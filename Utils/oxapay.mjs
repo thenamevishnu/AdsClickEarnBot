@@ -1,5 +1,4 @@
 import axios from "axios"
-import { botConfig } from "../Config/botConfig.mjs"
 
 export const createPaymentLink = async (user_id, amount, callbackUrl, orderId) => {
 

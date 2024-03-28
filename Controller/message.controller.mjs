@@ -4,6 +4,8 @@ import { answerCallback, getKeyArray, keyList, localStore, protect_content, shor
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
+import { createPaymentLink } from "../Utils/oxapay.mjs";
+import { createOrderId } from "../Utils/helper.mjs";
 
 api.on("message", async message => {
     if(message.chat.type !== "private") return
@@ -481,6 +483,60 @@ api.on("message", async message => {
                 reply_markup: {
                     keyboard: keyList.balanceKey,
                     resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "PAY_WITH_CRYPTO") {
+        try {
+            if (!message.text || isNaN(message.text)) {
+                const text = `<b><i>❌ Invalid amount!</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const amount = parseFloat(message.text).toFixed(4)
+            if (amount < settings.PAYMENT.MIN.DEPOSIT) {
+                const text = `<b><i>❌ Minimum deposit $${settings.PAYMENT.MIN.DEPOSIT.toFixed(4)}</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            answerCallback[from.id] = null
+            const CALLBACK_URL = `${process.env.SERVER}/payments/callback`
+            const orderid = createOrderId()
+            const { payLink } = await createPaymentLink(from.id, amount, CALLBACK_URL, orderid)
+            if (!payLink) {
+                const text = `<b><i>❌ We can't generate a payment link.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content,
+
+                })
+            }
+            await api.sendMessage(from.id, `<b><i>⌛ Generating payment link...</i></b>`, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: keyList.balanceKey,
+                    resize_keyboard: true
+                }
+            })
+            const text = `<b><i><code>🆔 #${orderid}</code>\n\n💵 Amount: $${amount}\n⌛ Expire in 30 minutes</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: "PAY NOW", url: payLink}
+                        ]
+                    ]
                 }
             })
         } catch (err) {

@@ -19,5 +19,11 @@ export const settings = {
             DEPOSIT: 0.1
         }  
     },
-    GIVEAWAY: 0.5
+    GIVEAWAY: 0.5,
+    PAYMENT: {
+        MIN: {
+            DEPOSIT: 1,
+            WITHDRAW: 5
+        }
+    }
 }

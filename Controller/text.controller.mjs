@@ -79,7 +79,7 @@ api.onText(/^➕ Deposit$/, async message => {
         const text = `<b><i>📥 Choose your payment method!</i></b>`
         const key = [
             [
-                { text: "Pay with crypto", callback_data: "/pay crypto" }
+                { text: "PAY WITH CRYPTO", callback_data: "/pay CRYPTO" }
             ]
         ]
         return await api.sendMessage(from.id, text, {

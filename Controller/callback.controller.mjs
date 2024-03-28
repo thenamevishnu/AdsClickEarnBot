@@ -1,8 +1,7 @@
 import api from "../Config/Telegram.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { createPaymentLink } from "../Utils/oxapay.mjs";
-import { adsText, answerCallback, inlineKeys, localStore, protect_content } from "../Utils/tele.mjs";
+import { adsText, answerCallback, inlineKeys, keyList, localStore, protect_content } from "../Utils/tele.mjs";
 
 api.on("callback_query", async callback => {
     const data = callback.data
@@ -16,7 +15,26 @@ api.on("callback_query", async callback => {
     // payments
 
     if (command === "/pay") {
-        
+        try{
+            const [method] = params
+            let text;
+            if (method == "CRYPTO") {
+                text = `<b><i>💷 Enter the amount you want to deposit!</i></b>`
+                answerCallback[from.id] = "PAY_WITH_CRYPTO"
+            }
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: [
+                        ["🚫 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        }catch(err){
+            return console.log(err.message)
+        }
     }
 
     // notification
