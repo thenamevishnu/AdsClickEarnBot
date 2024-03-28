@@ -1,6 +1,10 @@
 import express from "express"
+import "./Config/database.mjs"
 import serverRoute from "./Router/server.route.mjs"
-import "./Utils/cron.mjs"
+
+import "./Controller/text.controller.mjs"
+import "./Controller/message.controller.mjs"
+import "./Controller/callback.controller.mjs"
 
 const app = express()
 
