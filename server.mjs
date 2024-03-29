@@ -5,6 +5,7 @@ import "./Config/database.mjs"
 import serverRoute from "./Router/server.route.mjs"
 import linkRoute from "./Router/links.route.mjs"
 import paymentRoute from "./Router/payment.route.mjs"
+import "./Utils/cron.mjs"
 
 import "./Controller/text.controller.mjs"
 import "./Controller/message.controller.mjs"
