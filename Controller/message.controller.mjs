@@ -4,8 +4,8 @@ import { answerCallback, getKeyArray, keyList, localStore, protect_content, shor
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
-import { createPaymentLink } from "../Utils/oxapay.mjs";
-import { createOrderId } from "../Utils/helper.mjs";
+import { createPaymentLink, createPayout } from "../Utils/oxapay.mjs";
+import { createOrderId, isValidTRXAddress } from "../Utils/helper.mjs";
 
 api.on("message", async message => {
     if(message.chat.type !== "private") return
@@ -484,6 +484,72 @@ api.on("message", async message => {
                     keyboard: keyList.balanceKey,
                     resize_keyboard: true
                 }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "PAYOUT_AMOUNT") {
+        try {
+            if (!message.text || isNaN(message.text)) {
+                const text = `<b><i>❌ Invalid amount!</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            } 
+            const amount = parseFloat(message.text).toFixed(4)
+            const user = await userCollection.findOne({ _id: from.id })
+            const minPay = settings.PAYMENT.MIN.WITHDRAW
+            if (amount < minPay || amount > user.balance.withdrawable) {
+                const text = `<b><i>❌ ${amount < minPay ? `Minimum payout is $${minPay}` : `You don't have enough balance.`}</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["payout"] = amount
+            answerCallback[from.id] = "PAYOUT_ADDRESS"
+            const text = `<b><i>📤 Enter your USDT-TRC20 address for withdrawal.</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "PAYOUT_ADDRESS") {
+        try {
+            if (!message.text) {
+                const text = `<b><i>❌ Invalid address!</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const isOk = isValidTRXAddress(message.text)
+            if (!isOk) {
+                const text = `<b><i>❌ Invalid address!</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const amount = parseFloat(localStore[from.id]["payout"]).toFixed(4)
+            const address = message.text
+            answerCallback[from.id] = null
+            const CALLBACK_URL = `${process.env.SERVER}/payments/callback`
+            const { status } = await createPayout(from.id, address, amount, CALLBACK_URL)
+            if (status) {
+                await userCollection.updateOne({_id: from.id},{$set: {"balance.withdrawable": -(amount)}})
+            }
+            const text = `<b><i>✅ Requested payout of $${amount} to ${address} is ${status || "Failed"}!</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
             })
         } catch (err) {
             return console.log(err.message)
