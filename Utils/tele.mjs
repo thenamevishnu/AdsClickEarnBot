@@ -61,11 +61,11 @@ export const inlineKeys = {
             ]
         ]
     },
-    visit_site: (ads) => {
+    visit_site: (ads, user_id) => {
         return [
             [
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
-                { text: `🔗 Open link`, url: `${ads.link}` }
+                { text: `🔗 Open link`, url: `${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
             ]
         ]
     },
@@ -142,7 +142,7 @@ export const onSuccessVisitSite = async (campaignId, user_id) => {
         const cpc = getCampaign.cpc
         const earn = (cpc * settings.GIVEAWAY).toFixed(4)
         const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
-        await adsCollection.updateOne({_id: campaignId},{$addToSet:{completed: Number(user_id)}})
+        await adsCollection.updateOne({ _id: campaignId }, { $addToSet: { completed: Number(user_id) }, $inc: { remaining_budget: -(cpc) } })
         const userUpdate = await userCollection.findOneAndUpdate({ _id: user_id }, { $inc: { "balance.withdrawable": earn } })
         await userCollection.updateOne({ _id: userUpdate.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission } })
         return `✅ Task completed: +$${earn}`

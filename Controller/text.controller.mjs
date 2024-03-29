@@ -302,7 +302,7 @@ api.onText(/^🔗 Visit Sites$/, async message => {
             parse_mode: "HTML",
             protect_content: protect_content,
             reply_markup: {
-                inline_keyboard: inlineKeys.visit_site(ads)
+                inline_keyboard: inlineKeys.visit_site(ads, from.id)
             }
         })
     } catch (err) {
