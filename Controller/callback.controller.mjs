@@ -141,9 +141,9 @@ api.on("callback_query", async callback => {
     if (command === "/ads_status") {
         try {
             const [status, ads_id] = params
-            await adsCollection.updateOne({ _id: ads_id }, { $set: { status: status } })
+            const adType = await adsCollection.findOneAndUpdate({ _id: ads_id }, { $set: { status: status } })
             const ads = await adsCollection.findOne({ _id: ads_id })
-            const text = adsText.botAds(ads)
+            const text = adType.type == "BOT" ? adsText.botAds(ads) : adType.type == "SITE" ? adsText.siteAds(ads) : "Error"
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,

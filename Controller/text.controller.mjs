@@ -113,7 +113,13 @@ api.onText(/^➖ Payout$/, async message => {
         answerCallback[from.id] = "PAYOUT_AMOUNT"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content
+            protect_content: protect_content,
+            reply_markup: {
+                keyboard: [
+                    ["🚫 Cancel"]
+                ],
+                resize_keyboard: true
+            }
         })
     } catch (err) {
         return console.log(err.message)
@@ -243,6 +249,67 @@ api.onText(/^🤖 Start Bots$/, async message => {
     }
 })
 
+// web task
+
+api.onText(/^💻 Web Task$|^🛑 Cancel$/, async message => {
+    try {
+        const from = message.from
+        if (message.chat.type != "private") return
+        answerCallback[from.id] = null
+        const text = `<b><i>🔗 Web related tasks</i></b>`
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                keyboard: keyList.webKey,
+                resize_keyboard: true
+            }
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// visit sites
+
+api.onText(/^🔗 Visit Sites$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        let ads = await adsCollection.findOne({
+            type: "SITE",
+            chat_id: {
+                $ne: from.id
+            },
+            completed: {
+                $nin: [from.id]
+            },
+            skip: {
+                $nin: [from.id]
+            },
+            status: true
+        })
+        if (!ads) {
+            const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        const text = showAdsText.siteAds(ads)
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                inline_keyboard: inlineKeys.visit_site(ads)
+            }
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
 // Advertise Section
 
 api.onText(/^📊 Advertise$|^\/advertise$|^🔙 Advertise$/, async message => {
@@ -307,6 +374,29 @@ api.onText(/^🤖 New Bots$/, async message => {
     }
 })
 
+// new site ads
+
+api.onText(/^🔗 New Sites$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const text = `<b><i>🔗 Enter the link to get traffic.</i></b>`
+        answerCallback[from.id] = "NEW_SITE_ADS"
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                keyboard: [
+                    ["❌ Cancel"]
+                ],
+                resize_keyboard: true
+            } 
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
 // ads list
 
 api.onText(/^📊 My Ads$|^✖️ Cancel$/, async message => {
@@ -334,7 +424,7 @@ api.onText(/^🤖 My Bots$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
-        const ads = await adsCollection.find({ chat_id: from.id })
+        const ads = await adsCollection.find({ chat_id: from.id, type: "BOT" })
         if (ads.length === 0) {
             const text = `<b><i>🤖 No bot ads available</i></b>`
             return await api.sendMessage(from.id, text, {
@@ -344,6 +434,35 @@ api.onText(/^🤖 My Bots$/, async message => {
         }
         ads.forEach(item => {
             const text = adsText.botAds(item)
+            api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    inline_keyboard: inlineKeys.adsManageKey(item)
+                }
+            })
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// my site ads
+
+api.onText(/^🔗 My Sites$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const ads = await adsCollection.find({ chat_id: from.id, type: "SITE" })
+        if (ads.length === 0) {
+            const text = `<b><i>🔗 No site ads available</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        ads.forEach(item => {
+            const text = adsText.siteAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 protect_content: protect_content,

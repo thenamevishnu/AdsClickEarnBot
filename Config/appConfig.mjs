@@ -10,7 +10,8 @@ export const settings = {
     },
     COST: {
         PER_CLICK: {
-            BOT_ADS: 0.005
+            BOT_ADS: 0.005,
+            SITE_ADS: 0.005
         }
     },
     REF: {

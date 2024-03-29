@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visit Site</title>
+</head>
+<body>
+    <style>
+        body{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        .top{
+            width: 100vw;
+            text-align: center;
+        }
+        .link{
+            width: 95vw;
+            height: 90vh;
+        }
+    </style>
+    <div class="top">
+        <p id="timer"></p>
+    </div>
+    <div class="link">
+        <iframe class="link" src=<%= link %> frameborder="1"></iframe>
+    </div>
+    <script>
+        const timerElement = document.getElementById("timer")
+        const dur = `<%= duration %>`;
+        let secondsRemaining = dur
+        const timer = setInterval(() => {
+            timerElement.innerHTML = `<b>Time remaining: </b><code>${secondsRemaining} seconds</code>`;
+            if (secondsRemaining <= 0) {
+                clearInterval(timer)
+                timerElement.innerHTML = 'Redirecting...';
+                window.location.href = `<%= link %>`
+            } else {
+                secondsRemaining--;
+            }
+        }, 1000)
+    </script>
+</body>
+</html>

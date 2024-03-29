@@ -152,7 +152,7 @@ api.on("message", async message => {
 
     if (waitfor === "NEW_BOT_ADS_CPC") {
         try {
-            if (!message.text) {
+            if (!message.text || isNaN(message.text)) {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
@@ -181,7 +181,7 @@ api.on("message", async message => {
 
     if (waitfor === "NEW_BOT_ADS_BUDGET") {
         try {
-            if (!message.text) {
+            if (!message.text || isNaN(message.text)) {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
@@ -223,6 +223,208 @@ api.on("message", async message => {
             await userCollection.updateOne({_id: from.id},{$inc:{"balance.balance": -(amount)}})
             localStore[from.id] = {}
             const text = `<b><i>✅ You bot ads created</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: keyList.newAdsKey,
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    // new site ads
+
+    if(waitfor === "NEW_SITE_ADS") {
+        try {
+            localStore[from.id] = {}
+            const forward = message.forward_from
+            if (!message.text || !isUri(message.text)) {
+                const text = `<b><i>❌ Looks like an invalid url.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["link"] = message.text
+            answerCallback[from.id] = "NEW_SITE_ADS_TITLE"
+            const text = `<b><i>🔠 Enter a title for the ad</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_SITE_ADS_TITLE") {
+        try {
+            if (!message.text) {
+                const text = `<b><i>❌ Looks like invalid title.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const title = message.text
+            if (title.length < 5 || title.length > 80) {
+                const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["title"] = title
+            answerCallback[from.id] = "NEW_SITE_ADS_DESCRIPTION"
+            const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_SITE_ADS_DESCRIPTION") {
+        try {
+            if (!message.text) {
+                const text = `<b><i>❌ Looks like invalid description.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const description = message.text
+            if (description.length < 10 || description.length > 255) {
+                const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["description"] = description
+            answerCallback[from.id] = "NEW_SITE_ADS_DURATION"
+            settings.COST.PER_CLICK.BOT_ADS.toFixed(4)
+            const text = `<b><i>⌚ Provide the duration in seconds that people stay on the site.\n\n⏳ Minimum duration is 10 seconds.</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_SITE_ADS_DURATION") {
+        try {
+            if (!message.text && isNaN(message.text)) {
+                const text = `<b><i>❌ Invalid duration.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const duration = parseInt(message.text)
+            if (duration < 10 || duration > 120) {
+                const text = `<b><i>❌ Duration should be from 10 to 120 seconds</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["duration"] = duration
+            answerCallback[from.id] = "NEW_SITE_ADS_CPC"
+            const perVisit = parseFloat((settings.COST.PER_CLICK.SITE_ADS / 10) * duration).toFixed(4)
+            const text = `<b><i>💷 Enter the cost per visit.\n\n💰 Minimum: $${perVisit} for ${duration} seconds.</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_SITE_ADS_CPC") {
+        try {
+            if (!message.text || isNaN(message.text)) {
+                const text = `<b><i>❌ Looks like invalid amount.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const amount = parseFloat(message.text).toFixed(4)
+            const duration = localStore[from.id]["duration"]
+            const perVisit = parseFloat((settings.COST.PER_CLICK.SITE_ADS / 10) * duration).toFixed(4)
+            if (isNaN(amount) || amount < perVisit) {
+                const text = `<b><i>❌ Minimum CPC: $${perVisit} per ${duration} seconds.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["cpc"] = amount
+            answerCallback[from.id] = "NEW_SITE_ADS_BUDGET"
+            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_SITE_ADS_BUDGET") {
+        try {
+            if (!message.text || isNaN(message.text)) {
+                const text = `<b><i>❌ Looks like invalid budget.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const amount = parseFloat(message.text).toFixed(4)
+            const cpc = parseFloat(localStore[from.id]["cpc"]).toFixed(4)
+            if (isNaN(amount) || amount < cpc) {
+                const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const user = await userCollection.findOne({ _id: from.id })
+            if (amount > user.balance.balance) {
+                const text = `<b><i>❌ You don't have enough balance.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["budget"] = amount
+            answerCallback[from.id] = null
+            localStore[from.id]["chat_id"] = from.id
+            let short = null
+            while (true) {
+                short = shortID()
+                const response = await adsCollection.findOne({ _id: short })
+                if (!response) {
+                    break
+                }
+            }
+            localStore[from.id]["_id"] = short
+            localStore[from.id]["remaining_budget"] = amount
+            localStore[from.id]["type"] = "SITE"
+            await adsCollection.create(localStore[from.id])
+            await userCollection.updateOne({_id: from.id},{$inc:{"balance.balance": -(amount)}})
+            localStore[from.id] = {}
+            const text = `<b><i>✅ You site ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 protect_content: protect_content,
