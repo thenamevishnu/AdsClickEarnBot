@@ -20,7 +20,7 @@ export const shortID = () => {
 
 export const keyList = {
     mainKey: [
-        ["🛰️ Tele Task", "💻 Web Task"],
+        ["🛰️ Tele Task", "🎯 Micro Task", "💻 Web Task"],
         ["💷 Balance", "👭 Referrals", "⚙️ Settings"],
         ["📊 Advertise"]
     ],

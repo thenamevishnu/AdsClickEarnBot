@@ -161,7 +161,8 @@ api.onText(/^👭 Referrals$/, async message => {
                 inline_keyboard: [
                     [{ text: "Share Link", url: `https://t.me/share/url?url=${send}` }]
                 ]
-            }
+            },
+            disable_web_page_preview: true
         })
     } catch (err) {
         return console.log(err.message)
@@ -182,6 +183,22 @@ api.onText(/^⚙️ Settings$/, async message => {
                     [{ text: `${user.notification ? `🔕 Turn OFF` : `🔔 Turn ON` } Notification`, callback_data: `/notification ${user.notification ? false : true}` }]
                 ]
             }
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// Micro Task
+
+api.onText(/^🎯 Micro Task$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const text = `<b><i>🎯 Micro tasks ( under development )</i></b>`
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content
         })
     } catch (err) {
         return console.log(err.message)
