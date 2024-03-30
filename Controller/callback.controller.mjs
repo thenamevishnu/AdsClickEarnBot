@@ -1,4 +1,5 @@
 import api from "../Config/Telegram.mjs";
+import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsText, answerCallback, inlineKeys, keyList, localStore, protect_content } from "../Utils/tele.mjs";
@@ -108,6 +109,14 @@ api.on("callback_query", async callback => {
                     parse_mode: "HTML"
                 }) 
             }
+            if (ads.completed.includes(from.id)) {
+                const text = `<b><i>❌ Task already completed</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                }) 
+            }
             if (ads.remaining_budget < ads.cpc) {
                 await adsCollection.updateOne({ _id: ads_id }, { $set: { status: false } })
                 const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
@@ -136,6 +145,132 @@ api.on("callback_query", async callback => {
         }
     }
 
+    // watch ads completed
+
+    if (command === "/watched") {
+        try {
+            const [endTime, ads_id] = params
+            const currentTime = Math.floor(new Date().getTime() / 1000)
+            if (currentTime < endTime) {
+                const text = `⌚ Wait: ${endTime - currentTime} seconds.`
+                return await api.answerCallbackQuery(callback.id, {
+                    text: text,
+                    show_alert: true
+                })
+            }
+            const ads = await adsCollection.findOne({ _id: ads_id, status: true })
+            if (!ads) {
+                const text = `<b><i>❌ Task disabled or deleted!</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                })
+            }
+            if (ads.skip.includes(from.id)) {
+                const text = `<b><i>❌ Task already skipped</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                }) 
+            }
+            if (ads.completed.includes(from.id)) {
+                const text = `<b><i>❌ Task already completed</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                }) 
+            }
+            if (ads.remaining_budget < ads.cpc) {
+                await adsCollection.updateOne({ _id: ads_id }, { $set: { status: false } })
+                const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                }) 
+            }
+            const earn = (ads.cpc * settings.GIVEAWAY).toFixed(4)
+            const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
+            const text = `<b><i>✅ Task completed: +${earn}</i></b>`
+            await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
+            const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn } })
+            await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission } })
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML"
+            }) 
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    // chat join completed
+
+    if (command === "/chat_joined") {
+        try {
+            const [ads_id] = params
+            const ads = await adsCollection.findOne({ _id: ads_id, status: true })
+            if (!ads) {
+                const text = `<b><i>❌ Task disabled or deleted!</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                })
+            }
+            if (ads.skip.includes(from.id)) {
+                const text = `<b><i>❌ Task already skipped</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                }) 
+            }
+            if (ads.completed.includes(from.id)) {
+                const text = `<b><i>❌ Task already completed</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                }) 
+            }
+            if (ads.remaining_budget < ads.cpc) {
+                await adsCollection.updateOne({ _id: ads_id }, { $set: { status: false } })
+                const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                }) 
+            }
+            const { status: userStatus } = await api.getChatMember(ads.chats_id, from.id)
+            if (userStatus != "creator" && userStatus != "administrator" && userStatus != "member") {
+                const text = `❌ We can't find you there`
+                return await api.answerCallbackQuery(callback.id, {
+                    text: text,
+                    show_alert: true
+                })
+            }
+            const earn = (ads.cpc * settings.GIVEAWAY).toFixed(4)
+            const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
+            const text = `<b><i>✅ Task completed: +${earn}</i></b>`
+            await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
+            const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn } })
+            await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission } })
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML"
+            }) 
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
     // manage ads
 
     if (command === "/ads_status") {
@@ -143,14 +278,15 @@ api.on("callback_query", async callback => {
             const [status, ads_id] = params
             const adType = await adsCollection.findOneAndUpdate({ _id: ads_id }, { $set: { status: status } })
             const ads = await adsCollection.findOne({ _id: ads_id })
-            const text = adType.type == "BOT" ? adsText.botAds(ads) : adType.type == "SITE" ? adsText.siteAds(ads) : "Error"
+            const text = adType.type == "BOT" ? adsText.botAds(ads) : adType.type == "SITE" ? adsText.siteAds(ads) : ads.type == "POST" ? adsText.postAds(ads) : ads.type == "CHAT" ? adsText.chatAds(ads) : "Error"
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(ads)
-                }
+                },
+                disable_web_page_preview: true
             })
         } catch (err) {
             return console.log(err.message)
@@ -282,4 +418,21 @@ api.on("callback_query", async callback => {
             return console.log(err.message)
         }
     }
+
+    // view post
+
+    if (command === "/view_post") {
+        try {
+            const [post] = params
+            return await api.copyMessage(from.id, from.id, post, {
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b><i>❌ Post not found!</i></b>", {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+    }
+
 })

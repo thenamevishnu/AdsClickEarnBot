@@ -25,7 +25,7 @@ export const keyList = {
         ["📊 Advertise"]
     ],
     teleKey: [
-        ["🤖 Start Bots"],
+        ["🤖 Start Bots", "📄 View Posts", "💬 Join Chats"],
         ["🔙 Home"]
     ],
     webKey: [
@@ -37,12 +37,14 @@ export const keyList = {
         ["🔙 Home"]
     ],
     newAdsKey: [
-        ["🤖 New Bots", "🔗 New Sites"],
-        ["🔙 Advertise", "🔙 Home"]
+        ["🤖 New Bots", "🔗 New Sites", "📄 New Posts"],
+        ["💬 New Chats"],
+        ["🔙 Advertise"]
     ],
     myAdsKey: [
-        ["🤖 My Bots", "🔗 My Sites"],
-        ["🔙 Advertise", "🔙 Home"]
+        ["🤖 My Bots", "🔗 My Sites", "📄 My Posts"],
+        ["💬 My Chats"],
+        ["🔙 Advertise"]
     ],
     balanceKey: [
         ["➕ Deposit", "🔄 Convert", "➖ Payout"],
@@ -61,11 +63,29 @@ export const inlineKeys = {
             ]
         ]
     },
+    chat_join: (ads) => {
+        return [
+            [
+                { text: `🔗 Open Chat`, url: `${ads.link}` }
+            ],[
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
+                { text: `✅ Joined`, callback_data: `/chat_joined ${ads._id}`}
+            ]
+        ]
+    },
     visit_site: (ads, user_id) => {
         return [
             [
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
                 { text: `🔗 Open link`, url: `${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
+            ]
+        ]
+    },
+    post_view: (ads, endTime) => {
+        return [
+            [
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
+                { text: `✅ Watched`, callback_data: `/watched ${endTime} ${ads._id}` }
             ]
         ]
     },
@@ -78,7 +98,7 @@ export const inlineKeys = {
         ]
     },
     adsManageKey: (ads) => {
-        return [
+        const key = [
             [
                 { text: `${ads.status ? `⏹️ Stop` : `▶️ Start`}`, callback_data: `/ads_status ${ads.status ? false : true} ${ads._id}` }
             ], [
@@ -91,6 +111,8 @@ export const inlineKeys = {
                 { text: "❌ Delete Ad", callback_data: `/delete_ad ${ads._id}`}
             ]
         ]
+        if(ads.post_id) key[0].push({ text: "📄 View Posts", callback_data: `/view_post ${ads.post_id}` })
+        return key
     }
 }
 
@@ -109,6 +131,14 @@ export const adsText = {
     siteAds: (info) => {
         const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🔗 Link: ${info.link}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
+    },
+    postAds: (info) => {
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🆔 PostID: ${info.post_id}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        return text
+    },
+    chatAds: (info) => {
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n💬 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        return text
     }
 }
 
@@ -119,6 +149,12 @@ export const showAdsText = {
         return `<b><i>${warningText}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
     },
     siteAds: (ads) => {
+        return `<b><i>${warningText}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
+    },
+    postAds: (ads) => {
+        return `<b><i>${warningText}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
+    },
+    chatAds: (ads) => {
         return `<b><i>${warningText}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
     }
 }

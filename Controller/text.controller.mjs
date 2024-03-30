@@ -310,6 +310,90 @@ api.onText(/^🔗 Visit Sites$/, async message => {
     }
 })
 
+// view post
+
+api.onText(/^📄 View Posts$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        let ads = await adsCollection.findOne({
+            type: "POST",
+            chat_id: {
+                $ne: from.id
+            },
+            completed: {
+                $nin: [from.id]
+            },
+            skip: {
+                $nin: [from.id]
+            },
+            status: true
+        })
+        if (!ads) {
+            const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        const text = showAdsText.postAds(ads)
+        const endTime = Math.floor(new Date().getTime()/1000) + ads.duration
+        await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                inline_keyboard: inlineKeys.post_view(ads, endTime)
+            }
+        })
+        return await api.copyMessage(from.id, ads.chat_id, ads.post_id, {
+            protect_content: protect_content
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// chat join
+
+api.onText(/^💬 Join Chats$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        let ads = await adsCollection.findOne({
+            type: "CHAT",
+            chat_id: {
+                $ne: from.id
+            },
+            completed: {
+                $nin: [from.id]
+            },
+            skip: {
+                $nin: [from.id]
+            },
+            status: true
+        })
+        if (!ads) {
+            const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        const text = showAdsText.chatAds(ads)
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                inline_keyboard: inlineKeys.chat_join(ads)
+            }
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
 // Advertise Section
 
 api.onText(/^📊 Advertise$|^\/advertise$|^🔙 Advertise$/, async message => {
@@ -397,6 +481,52 @@ api.onText(/^🔗 New Sites$/, async message => {
     }
 })
 
+// new post view
+
+api.onText(/^📄 New Posts$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const text = `<b><i>🔎 Forward or create a post to promote</i></b>`
+        answerCallback[from.id] = "NEW_POST_ADS"
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                keyboard: [
+                    ["❌ Cancel"]
+                ],
+                resize_keyboard: true
+            } 
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// new join chat
+
+api.onText(/^💬 New Chats$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const text = `<b><i>🔎 Forward a message or enter the username of the chat/channel</i></b>`
+        answerCallback[from.id] = "NEW_CHAT_ADS"
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                keyboard: [
+                    ["❌ Cancel"]
+                ],
+                resize_keyboard: true
+            } 
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
 // ads list
 
 api.onText(/^📊 My Ads$|^✖️ Cancel$/, async message => {
@@ -468,7 +598,67 @@ api.onText(/^🔗 My Sites$/, async message => {
                 protect_content: protect_content,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
+                },
+                disable_web_page_preview: true
+            })
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// my post ads
+
+api.onText(/^📄 My Posts$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const ads = await adsCollection.find({ chat_id: from.id, type: "POST" })
+        if (ads.length === 0) {
+            const text = `<b><i>📄 No post ads available</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        ads.forEach(item => {
+            const text = adsText.postAds(item)
+            api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    inline_keyboard: inlineKeys.adsManageKey(item)
                 }
+            })
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// my chat ads
+
+api.onText(/^💬 My Chats$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const ads = await adsCollection.find({ chat_id: from.id, type: "CHAT" })
+        if (ads.length === 0) {
+            const text = `<b><i>💬 No chat ads available</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        ads.forEach(item => {
+            const text = adsText.chatAds(item)
+            api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    inline_keyboard: inlineKeys.adsManageKey(item)
+                },
+                disable_web_page_preview: true
             })
         })
     } catch (err) {

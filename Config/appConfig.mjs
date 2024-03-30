@@ -6,12 +6,14 @@ export const settings = {
     BOT: {
         USERNAME: "RoyalClickBot",
         NAME: "Royal Click",
-        ID: 6496287597
+        ID: 6573900074
     },
     COST: {
         PER_CLICK: {
             BOT_ADS: 0.005,
-            SITE_ADS: 0.005
+            SITE_ADS: 0.005,
+            POST_ADS: 0.005,
+            CHAT_ADS: 0.005
         }
     },
     REF: {
