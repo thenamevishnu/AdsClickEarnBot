@@ -16,8 +16,9 @@ export const userMention = (user_id, username, first_name) => {
 export const isUserBanned = async user_id => {
     try {
         const user = await userCollection.findOne({ _id: user_id })
-        return user.banned
+        return user?.banned
     } catch (err) {
+        console.log(err.message);
         return true
     }
 }
