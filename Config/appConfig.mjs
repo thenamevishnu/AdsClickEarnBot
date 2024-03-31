@@ -3,7 +3,11 @@ export const settings = {
         ID: 6813105483,
         USERNAME: "vkripz"
     },
+    CHAT: {
+        USERNAME: "RoyalClickCommunity"  
+    },
     BOT: {
+        VERSION: "v1.0.3",
         USERNAME: "RoyalClickBot",
         NAME: "Royal Click",
         ID: 6617978738

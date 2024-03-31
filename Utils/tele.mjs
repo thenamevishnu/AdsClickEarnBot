@@ -32,7 +32,7 @@ export const keyList = {
     mainKey: [
         ["🛰️ Tele Task", "🎯 Micro Task", "💻 Web Task"],
         ["💷 Balance", "👭 Referrals", "⚙️ Settings"],
-        ["📊 Advertise"]
+        ["📊 Advertise", "⁉️ info"]
     ],
     teleKey: [
         ["🤖 Start Bots", "📄 View Posts", "💬 Join Chats"],

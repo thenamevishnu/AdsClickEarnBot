@@ -235,6 +235,20 @@ api.onText(/^⚙️ Settings$/, async message => {
     }
 })
 
+api.onText(/^⁉️ info$/, async message => {
+    try {
+        const from = message.from
+        const totalUsers = await userCollection.countDocuments()
+        const text = `<b><i>🤖 ${settings.BOT.NAME} - ${settings.BOT.VERSION}\n\n🎯 Introducing ${settings.BOT.NAME} – your all-in-one marketplace for promoting Telegram bots, chats/channels, websites, and engaging in micro tasks, including viewing posts!\n\n🛰️ With ${settings.BOT.NAME}, users can effortlessly promote their Telegram creations and websites to a vast audience, attracting potential followers and customers. Whether you're a bot developer, a chat/channel administrator, or a website owner, this platform offers a seamless solution for enhancing visibility and driving engagement.\n\n🪐 But that's not all! In addition to promoting content, users can explore a wide range of micro tasks, from liking posts to subscribing to channels. Plus, with the ability to view posts, users can interact with content while earning rewards for their engagement.\n\n🚁 Join our dynamic community of promoters and task participants today, and discover the endless possibilities with ${settings.BOT.NAME}!\n\n👥 Users: ${totalUsers}\n\n💬 Community Chat: @${settings.CHAT.USERNAME}</i></b>`
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
 // micro task
 
 api.onText(/^🎯 Micro Task$/, async message => {
