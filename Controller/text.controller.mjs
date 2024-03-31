@@ -3,14 +3,17 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, inlineKeys, invited_user, keyList, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, inlineKeys, invited_user, isUserBanned, keyList, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
 
 // start message
 
-api.onText(/^\/start(?: (.+))?$|^🔙 Home$/, async (message, match) => {
+api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, match) => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
+        answerCallback[from.id] = null
         const user = await userCollection.findOne({ _id: from.id })
         if (!user) {
             invited_user[from.id] = match[1] || settings.ADMIN.ID
@@ -59,6 +62,8 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         answerCallback[from.id] = null
         const text = `<b><i>💰 Balance: $${user.balance.balance.toFixed(4)}\n\n💶 Withdrawable: $${user.balance.withdrawable.toFixed(4)}</i></b>`
@@ -79,6 +84,8 @@ api.onText(/^➕ Deposit$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const text = `<b><i>📥 Choose your payment method!</i></b>`
         const key = [
             [
@@ -101,6 +108,8 @@ api.onText(/^➖ Payout$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         if (user.balance.withdrawable < settings.PAYMENT.MIN.WITHDRAW) {
             const text = `<b><i>❌ Minimum withdrawal is $${settings.PAYMENT.MIN.WITHDRAW.toFixed(4)}</i></b>`
@@ -130,6 +139,8 @@ api.onText(/^🔄 Convert$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const text = `<b><i>🔄 Convert withdrawable to balance</i></b>`
         answerCallback[from.id] = "CONVERT_BALANCE"
         return await api.sendMessage(from.id, text, {
@@ -151,10 +162,12 @@ api.onText(/^📃 History$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         let text = `<b><i>📃 Here you can see the latest 10 waiting, pending, completed transaction history</i></b>`
         const history = await paymentCollection.find({ user_id: from.id }).sort({ createdAt: -1 }).limit(10)
         if (history.length == 0) {
-            text += `\n\n<b><i>💫 No Transaction Found!</i/></b>`
+            text += `\n\n<b><i>💫 No Transaction Found!</i></b>`
         }
         history.forEach(item => {
             if (item.status == "Waiting" && item.type == "payment") {
@@ -180,6 +193,8 @@ api.onText(/^👭 Referrals$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const user = await userCollection.findOne({_id: from.id})
         const send = `👭 You have total : ${user.invites} Referrals\n\n💸 Total Earned : $${user.balance.referral.toFixed(4)}\n\n🔗 Your Referral Link : https://t.me/${settings.BOT.USERNAME}?start=${from.id}\n\n🎉 You will earn 10% of each user earnings from tasks, and 10% of USD they deposit in bot. Share your refer link and earn money ✅`
         const text = `<b><i>👭 You have total : ${user.invites} Referrals\n\n💸 Total Earned : $${user.balance.referral.toFixed(4)}\n\n🔗 Your Referral Link : https://t.me/${settings.BOT.USERNAME}?start=${from.id}\n\n🎉 You will earn 10% of each user"s earnings from tasks, and 10% of USD they deposit in bot. Share your refer link and earn money ✅</i></b>`
@@ -202,6 +217,8 @@ api.onText(/^⚙️ Settings$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const user = await userCollection.findOne({_id: from.id})
         const text = `<b><i>🛎️ Notification: ${ user.notification ? "✅" : "❌" }\n\n📅 Since: ${new Date(user.createdAt).toLocaleString("en-IN")}</i></b>`
         return await api.sendMessage(from.id, text, {
@@ -218,16 +235,42 @@ api.onText(/^⚙️ Settings$/, async message => {
     }
 })
 
-// Micro Task
+// micro task
 
 api.onText(/^🎯 Micro Task$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
-        const text = `<b><i>🎯 Micro tasks ( under development )</i></b>`
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
+        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        let ads = await adsCollection.findOne({
+            type: "MICRO",
+            chat_id: {
+                $ne: from.id
+            },
+            completed: {
+                $nin: [from.id]
+            },
+            skip: {
+                $nin: [from.id]
+            },
+            status: true
+        })
+        if (!ads) {
+            const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        const text = showAdsText.microTask(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content
+            protect_content: protect_content,
+            reply_markup: {
+                inline_keyboard: inlineKeys.micro_task(ads)
+            }
         })
     } catch (err) {
         return console.log(err.message)
@@ -240,6 +283,8 @@ api.onText(/^🛰️ Tele Task$|^⛔ Cancel$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         answerCallback[from.id] = null
         const text = `<b><i>🛰️ Telegram Tasks</i></b>`
         return await api.sendMessage(from.id, text, {
@@ -261,6 +306,8 @@ api.onText(/^🤖 Start Bots$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
         let ads = await adsCollection.findOne({
             type: "BOT",
@@ -300,6 +347,8 @@ api.onText(/^🤖 Start Bots$/, async message => {
 api.onText(/^💻 Web Task$|^🛑 Cancel$/, async message => {
     try {
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         if (message.chat.type != "private") return
         answerCallback[from.id] = null
         const text = `<b><i>🔗 Web related tasks</i></b>`
@@ -322,6 +371,8 @@ api.onText(/^🔗 Visit Sites$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
         let ads = await adsCollection.findOne({
             type: "SITE",
@@ -362,6 +413,8 @@ api.onText(/^📄 View Posts$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
         let ads = await adsCollection.findOne({
             type: "POST",
@@ -406,6 +459,8 @@ api.onText(/^💬 Join Chats$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
         let ads = await adsCollection.findOne({
             type: "CHAT",
@@ -446,6 +501,8 @@ api.onText(/^📊 Advertise$|^\/advertise$|^🔙 Advertise$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const text = `<b><i>🚀 Here you can create new ad and check current ads status</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
@@ -466,6 +523,8 @@ api.onText(/^➕ New Ad$|^❌ Cancel$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         answerCallback[from.id] = null
         const text = `<b><i>🛰️ Here you can create new ad choose an option from below</i></b>`
         return await api.sendMessage(from.id, text, {
@@ -487,6 +546,8 @@ api.onText(/^🤖 New Bots$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const text = `<b><i>🔎 Forward a message from the bot you want to promote</i></b>`
         answerCallback[from.id] = "NEW_BOT_ADS"
         return await api.sendMessage(from.id, text, {
@@ -510,6 +571,8 @@ api.onText(/^🔗 New Sites$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const text = `<b><i>🔗 Enter the link to get traffic.</i></b>`
         answerCallback[from.id] = "NEW_SITE_ADS"
         return await api.sendMessage(from.id, text, {
@@ -533,6 +596,8 @@ api.onText(/^📄 New Posts$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const text = `<b><i>🔎 Forward or create a post to promote</i></b>`
         answerCallback[from.id] = "NEW_POST_ADS"
         return await api.sendMessage(from.id, text, {
@@ -556,8 +621,35 @@ api.onText(/^💬 New Chats$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const text = `<b><i>🔎 Forward a message or enter the username of the chat/channel</i></b>`
         answerCallback[from.id] = "NEW_CHAT_ADS"
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content,
+            reply_markup: {
+                keyboard: [
+                    ["❌ Cancel"]
+                ],
+                resize_keyboard: true
+            } 
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// new join chat
+
+api.onText(/^🎯 New Micro$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
+        answerCallback[from.id] = "NEW_MICRO_ADS"
+        const text = `<b><i>🔠 Enter a title for the ad</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             protect_content: protect_content,
@@ -579,6 +671,8 @@ api.onText(/^📊 My Ads$|^✖️ Cancel$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         answerCallback[from.id] = null
         const text = `<b><i>🚀 Here you can manage all your running/expired ads.</i></b>`
         return await api.sendMessage(from.id, text, {
@@ -600,6 +694,8 @@ api.onText(/^🤖 My Bots$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const ads = await adsCollection.find({ chat_id: from.id, type: "BOT" })
         if (ads.length === 0) {
             const text = `<b><i>🤖 No bot ads available</i></b>`
@@ -629,6 +725,8 @@ api.onText(/^🔗 My Sites$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const ads = await adsCollection.find({ chat_id: from.id, type: "SITE" })
         if (ads.length === 0) {
             const text = `<b><i>🔗 No site ads available</i></b>`
@@ -659,6 +757,8 @@ api.onText(/^📄 My Posts$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const ads = await adsCollection.find({ chat_id: from.id, type: "POST" })
         if (ads.length === 0) {
             const text = `<b><i>📄 No post ads available</i></b>`
@@ -688,6 +788,8 @@ api.onText(/^💬 My Chats$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const ads = await adsCollection.find({ chat_id: from.id, type: "CHAT" })
         if (ads.length === 0) {
             const text = `<b><i>💬 No chat ads available</i></b>`
@@ -698,6 +800,38 @@ api.onText(/^💬 My Chats$/, async message => {
         }
         ads.forEach(item => {
             const text = adsText.chatAds(item)
+            api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    inline_keyboard: inlineKeys.adsManageKey(item)
+                },
+                disable_web_page_preview: true
+            })
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+// my micro task
+
+api.onText(/^🎯 My Micro$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
+        const ads = await adsCollection.find({ chat_id: from.id, type: "MICRO" })
+        if (ads.length === 0) {
+            const text = `<b><i>🎯 No micro tasks available</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        }
+        ads.forEach(item => {
+            const text = adsText.microTask(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 protect_content: protect_content,

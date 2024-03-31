@@ -12,6 +12,7 @@ const user = new Schema({
         referral: { type: Number, default: 0 },
         payouts: { type: Number, default: 0 }
     },
+    banned: { type: Boolean, default: false },
     invites: { type: Number, default: 0 },
     invited_by: { type: Number, default: settings.ADMIN.ID },
     notification: { type: Boolean, default: true }

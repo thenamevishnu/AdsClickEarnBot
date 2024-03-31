@@ -1,17 +1,21 @@
 import { isUri } from "valid-url";
 import api from "../Config/Telegram.mjs";
-import { answerCallback, getKeyArray, keyList, localStore, protect_content, shortID } from "../Utils/tele.mjs";
+import { answerCallback, getKeyArray, isUserBanned, keyList, localStore, protect_content, shortID } from "../Utils/tele.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { createPaymentLink, createPayout } from "../Utils/oxapay.mjs";
 import { createOrderId, isValidTRXAddress } from "../Utils/helper.mjs";
+import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 
 api.on("message", async message => {
     if(message.chat.type !== "private") return
     if (message.text && getKeyArray().includes(message.text)) return
 
     const from = message.from
+
+    const userStatusCheck = await isUserBanned(from.id)
+    if(userStatusCheck) return
     
     if (!localStore[from.id]) localStore[from.id] = {}
     
@@ -856,6 +860,152 @@ api.on("message", async message => {
         }
     }
 
+    // micro task
+
+    if (waitfor === "NEW_MICRO_ADS") {
+        try {
+            if (!message.text) {
+                const text = `<b><i>❌ Looks like invalid title.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const title = message.text
+            if (title.length < 5 || title.length > 80) {
+                const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["title"] = title
+            answerCallback[from.id] = "NEW_MICRO_ADS_DESCRIPTION"
+            const text = `<b><i>🔠 Enter a description/what people should do in this ad.</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_MICRO_ADS_DESCRIPTION") {
+        try {
+            if (!message.text) {
+                const text = `<b><i>❌ Looks like invalid description.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const description = message.text
+            if (description.length < 10 || description.length > 500) {
+                const text = `<b><i>❌ Description length should be from 10 to 500</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["description"] = description
+            answerCallback[from.id] = "NEW_MICRO_ADS_CPC"
+            const text = `<b><i>💷 Enter the cost per task.\n\n💰 Minimum: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(4)}</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_MICRO_ADS_CPC") {
+        try {
+            if (!message.text || isNaN(message.text)) {
+                const text = `<b><i>❌ Looks like invalid amount.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const amount = parseFloat(message.text).toFixed(4)
+            if (isNaN(amount) || amount < settings.COST.PER_CLICK.MICRO_ADS) {
+                const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(4)}.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["cpc"] = amount
+            answerCallback[from.id] = "NEW_MICRO_ADS_BUDGET"
+            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "NEW_MICRO_ADS_BUDGET") {
+        try {
+            if (!message.text || isNaN(message.text)) {
+                const text = `<b><i>❌ Looks like invalid budget.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const amount = parseFloat(message.text).toFixed(4)
+            const cpc = parseFloat(localStore[from.id]["cpc"]).toFixed(4)
+            if (isNaN(amount) || amount < cpc) {
+                const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const user = await userCollection.findOne({ _id: from.id })
+            if (amount > user.balance.balance) {
+                const text = `<b><i>❌ You don't have enough balance.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            localStore[from.id]["budget"] = amount
+            answerCallback[from.id] = null
+            localStore[from.id]["chat_id"] = from.id
+            let short = null
+            while (true) {
+                short = shortID()
+                const response = await adsCollection.findOne({ _id: short })
+                if (!response) {
+                    break
+                }
+            }
+            localStore[from.id]["_id"] = short
+            localStore[from.id]["remaining_budget"] = amount
+            localStore[from.id]["type"] = "MICRO"
+            await adsCollection.create(localStore[from.id])
+            await userCollection.updateOne({_id: from.id},{$inc:{"balance.balance": -(amount)}})
+            localStore[from.id] = {}
+            const text = `<b><i>✅ You micro task created</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: keyList.newAdsKey,
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
     // edit ads
 
     if (waitfor === "EDIT_ADS_TITLE") {
@@ -1061,6 +1211,122 @@ api.on("message", async message => {
                     keyboard: keyList.teleKey,
                     resize_keyboard: true
                 }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    // micro task proof submission
+
+    if (waitfor === "MICRO_TASK_SUBMIT_PROOF") {
+        try {
+            const ads_id = localStore[from.id]["ads_id"]
+            const ads = await adsCollection.findOne({ _id: ads_id, status: true })
+            if (!ads) {
+                const text = `<b><i>❌ Task disabled or deleted!</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            if (ads.skip.includes(from.id)) {
+                const text = `<b><i>❌ Task already skipped</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            if (ads.completed.includes(from.id)) {
+                const text = `<b><i>❌ Task already completed</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                }) 
+            }
+            if (ads.remaining_budget < ads.cpc) {
+                await adsCollection.updateOne({ _id: ads_id }, { $set: { status: false } })
+                const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const sendTo = ads.chat_id
+            const proof = message.message_id
+            await adsCollection.updateOne({ _id: ads_id }, { $addToSet: { completed: from.id }, $inc: { remaining_budget: -(ads.cpc) } })
+            await pendingMicroCollection.create({
+                campaign_id: ads_id,
+                cpc: ads.cpc.toFixed(4),
+                done_by: from.id,
+                proof: proof,
+                creator: sendTo,
+                time: Math.floor(new Date().getTime()/1000)
+            })
+            answerCallback[from.id] = null
+            const text = `<b><i>✅ Submitted. Wait for advertiser approval.</i></b>`
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: keyList.mainKey,
+                    resize_keyboard: true
+                }
+            })
+            return await api.sendMessage(sendTo, `<b><i>🆔 CampaignID: #${ads._id}\n🎯 Type: MICRO STASK\n✅ Submitted: ${from.first_name}\n\n📊 Advertise => 📊 My Ads => 🎯 My Micro to see list</i></b>`, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    // micro task rejection reason
+
+    if (waitfor === "MICRO_TASK_REJECTION_REASON") {
+        try {
+            if (!message.text) {
+                const text = `<b><i>❌ Only text message is allowed.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content,
+                    reply_markup: {
+                        keyboard: keyList.mainKey,
+                        resize_keyboard: true
+                    }
+                })
+            }
+            const list_id = localStore[from.id]["list_id"]
+            const pendingTask = await pendingMicroCollection.findOne({ _id: list_id })
+            if (pendingTask.status == "rejected" || pendingTask.status == "completed") {
+                const text = `<b><i>❌ This task already rejected or completed.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content,
+                    reply_markup: {
+                        keyboard: keyList.mainKey,
+                        resize_keyboard: true
+                    }
+                })
+            }
+            answerCallback[from.id] = null
+            const resp = await pendingMicroCollection.updateOne({ _id: list_id }, { $set: { status: "rejected", reason: message.text } })
+            if (resp.matchedCount == 1 && resp.modifiedCount == 1) {
+                await adsCollection.updateOne({ _id: pendingTask.campaign_id }, { $inc: { remaining_budget: pendingTask.cpc.toFixed(4) } })
+            }
+            const text = `<b><i>✅ The response [#${pendingTask.campaign_id}] has been rejected.\n📃 Reason: ${message.text}</i></b>`
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: keyList.mainKey,
+                    resize_keyboard: true
+                }
+            })
+            return await api.sendMessage(pendingTask.done_by, `<b><i>🔴 Your micro task response [#${pendingTask.campaign_id}] has been rejected by the advertiser\n📃 Reason: ${message.text}</i></b>`, {
+                parse_mode: "HTML",
+                protect_content: true
             })
         } catch (err) {
             return console.log(err.message)

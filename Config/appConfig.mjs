@@ -13,7 +13,8 @@ export const settings = {
             BOT_ADS: 0.005,
             SITE_ADS: 0.005,
             POST_ADS: 0.005,
-            CHAT_ADS: 0.005
+            CHAT_ADS: 0.005,
+            MICRO_ADS: 0.01
         }
     },
     REF: {

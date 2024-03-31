@@ -17,6 +17,8 @@ const ads = new Schema({
     completed: { type: Array, default: [] },
     skip: { type: Array, default: [] },
     status:{ type: Boolean, default: true }
+}, {
+    timestamps: true
 })
 
 export const adsCollection = model("ads", ads)

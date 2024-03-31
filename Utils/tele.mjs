@@ -13,6 +13,15 @@ export const userMention = (user_id, username, first_name) => {
     return mention
 }
 
+export const isUserBanned = async user_id => {
+    try {
+        const user = await userCollection.findOne({ _id: user_id })
+        return user.banned
+    } catch (err) {
+        return true
+    }
+}
+
 export const shortID = () => {
     const short = new ShortUniqueId({ length: 10 })
     return short.rnd()
@@ -37,12 +46,12 @@ export const keyList = {
         ["🔙 Home"]
     ],
     newAdsKey: [
-        ["🤖 New Bots", "🔗 New Sites"],
+        ["🤖 New Bots", "🎯 New Micro", "🔗 New Sites"],
         ["📄 New Posts", "💬 New Chats"],
         ["🔙 Advertise"]
     ],
     myAdsKey: [
-        ["🤖 My Bots", "🔗 My Sites"],
+        ["🤖 My Bots", "🎯 My Micro", "🔗 My Sites"],
         ["📄 My Posts", "💬 My Chats"],
         ["🔙 Advertise"]
     ],
@@ -82,6 +91,14 @@ export const inlineKeys = {
             ]
         ]
     },
+    micro_task: (ads) => {
+        return [
+            [
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
+                { text: `✅ Submit Proof`, callback_data: `/micro_task_done ${ads._id}` }
+            ]
+        ]
+    },
     post_view: (ads, endTime) => {
         return [
             [
@@ -112,7 +129,8 @@ export const inlineKeys = {
                 { text: "❌ Delete Ad", callback_data: `/delete_ad ${ads._id}`}
             ]
         ]
-        if(ads.post_id) key[0].push({ text: "📄 View Posts", callback_data: `/view_post ${ads.post_id}` })
+        if (ads.type == "POST") key[0].push({ text: "📄 View Posts", callback_data: `/view_post ${ads.post_id}` })
+        if (ads.type == "MICRO") key[0].push({ text: "📄 See List", callback_data: `/micro_list 0 ${ads._id}` })
         return key
     }
 }
@@ -120,7 +138,7 @@ export const inlineKeys = {
 export const getKeyArray = () => {
     let keyArray = Object.entries(keyList).map(item => item[1]).flat().flat()
     keyArray = keyArray.filter((item, index) => index === keyArray.indexOf(item))
-    keyArray = [...keyArray,"❌ Cancel","⛔ Cancel","🚫 Cancel", "🛑 Cancel", "✖️ Cancel", "💷 Balance","👭 Referrals","⚙️ Settings"]
+    keyArray = [...keyArray,"❌ Cancel","⛔ Cancel","🚫 Cancel", "🛑 Cancel", "✖️ Cancel", "🔴 Cancel", "💷 Balance","👭 Referrals","⚙️ Settings"]
     return keyArray
 }
 
@@ -140,6 +158,10 @@ export const adsText = {
     chatAds: (info) => {
         const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n💬 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
+    },
+    microTask: (info) => {
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: \n ${info.description}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        return text
     }
 }
 
@@ -157,6 +179,10 @@ export const showAdsText = {
     },
     chatAds: (ads) => {
         return `<b><i>${warningText}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
+    },
+    microTask: (ads) => {
+        const reward = ( ads.cpc * settings.GIVEAWAY).toFixed(4)
+        return `<b><i>${warningText}\n\n🆔 CampaignID: #${ads._id} [Keep this ID]\n🎁 Reward: $${reward}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
     }
 }
 

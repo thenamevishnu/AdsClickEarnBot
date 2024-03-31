@@ -1,8 +1,10 @@
+import moment from "moment";
 import api from "../Config/Telegram.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
+import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, inlineKeys, keyList, localStore, protect_content } from "../Utils/tele.mjs";
+import { adsText, answerCallback, inlineKeys, isUserBanned, keyList, localStore, protect_content, userMention } from "../Utils/tele.mjs";
 
 api.on("callback_query", async callback => {
     const data = callback.data
@@ -10,7 +12,8 @@ api.on("callback_query", async callback => {
     const command = params[0]
     params.shift()
     const from = callback.from
-
+    const userStatusCheck = await isUserBanned(from.id)
+    if(userStatusCheck) return
     if(!localStore[from.id]) localStore[from.id] = {}
 
     // payments
@@ -278,7 +281,7 @@ api.on("callback_query", async callback => {
             const [status, ads_id] = params
             const adType = await adsCollection.findOneAndUpdate({ _id: ads_id }, { $set: { status: status } })
             const ads = await adsCollection.findOne({ _id: ads_id })
-            const text = adType.type == "BOT" ? adsText.botAds(ads) : adType.type == "SITE" ? adsText.siteAds(ads) : ads.type == "POST" ? adsText.postAds(ads) : ads.type == "CHAT" ? adsText.chatAds(ads) : "Error"
+            const text = adType.type == "BOT" ? adsText.botAds(ads) : adType.type == "SITE" ? adsText.siteAds(ads) : ads.type == "POST" ? adsText.postAds(ads) : ads.type == "CHAT" ? adsText.chatAds(ads) : ads.type == "MICRO" ? adsText.microTask(ads) : "Error"
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -346,6 +349,184 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML"
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    // micro task done
+
+    if (command === "/micro_task_done") {
+        try {
+            const [ads_id] = params
+            localStore[from.id]["ads_id"] = ads_id
+            answerCallback[from.id] = "MICRO_TASK_SUBMIT_PROOF"
+            const text = `<b><i>🎯 Submit your proof to validate this task.</i></b>`
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: [
+                        ["🔴 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/micro_list") {
+        try {
+            const [index, ads_id] = params
+            const list = await pendingMicroCollection.find({ campaign_id: ads_id, status: "pending" }).sort({ createdAt: 1 })
+            if (list.length == 0) {
+                const text = `<b><i>📃 There are no list available</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                })
+            }
+            const completed = list[Number(index)]
+            const key = [
+                [
+                    { text: "👁️ See Proof", callback_data: `/see_micro_proof ${completed.proof} ${completed.done_by}` }
+                ],[
+                    { text: "✅ Approve", callback_data: `/micro_approve ${completed._id}` },
+                    { text: "❌ Reject", callback_data: `/micro_reject ${completed._id}` }
+                ], [
+                    
+                ]
+            ]
+            if (list?.[Number(index) - 1]) {
+                key[2].push(
+                    {
+                        text: "⏮️ Prev", callback_data: `/micro_list ${Number(index) - 1} ${ads_id}`
+                    }
+                )
+            }
+            if (list?.[Number(index) + 1]) {
+                key[2].push(
+                    {
+                        text: "⏭️ Next", callback_data: `/micro_list ${Number(index) + 1} ${ads_id}`
+                    }
+                )
+            }
+            const text = `<b><i>✅ Completd by: ${userMention(completed.done_by, completed.done_by_username, completed.done_by_first_name)}\n⌚ Updated: ${moment(completed.createdAt).fromNow()}</i></b>`
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: key
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    // show micro proof
+
+    if (command === "/see_micro_proof") {
+        try {
+            const [proof_id, done_by] = params
+            return await api.copyMessage(from.id, done_by, proof_id, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/micro_reject") {
+        try {
+            const [list_id] = params
+            localStore[from.id]["list_id"] = list_id
+            const text = `<b><i>⁉️ Provide the reason for rejection.</i></b>`
+            answerCallback[from.id] = "MICRO_TASK_REJECTION_REASON"
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: [
+                        ["✖️ Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+            return await api.deleteMessage(from.id, callback.message.message_id)
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/micro_approve") {
+        try {
+            const [list_id] = params
+            const pendingTask = await pendingMicroCollection.findOne({ _id: list_id })
+            if (pendingTask.status == "rejected" || pendingTask.status == "completed") {
+                const text = `<b><i>❌ This task already rejected or completed.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content,
+                    reply_markup: {
+                        keyboard: keyList.mainKey,
+                        resize_keyboard: true
+                    }
+                })
+            }
+            const text = `<b><i>⁉️ Are you sure to approve this response?</i></b>`
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: "✅ Yes", callback_data: `/confirm_micro_approve ${pendingTask._id}` },
+                            { text: "❌ No", callback_data: `/micro_list 0 ${pendingTask.campaign_id}` }
+                        ]
+                    ]
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/confirm_micro_approve") {
+        try {
+            const [list_id] = params
+            const pendingTask = await pendingMicroCollection.findOne({ _id: list_id })
+            if (pendingTask.status == "rejected" || pendingTask.status == "completed") {
+                const text = `<b><i>❌ This task already rejected or completed.</i></b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML"
+                })
+            }
+            const response = await pendingMicroCollection.updateOne({ _id: list_id }, { $set: { status: "completed" } })
+            const earn = (pendingTask.cpc * settings.GIVEAWAY).toFixed(4)
+            if (response.matchedCount == 1 && response.modifiedCount == 1) {
+                const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
+                const updateUser = await userCollection.findOneAndUpdate({ _id: pendingTask.done_by }, { $inc: { "balance.withdrawable": earn } })
+                await userCollection.updateOne({ _id: updateUser.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission } })
+            }
+            const text = `<b><i>✅ You micro task response [#${pendingTask.campaign_id}] has been approved by advertiser.\n🎁 Earned: +$${earn}</i></b>`
+            await api.editMessageText(`<b><i>✅ The response [#${pendingTask.campaign_id}] has been approved.</i></b>`, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML"
+            })
+            return await api.sendMessage(pendingTask.done_by, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
             })
         } catch (err) {
             return console.log(err.message)
