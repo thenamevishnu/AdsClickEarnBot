@@ -3,7 +3,7 @@ import { adsCollection } from "../Models/ads.model.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 
-export const protect_content = true
+export const protect_content = false
 export const invited_user = {}
 export const answerCallback = {}
 export const localStore = {}
@@ -212,5 +212,19 @@ export const onSuccessVisitSite = async (campaignId, user_id) => {
         return `✅ Task completed: +$${earn}`
     } catch (err) {
         return "❌ Error happend!"
+    }
+}
+
+export const getAdminPanel = () => {
+    const text = `<b><i>🎯 Dashboard of admins</i></b>`
+    const key = [
+        [
+            { text: `🔴 Ban User`, callback_data: `/admin_ban_user` },
+            { text: `🟢 Unban User`, callback_data: `/admin_unban_user` }
+        ]
+    ]
+    return {
+        text: text,
+        key: key
     }
 }

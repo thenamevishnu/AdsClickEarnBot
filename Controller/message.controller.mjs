@@ -1491,4 +1491,96 @@ api.on("message", async message => {
             return console.log(err.message)
         }
     }
+
+    // admin section
+
+    if (waitfor === "ADMIN_BAN_USER") {
+        try {
+            if(!message.text || isNaN(message.text)){
+                const text = `<b><i>❌ Enter userId in numberic.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const user = await userCollection.findOne({ _id: Number(message.text) })
+            if(!user){
+                const text = `<b><i>❌ Invalid userId or user not found.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            answerCallback[from.id] = null
+            if(user.banned){
+                const text = `<b><i>❌ User already banned.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            await userCollection.updateOne({_id: Number(message.text)},{$set:{banned: true}})
+            const text = `<b><i>✅ Targeted user banned</i></b>`
+            const text2 = `<b><i>❌ You're banned</i></b>`
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup:{
+                    keyboard: keyList.mainKey,
+                    resize_keyboard: true
+                }
+            })
+            return await api.sendMessage(Number(message.text), text2, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "ADMIN_UNBAN_USER") {
+        try {
+            if(!message.text || isNaN(message.text)){
+                const text = `<b><i>❌ Enter userId in numberic.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            const user = await userCollection.findOne({ _id: Number(message.text) })
+            if(!user){
+                const text = `<b><i>❌ Invalid userId or user not found.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            answerCallback[from.id] = null
+            if(!user.banned){
+                const text = `<b><i>✅ User already unbanned</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            await userCollection.updateOne({_id: Number(message.text)},{$set:{banned: false}})
+            const text = `<b><i>✅ Targeted user unbanned</i></b>`
+            const text2 = `<b><i>✅ You're unbanned</i></b>`
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup:{
+                    keyboard: keyList.mainKey,
+                    resize_keyboard: true
+                }
+            })
+            return await api.sendMessage(Number(message.text), text2, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
 })

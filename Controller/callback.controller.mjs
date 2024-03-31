@@ -616,4 +616,45 @@ api.on("callback_query", async callback => {
         }
     }
 
+
+    // admin section
+
+    if (command === "/admin_ban_user") {
+        try {
+            const text = `<b><i>🎯 Enter the targeted userId to ban.</i></b>`
+            answerCallback[from.id] = "ADMIN_BAN_USER"
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: [
+                        ["🔴 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/admin_unban_user") {
+        try {
+            const text = `<b><i>🎯 Enter the targeted userId to ban.</i></b>`
+            answerCallback[from.id] = "ADMIN_UNBAN_USER"
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: [
+                        ["🔴 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
 })

@@ -10,6 +10,7 @@ import "./Utils/cron.mjs"
 import "./Controller/text.controller.mjs"
 import "./Controller/message.controller.mjs"
 import "./Controller/callback.controller.mjs"
+import "./Controller/admin.controller.mjs"
 
 const app = express()
 
