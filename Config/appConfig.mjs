@@ -1,7 +1,7 @@
 export const settings = {
     ADMIN: {
-        ID: 6813105483,
-        USERNAME: "vkripz"
+        ID: 7169860704,
+        USERNAME: "iJsDev"
     },
     CHAT: {
         USERNAME: "RoyalClickCommunity"  
