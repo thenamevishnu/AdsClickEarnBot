@@ -1,6 +1,7 @@
 import api from "../Config/Telegram.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
+import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsText, answerCallback, inlineKeys, invited_user, keyList, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
 
@@ -34,8 +35,7 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$/, async (message, match) => {
                 const userCount = await userCollection.countDocuments()
                 const txt = `<b>🦉 Users: <code>${userCount}</code>\n🚀 UserName: ${userMention(from.id, from.username, from.first_name)}\n🆔 UserID: <code>${from.id}</code>\n☄️ InvitedBy: <code>${invited_user[from.id] == settings.ADMIN.ID ? `You` : `${invited_user[from.id]}`}</code></b>` 
                 await api.sendMessage(settings.ADMIN.ID, txt, {
-                    parse_mode: "HTML",
-                    protect_content: protect_content
+                    parse_mode: "HTML"
                 })
             }
         }
@@ -141,6 +141,35 @@ api.onText(/^🔄 Convert$/, async message => {
                 ],
                 resize_keyboard: true
             }
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
+
+api.onText(/^📃 History$/, async message => {
+    try {
+        if(message.chat.type != "private") return
+        const from = message.from
+        let text = `<b><i>📃 Here you can see the latest 10 waiting, pending, completed transaction history</i></b>`
+        const history = await paymentCollection.find({ user_id: from.id }).sort({ createdAt: -1 }).limit(10)
+        if (history.length == 0) {
+            text += `\n\n<b><i>💫 No Transaction Found!</i/></b>`
+        }
+        history.forEach(item => {
+            if (item.status == "Waiting" && item.type == "payment") {
+                text += `\n\n<b><i>⌚ Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: $${item.amount.toFixed(4)}\n🆔 OrderID: ${item.orderId}</i></b>`   
+            }
+            if ((item.status == "Confirming" || item.status == "Paid") && item.type == "payment") {
+                text += `\n\n<b><i>${item.status == "Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.payAmount.toFixed(4)} ${item.currency}\n🆔 txID: ${item.txID}</i></b>`   
+            }
+            if (item.type == "payout") {
+                text += `\n\n<b><i>${item.status=="Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Payout\n💷 Amount: $${item.amount.toFixed(4)}\n🆔 txID: ${item.txID}</i></b>`   
+            }
+        })
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            protect_content: protect_content
         })
     } catch (err) {
         return console.log(err.message)
