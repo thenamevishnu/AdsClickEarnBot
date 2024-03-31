@@ -1290,13 +1290,10 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Only text message is allowed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
-                    reply_markup: {
-                        keyboard: keyList.mainKey,
-                        resize_keyboard: true
-                    }
+                    protect_content: protect_content
                 })
             }
+            answerCallback[from.id] = null
             const list_id = localStore[from.id]["list_id"]
             const pendingTask = await pendingMicroCollection.findOne({ _id: list_id })
             if (pendingTask.status == "rejected" || pendingTask.status == "completed") {
@@ -1305,12 +1302,11 @@ api.on("message", async message => {
                     parse_mode: "HTML",
                     protect_content: protect_content,
                     reply_markup: {
-                        keyboard: keyList.mainKey,
+                        keyboard: keyList.myAdsKey,
                         resize_keyboard: true
                     }
                 })
             }
-            answerCallback[from.id] = null
             const resp = await pendingMicroCollection.updateOne({ _id: list_id }, { $set: { status: "rejected", reason: message.text } })
             if (resp.matchedCount == 1 && resp.modifiedCount == 1) {
                 await adsCollection.updateOne({ _id: pendingTask.campaign_id }, { $inc: { remaining_budget: pendingTask.cpc.toFixed(4) } })
@@ -1320,7 +1316,7 @@ api.on("message", async message => {
                 parse_mode: "HTML",
                 protect_content: protect_content,
                 reply_markup: {
-                    keyboard: keyList.mainKey,
+                    keyboard: keyList.myAdsKey,
                     resize_keyboard: true
                 }
             })
