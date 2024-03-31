@@ -158,7 +158,7 @@ api.onText(/^📃 History$/, async message => {
         }
         history.forEach(item => {
             if (item.status == "Waiting" && item.type == "payment") {
-                text += `\n\n<b><i>⌚ Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: $${item.amount.toFixed(4)}\n🆔 OrderID: ${item.orderId}</i></b>`   
+                text += `\n\n<b><i>⌚ Status: ${item.status}  [<a href='https://oxapay.com/mpay/${item.trackId}'>Pay Now</a>]\n🛰️ Type: Deposit\n💷 Amount: $${item.amount.toFixed(4)}\n🆔 OrderID: ${item.orderId}</i></b>`   
             }
             if ((item.status == "Confirming" || item.status == "Paid") && item.type == "payment") {
                 text += `\n\n<b><i>${item.status == "Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.payAmount.toFixed(4)} ${item.currency}\n🆔 txID: ${item.txID}</i></b>`   
