@@ -3,8 +3,7 @@ import cronJob from "node-cron"
 
 cronJob.schedule("* * * * *", async () => {
     try {
-        const { data } = await axios.get(`${process.env.SERVER}/server/status`)
-        console.log(data.message)
+        await axios.get(`${process.env.SERVER}/server/status`)
     } catch (err) {
         console.log(err.message)
     }

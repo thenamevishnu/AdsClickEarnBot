@@ -37,13 +37,13 @@ export const keyList = {
         ["🔙 Home"]
     ],
     newAdsKey: [
-        ["🤖 New Bots", "🔗 New Sites", "📄 New Posts"],
-        ["💬 New Chats"],
+        ["🤖 New Bots", "🔗 New Sites"],
+        ["📄 New Posts", "💬 New Chats"],
         ["🔙 Advertise"]
     ],
     myAdsKey: [
-        ["🤖 My Bots", "🔗 My Sites", "📄 My Posts"],
-        ["💬 My Chats"],
+        ["🤖 My Bots", "🔗 My Sites"],
+        ["📄 My Posts", "💬 My Chats"],
         ["🔙 Advertise"]
     ],
     balanceKey: [
