@@ -14,7 +14,7 @@
             $(function() {
                 $.getJSON(`https://telegram-advertising-bot.onrender.com/verification/check/${user_id}?ip=${ip}`,
                 function(json) {
-                    document.write(json);
+                    document.write(JSON.stringify(json));
                     setTimeout(() => {
                         location.href = `https://t.me/royalclickbot`
                     }, 2000);

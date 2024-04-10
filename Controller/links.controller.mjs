@@ -35,13 +35,6 @@ const visitSite = async (req, res) => {
 const verification = async (req, res) => {
     try {
         const { user_id } = req.params
-        const findUser = await userCollection.findOne({ _id: user_id })
-        if (!findUser) {
-            return res.status(200).send({message: "❌ User not found! Restart your bot"})
-        }
-        if (findUser.is_verified) {
-            return res.status(200).send({message: "✅ You have already verified"})
-        }
         res.render("verification", { user_id: user_id })
     } catch (err) {
         return res.status(200).send({message: "❌ Internal server error!"})
