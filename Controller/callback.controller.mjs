@@ -23,7 +23,7 @@ api.on("callback_query", async callback => {
             const [method] = params
             let text;
             if (method == "CRYPTO") {
-                text = `<b><i>💷 Enter the amount you want to deposit!</i></b>`
+                text = `<b><i>💷 Enter the amount in USDT you want to deposit!</i></b>`
                 answerCallback[from.id] = "PAY_WITH_CRYPTO"
             }
             return await api.sendMessage(from.id, text, {

@@ -12,6 +12,9 @@ const user = new Schema({
         referral: { type: Number, default: 0 },
         payouts: { type: Number, default: 0 }
     },
+    is_verified: { type: Boolean, default: false },
+    ip: { type: String },
+    ban_reason: { type: String },
     banned: { type: Boolean, default: false },
     invites: { type: Number, default: 0 },
     invited_by: { type: Number, default: settings.ADMIN.ID },

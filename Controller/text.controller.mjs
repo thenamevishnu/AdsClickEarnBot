@@ -12,7 +12,6 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
         if(message.chat.type != "private") return
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
         answerCallback[from.id] = null
         const user = await userCollection.findOne({ _id: from.id })
         if (!user) {
@@ -42,6 +41,7 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
                 })
             }
         }
+        if(userStatusCheck) return
         const text = `<b><i>🚀 Welcome to ${settings.BOT.NAME}\n\nThis bot allows you to earn by completing simple tasks.\n\nYou can also create your own ads with /advertise</i></b>`
         return await api.sendMessage(from.id, text, { 
             parse_mode: "HTML",
@@ -238,6 +238,8 @@ api.onText(/^⚙️ Settings$/, async message => {
 api.onText(/^⁉️ info$/, async message => {
     try {
         const from = message.from
+        const userStatusCheck = await isUserBanned(from.id)
+        if(userStatusCheck) return
         const totalUsers = await userCollection.countDocuments()
         const text = `<b><i>🤖 ${settings.BOT.NAME} - ${settings.BOT.VERSION}\n\n🎯 Introducing ${settings.BOT.NAME} – your all-in-one marketplace for promoting Telegram bots, chats/channels, websites, and engaging in micro tasks, including viewing posts!\n\n🛰️ With ${settings.BOT.NAME}, users can effortlessly promote their Telegram creations and websites to a vast audience, attracting potential followers and customers. Whether you're a bot developer, a chat/channel administrator, or a website owner, this platform offers a seamless solution for enhancing visibility and driving engagement.\n\n🪐 But that's not all! In addition to promoting content, users can explore a wide range of micro tasks, from liking posts to subscribing to channels. Plus, with the ability to view posts, users can interact with content while earning rewards for their engagement.\n\n🚁 Join our dynamic community of promoters and task participants today, and discover the endless possibilities with ${settings.BOT.NAME}!\n\n👥 Users: ${totalUsers}\n\n💬 Community Chat: @${settings.CHAT.USERNAME}</i></b>`
         return await api.sendMessage(from.id, text, {

@@ -14,7 +14,7 @@ api.on("message", async message => {
 
     const from = message.from
 
-    const userStatusCheck = await isUserBanned(from.id)
+    const userStatusCheck = await isUserBanned(from.id, 1)
     if(userStatusCheck) return
     
     if (!localStore[from.id]) localStore[from.id] = {}

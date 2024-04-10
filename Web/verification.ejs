@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <title>Visit Site</title>
+</head>
+<body>
+    <script>
+        const user_id = "<%= user_id %>"
+        const getIP = (json) => {
+            const ip = json.ip
+            $(function() {
+                $.getJSON(`http://localhost:6001/verification/check/${user_id}?ip=${ip}`,
+                function(json) {
+                    document.write(json);
+                    setTimeout(() => {
+                        location.href = `https://t.me/royalclickbot`
+                    }, 2000);
+                }
+                );
+            });
+        }
+        </script>
+
+<script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
+    </script>
+</body>
+</html>

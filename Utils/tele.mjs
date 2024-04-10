@@ -2,6 +2,7 @@ import ShortUniqueId from "short-unique-id";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
+import api from "../Config/Telegram.mjs";
 
 export const protect_content = false
 export const invited_user = {}
@@ -13,9 +14,23 @@ export const userMention = (user_id, username, first_name) => {
     return mention
 }
 
-export const isUserBanned = async user_id => {
+export const isUserBanned = async (user_id, bool=0) => {
     try {
         const user = await userCollection.findOne({ _id: user_id })
+        if (!user?.is_verified && !bool) {
+            const text = "One tap verification is needed to continue!"
+            const verification_url = `${process.env.SERVER}/verification/${user_id}`
+            await api.sendMessage(user_id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{text: "👆 One Tap Verification", url: verification_url}]
+                    ]
+                }
+            })
+            return true
+        }
         return user?.banned
     } catch (err) {
         console.log(err.message);

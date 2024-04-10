@@ -5,6 +5,7 @@ import "./Config/database.mjs"
 import serverRoute from "./Router/server.route.mjs"
 import linkRoute from "./Router/links.route.mjs"
 import paymentRoute from "./Router/payment.route.mjs"
+import verificationRoute from "./Router/verify.route.mjs"
 import "./Utils/cron.mjs"
 
 import "./Controller/text.controller.mjs"
@@ -25,6 +26,7 @@ app.use(express.json())
 app.use("/server", serverRoute)
 app.use("/payments", paymentRoute)
 app.use("/links", linkRoute)
+app.use("/verification", verificationRoute)
 
 app.listen(process.env.PORT || 6001, () => {
     console.log(`Running: ${process.env.PORT || 6001}`)

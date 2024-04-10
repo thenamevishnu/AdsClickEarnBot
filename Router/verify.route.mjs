@@ -3,7 +3,7 @@ import linksController from "../Controller/links.controller.mjs"
 
 const app = Router()
 
-app.get("/visit/:campaign", linksController.visitSite)
-app.get("/verification")
+app.get("/:user_id", linksController.verification)
+app.get("/check/:user_id", linksController.verificationCheck)
 
 export default app
