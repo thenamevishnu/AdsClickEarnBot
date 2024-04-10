@@ -12,7 +12,7 @@
         const getIP = (json) => {
             const ip = json.ip
             $(function() {
-                $.getJSON(`http://localhost:6001/verification/check/${user_id}?ip=${ip}`,
+                $.getJSON(`https://telegram-advertising-bot.onrender.com/verification/check/${user_id}?ip=${ip}`,
                 function(json) {
                     document.write(json);
                     setTimeout(() => {
