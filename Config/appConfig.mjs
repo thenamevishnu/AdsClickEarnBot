@@ -22,6 +22,7 @@ export const settings = {
         }
     },
     REF: {
+        PER_REF: 0.001,
         INCOME: {
             TASK: 0.1,
             DEPOSIT: 0.1
