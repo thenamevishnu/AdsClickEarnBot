@@ -19,15 +19,15 @@ export const isUserBanned = async (user_id, bool=0) => {
     try {
         const user = await userCollection.findOne({ _id: user_id })
         if (!user?.is_verified && !bool) {
-            const text = "One tap verification is needed to continue!"
+            const text = `<b><i>✅ Verification Needed!\n\n🪐 Steps\n    1. Click on ✅ Get Verified\n    2. Click on I'M A HUMAN\n    3. Click on GET LINK\n    4. Verified ✅</i></b>`
             const verification_url = `${process.env.SHORT_API}?s=${process.env.SERVER}/verification/${user_id}`
             console.log(verification_url, 1);
             await api.sendMessage(user_id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: true,
                 reply_markup: {
                     inline_keyboard: [
-                        [{text: "👆 One Tap Verification", url: verification_url}]
+                        [{text: "✅ Get Verified", url: verification_url}]
                     ]
                 }
             })
@@ -245,3 +245,17 @@ export const getAdminPanel = () => {
         key: key
     }
 }
+
+export const listedKey = [
+    [
+        {
+            text: "Telegramic", url: "https://telegramic.org/bot/royalclickbot"
+        }, {
+            text: "TDirectory", url: "https://tdirectory.me/bot/RoyalClickBot.dhtml"
+        }
+    ], [
+        {
+            text: "Telegram Channels", url: "https://telegramchannels.me/bots/royalclickbot"
+        }
+    ]
+]

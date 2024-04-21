@@ -3,7 +3,27 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, inlineKeys, invited_user, isUserBanned, keyList, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, inlineKeys, invited_user, isUserBanned, keyList, listedKey, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
+
+// listed on
+
+api.onText(/\/listed_on/, async message => {
+    try {
+        const from = message.from
+        const userStatusCheck = await isUserBanned(from.id) 
+        if (userStatusCheck) return
+        const text = `<b><i>We are listed</i></b>`
+        return api.sendMessage(message.chat.id, text, {
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: listedKey
+            },
+            protect_content: protect_content
+        })
+    } catch (err) {
+        return console.log(err.message)
+    }
+})
 
 // start message
 
