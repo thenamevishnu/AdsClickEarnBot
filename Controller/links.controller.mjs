@@ -23,7 +23,8 @@ const visitSite = async (req, res) => {
         }, duration * 1000)
         const obj = {
             duration: duration,
-            link: link
+            link: link,
+            server: process.env.SERVER
         }
         return res.render("visitLink", obj)
     } catch (err) {

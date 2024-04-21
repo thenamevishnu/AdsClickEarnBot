@@ -9,10 +9,11 @@
 <body>
     <script>
         const user_id = "<%= user_id %>"
+        const server = "<%= server %>"
         const getIP = (json) => {
             const ip = json.ip
             $(function() {
-                $.getJSON(`https://telegram-advertising-bot.onrender.com/verification/check/${user_id}?ip=${ip}`,
+                $.getJSON(`${server}/verification/check/${user_id}?ip=${ip}`,
                 function(json) {
                     document.write(JSON.stringify(json));
                     setTimeout(() => {
