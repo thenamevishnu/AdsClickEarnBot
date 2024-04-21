@@ -84,7 +84,7 @@ export const inlineKeys = {
     start_bot: (ads) => {
         return [
             [
-                { text: `🔗 Open`, url: `${ads.link}` }
+                { text: `🔗 Open`, url: `${process.env.SHORT_API}?s=${ads.link}` }
             ],[
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
                 { text: `✅ Started`, callback_data: `/started_bot ${ads._id}`}
