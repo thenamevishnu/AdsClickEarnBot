@@ -5,26 +5,6 @@ import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsText, answerCallback, inlineKeys, invited_user, isUserBanned, keyList, listedKey, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
 
-// listed on
-
-api.onText(/\/listed_on/, async message => {
-    try {
-        const from = message.from
-        const userStatusCheck = await isUserBanned(from.id) 
-        if (userStatusCheck) return
-        const text = `<b><i>🎉 We are listed on these websites!</i></b>`
-        return api.sendMessage(message.chat.id, text, {
-            parse_mode: "HTML",
-            reply_markup: {
-                inline_keyboard: listedKey
-            },
-            protect_content: true
-        })
-    } catch (err) {
-        return console.log(err.message)
-    }
-})
-
 // start message
 
 api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, match) => {

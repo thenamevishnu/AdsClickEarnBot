@@ -235,6 +235,8 @@ export const getAdminPanel = () => {
     const text = `<b><i>🎯 Dashboard of admins</i></b>`
     const key = [
         [
+            { text: "📉 User Stat", callback_data: `/admin_user_stat` }
+        ],[
             { text: `🔴 Ban User`, callback_data: `/admin_ban_user` },
             { text: `🟢 Unban User`, callback_data: `/admin_unban_user` }
         ]

@@ -657,4 +657,32 @@ api.on("callback_query", async callback => {
         }
     }
 
+    if (command === "/admin_user_stat") {
+        try {
+            let text = `<b><i>🎯 User Stat</i></b>`
+            const users = await userCollection.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        count: { $count: {} },
+                        banned: { $sum: { $toInt: "$banned" } },
+                        verified: { $sum: { $toInt: "$is_verified" } },
+                        withdrawable: { $sum: "$balance.withdrawable" },
+                        balance: { $sum: "$balance.balance" },
+                        referral: { $sum: "$balance.referral" },
+                        payouts: { $sum: "$balance.payouts" },
+                    }
+                }
+            ])
+            text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: $${users?.[0]?.balance?.toFixed(4)}\nWithdrawable: $${users?.[0]?.withdrawable?.toFixed(4)}\nReferral: $${users?.[0]?.referral?.toFixed(4)}\nPayouts: $${users?.[0]?.payouts?.toFixed(4)}</i></b>`
+            return await api.editMessageText(text, {
+                parse_mode: "HTML",
+                chat_id: from.id,
+                message_id: callback.message.message_id
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
 })
