@@ -12,13 +12,13 @@ api.onText(/\/listed_on/, async message => {
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id) 
         if (userStatusCheck) return
-        const text = `<b><i>We are listed</i></b>`
+        const text = `<b><i>🎉 We are listed on these websites!</i></b>`
         return api.sendMessage(message.chat.id, text, {
             parse_mode: "HTML",
             reply_markup: {
                 inline_keyboard: listedKey
             },
-            protect_content: protect_content
+            protect_content: true
         })
     } catch (err) {
         return console.log(err.message)

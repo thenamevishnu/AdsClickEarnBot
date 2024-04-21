@@ -21,7 +21,6 @@ export const isUserBanned = async (user_id, bool=0) => {
         if (!user?.is_verified && !bool) {
             const text = `<b><i>✅ Verification Needed!\n\n🪐 Steps\n    1. Click on ✅ Get Verified\n    2. Click on I'M A HUMAN\n    3. Click on GET LINK\n    4. Verified ✅</i></b>`
             const verification_url = `${process.env.SHORT_API}?s=${process.env.SERVER}/verification/${user_id}`
-            console.log(verification_url, 1);
             await api.sendMessage(user_id, text, {
                 parse_mode: "HTML",
                 protect_content: true,
@@ -256,6 +255,10 @@ export const listedKey = [
     ], [
         {
             text: "Telegram Channels", url: "https://telegramchannels.me/bots/royalclickbot"
+        }, {
+            text: "Tgdir", url: "https://tgdir.org/bot/RoyalClickBot/"
+        }, {
+            text: "Botostore", url: "https://botostore.com/c/RoyalClickBot/"
         }
     ]
 ]
