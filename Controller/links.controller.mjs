@@ -23,8 +23,7 @@ const visitSite = async (req, res) => {
         }, duration * 1000)
         const obj = {
             duration: duration,
-            link: link,
-            server: process.env.SERVER
+            link: link
         }
         return res.render("visitLink", obj)
     } catch (err) {
@@ -36,7 +35,7 @@ const visitSite = async (req, res) => {
 const verification = async (req, res) => {
     try {
         const { user_id } = req.params
-        res.render("verification", { user_id: user_id })
+        res.render("verification", { user_id: user_id, server: process.env.SERVER })
     } catch (err) {
         return res.status(200).send({message: "❌ Internal server error!"})
     }
