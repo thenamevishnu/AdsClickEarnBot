@@ -59,7 +59,7 @@ const verificationCheck = async (req, res) => {
         }
         if (ipCheck && ipCheck.length == 0) {
             const resData = await userCollection.findOneAndUpdate({ _id: user_id, is_verified: false }, { $set: { ip: ip, is_verified: true } })
-            if (resData.matchedCount == 1 && resData.modifiedCount == 1) {
+            if (resData) {
                 await userCollection.updateOne({ _id: resData.invited_by }, { $inc: { "balance.balance": settings.REF.PER_REF } })
                 return res.status(200).send({message: "🎉 You're verified"})
             }
