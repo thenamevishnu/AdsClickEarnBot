@@ -245,7 +245,6 @@ api.on("message", async message => {
     if(waitfor === "NEW_SITE_ADS") {
         try {
             localStore[from.id] = {}
-            const forward = message.forward_from
             if (!message.text || !isUri(message.text)) {
                 const text = `<b><i>❌ Looks like an invalid url.</i></b>`
                 return await api.sendMessage(from.id, text, {

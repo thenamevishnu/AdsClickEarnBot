@@ -94,7 +94,7 @@ export const inlineKeys = {
     chat_join: (ads) => {
         return [
             [
-                { text: `🔗 Open Chat`, url: `${ads.link}` }
+                { text: `🔗 Open Chat`, url: `${process.env.SHORT_API}?s=${ads.link}` }
             ],[
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
                 { text: `✅ Joined`, callback_data: `/chat_joined ${ads._id}`}
@@ -105,7 +105,7 @@ export const inlineKeys = {
         return [
             [
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
-                { text: `🔗 Open link`, url: `${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
+                { text: `🔗 Open link`, url: `${process.env.SHORT_API}?s=${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
             ]
         ]
     },
