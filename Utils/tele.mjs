@@ -3,9 +3,8 @@ import { adsCollection } from "../Models/ads.model.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import api from "../Config/Telegram.mjs";
-import axios from "axios"
 
-export const protect_content = false
+export const protect_content = true
 export const invited_user = {}
 export const answerCallback = {}
 export const localStore = {}
