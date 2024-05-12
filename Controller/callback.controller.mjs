@@ -736,7 +736,6 @@ api.on("callback_query", async callback => {
                 }
             })
             const cronTask = nodeCron.schedule("*/2 * * * * *", async () => {
-                console.log("Hi");
                 const [userInfo] = users.splice(0, 1)
                 if (userInfo) {
                     try {
