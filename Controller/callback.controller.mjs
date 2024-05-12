@@ -1,5 +1,6 @@
 import moment from "moment";
 import api from "../Config/Telegram.mjs";
+import nodeCron from "node-cron"
 import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
@@ -734,33 +735,39 @@ api.on("callback_query", async callback => {
                     resize_keyboard: true
                 }
             })
-            const interval = setInterval(async () => {
-                users.splice(0, 2).forEach(item => {
-                    api.copyMessage(item._id, from.id, message_id, {
-                        parse_mode: "HTML",
-                        protect_content: protect_content
-                    }).then((res) => {
+            const cronTask = nodeCron.schedule("*/2 * * * * *", async () => {
+                console.log("Hi");
+                const [userInfo] = users.splice(0, 1)
+                if (userInfo) {
+                    try {
+                        await api.copyMessage(userInfo._id, from.id, message_id, {
+                            parse_mode: "HTML",
+                            protect_content: protect_content
+                        })
                         messageStat.success++
                         messageStat.sent++
-                    }).catch(err => {
+                    } catch (err) {
                         messageStat.failed++
                         messageStat.sent++
-                    })
-                })
-                if (messageStat.sent != 0 && messageStat.sent % 100 == 0) {
-                    await api.sendMessage(from.id, `<b><i>✅ Mail Status: ${JSON.stringify(messageStat)}</i></b>`, {
-                        parse_mode: "HTML",
-                        protect_content: protect_content,
-                    })
+                    }
+                
+                    if (messageStat.sent != 0 && messageStat.sent % 100 == 0) {
+                        await api.sendMessage(from.id, `<b><i>✅ Mail Status: ${JSON.stringify(messageStat)}</i></b>`, {
+                            parse_mode: "HTML",
+                            protect_content: protect_content,
+                        })
+                    }
+                    if (messageStat.sent === totalUsers) {
+                        cronTask.stop()
+                        await api.sendMessage(from.id, `<b><i>✅ Mail Completed: ${JSON.stringify(messageStat)}</i></b>`, {
+                            parse_mode: "HTML",
+                            protect_content: protect_content,
+                        })
+                    }
+                } else {
+                    cronTask.stop()
                 }
-                if (messageStat.sent === totalUsers) {
-                    clearInterval(interval)
-                    await api.sendMessage(from.id, `<b><i>✅ Mail Completed: ${JSON.stringify(messageStat)}</i></b>`, {
-                        parse_mode: "HTML",
-                        protect_content: protect_content,
-                    })
-                }
-            }, 1000);
+            })
         } catch (err) {
             return console.log(err.message)
         }
