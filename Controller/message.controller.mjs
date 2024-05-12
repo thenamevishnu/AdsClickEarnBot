@@ -1582,4 +1582,35 @@ api.on("message", async message => {
             return console.log(err.message)
         }
     }
+
+    if (waitfor === "ADMIN_MAILING") {
+        try {
+            const message_id = message.message_id
+            const text = "<b><i>👇 Preview 👇</i></b>"
+            answerCallback[from.id] = null
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content
+            })
+            await api.copyMessage(from.id, from.id, message_id, {
+                protect_content: protect_content,
+                parse_mode: "HTML"
+            })
+            return await api.sendMessage(from.id, "<i><b>✅ Are you sure?</b></i>", {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: "❌ Cancel", callback_data: "/admin_cancel_mail" },
+                            { text: "✅ Send", callback_data: `/admin_send_mail ${message_id}` }
+                        ]
+                    ]
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
 })

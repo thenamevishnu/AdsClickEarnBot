@@ -8,6 +8,7 @@ export const protect_content = true
 export const invited_user = {}
 export const answerCallback = {}
 export const localStore = {}
+export const messageStat = {}
 
 export const userMention = (user_id, username, first_name) => {
     const mention = username ? `@${username}` : `<a href='tg://user?id=${user_id}'>${first_name}</a>`
@@ -238,6 +239,8 @@ export const getAdminPanel = () => {
         ],[
             { text: `🔴 Ban User`, callback_data: `/admin_ban_user` },
             { text: `🟢 Unban User`, callback_data: `/admin_unban_user` }
+        ], [
+            { text: "📤 Mailing", callback_data: "/admin_mailing" }
         ]
     ]
     return {

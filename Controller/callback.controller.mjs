@@ -4,7 +4,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, inlineKeys, isUserBanned, keyList, localStore, protect_content, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, inlineKeys, isUserBanned, keyList, localStore, messageStat, protect_content, userMention } from "../Utils/tele.mjs";
 
 api.on("callback_query", async callback => {
     const data = callback.data
@@ -680,6 +680,87 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id
             })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/admin_mailing") {
+        try {
+            const text = "<b><i>📨 Create or forward a message to mail to users</i></b>"
+            answerCallback[from.id] = "ADMIN_MAILING"
+            return api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: [
+                        ["🔴 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/admin_cancel_mail") {
+        try {
+            const text = "<b><i>✖️ Mailing has been cancelled!</i></b>"
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML"
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/admin_send_mail") {
+        try {
+            const [message_id] = params
+            const text = "<b><i>✅ Mailing started...</i></b>"
+            const users = await userCollection.find({})
+            const totalUsers = users.length
+            messageStat.sent = 0
+            messageStat.failed = 0
+            messageStat.success = 0
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: protect_content,
+                reply_markup: {
+                    keyboard: keyList.mainKey,
+                    resize_keyboard: true
+                }
+            })
+            const interval = setInterval(async () => {
+                users.splice(0, 2).forEach(item => {
+                    api.copyMessage(item._id, from.id, message_id, {
+                        parse_mode: "HTML",
+                        protect_content: protect_content
+                    }).then((res) => {
+                        messageStat.success++
+                        messageStat.sent++
+                    }).catch(err => {
+                        messageStat.failed++
+                        messageStat.sent++
+                    })
+                })
+                if (messageStat.sent != 0 && messageStat.sent % 100 == 0) {
+                    await api.sendMessage(from.id, `<b><i>✅ Mail Status: ${JSON.stringify(messageStat)}</i></b>`, {
+                        parse_mode: "HTML",
+                        protect_content: protect_content,
+                    })
+                }
+                if (messageStat.sent === totalUsers) {
+                    clearInterval(interval)
+                    await api.sendMessage(from.id, `<b><i>✅ Mail Completed: ${JSON.stringify(messageStat)}</i></b>`, {
+                        parse_mode: "HTML",
+                        protect_content: protect_content,
+                    })
+                }
+            }, 1000);
         } catch (err) {
             return console.log(err.message)
         }
