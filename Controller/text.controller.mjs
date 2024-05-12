@@ -7,6 +7,8 @@ import { adsText, answerCallback, inlineKeys, invited_user, isUserBanned, keyLis
 
 // start message
 
+api.on("polling_error", () => {})
+
 api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, match) => {
     try {
         if(message.chat.type != "private") return
