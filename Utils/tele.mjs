@@ -155,7 +155,7 @@ export const inlineKeys = {
 export const getKeyArray = () => {
     let keyArray = Object.entries(keyList).map(item => item[1]).flat().flat()
     keyArray = keyArray.filter((item, index) => index === keyArray.indexOf(item))
-    keyArray = [...keyArray,"❌ Cancel","⛔ Cancel","🚫 Cancel", "🛑 Cancel", "✖️ Cancel", "🔴 Cancel", "💷 Balance","👭 Referrals","⚙️ Settings"]
+    keyArray = [...keyArray, "❌ Cancel", "⛔ Cancel", "🚫 Cancel", "🛑 Cancel", "✖️ Cancel", "🔴 Cancel", "💷 Balance", "👭 Referrals", "⚙️ Settings", "/id", "/gid", "/event"]
     return keyArray
 }
 
