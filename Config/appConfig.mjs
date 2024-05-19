@@ -4,7 +4,8 @@ export const settings = {
         USERNAME: "iJsDev"
     },
     CHAT: {
-        USERNAME: "RoyalClickCommunity"  
+        ID: -1001995172897,
+        USERNAME: "RoyalClickCommunity"
     },
     BOT: {
         VERSION: "v1.0.3",

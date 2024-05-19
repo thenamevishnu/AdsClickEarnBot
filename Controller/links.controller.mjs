@@ -35,7 +35,22 @@ const visitSite = async (req, res) => {
 const verification = async (req, res) => {
     try {
         const { user_id } = req.params
-        res.render("verification", { user_id: user_id, server: process.env.SERVER })
+        const { status } = await api.getChatMember(settings.CHAT.ID, user_id)
+        if (status != "administrator" && status != "member" && status != "creator") {
+            const joinText = `<b><i>✅ Join @${settings.CHAT.USERNAME} to continue</i></b>`
+            const verification_url = `${process.env.SHORT_API}?s=${process.env.SERVER}/verification/${user_id}`
+            await api.sendMessage(user_id, joinText, {
+                parse_mode: "HTML",
+                protect_content: true,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{text: "✅ Continue", url: verification_url}]
+                    ]
+                }
+            })
+            return res.redirect(`https://t.me/${settings.BOT.USERNAME}`)
+        }
+        return res.render("verification", { user_id: user_id, server: process.env.SERVER })
     } catch (err) {
         return res.status(200).send({message: "❌ Internal server error!"})
     }
@@ -61,7 +76,11 @@ const verificationCheck = async (req, res) => {
             const resData = await userCollection.findOneAndUpdate({ _id: user_id, is_verified: false }, { $set: { ip: ip, is_verified: true } })
             if (resData) {
                 await userCollection.updateOne({ _id: resData.invited_by }, { $inc: { "balance.balance": settings.REF.PER_REF } })
-                return res.status(200).send({message: "🎉 You're verified"})
+                await api.sendMessage(user_id, "<b><i>🎉 You're verified</i></b>", {
+                    parse_mode: "HTML",
+                    protect_content: true
+                })
+                return res.status(200).send({ message: "🎉 You're verified" })
             }
             return res.status(200).send({message: "❌ Internal server error!"})
         }
