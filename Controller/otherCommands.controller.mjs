@@ -32,6 +32,7 @@ api.onText(/^\/gid$/, async message => {
 
 api.onText(/\/event/, async message => {
     try {
+        const chat = message.chat
         const usersList = await userCollection.find({_id: {$ne: settings.ADMIN.ID}, is_verified: true, invites: { $gt: 0 } }).limit(10)
         let text = "🎉 Royal Click Top 10\n"
         usersList.forEach((item, index) => {
