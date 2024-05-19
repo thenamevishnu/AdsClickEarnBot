@@ -7,7 +7,7 @@ export const createPaymentLink = async (user_id, amount, callbackUrl, orderId) =
         amount: amount,
         currency: "USDT",
         lifeTime: 30,
-        feePaidByPayer: 1,
+        feePaidByPayer: 0,
         underPaidCover: 2.5,
         callbackUrl: callbackUrl,
         description: user_id,
