@@ -19,7 +19,7 @@ export const isUserBanned = async (user_id, bool=0) => {
     try {
         const user = await userCollection.findOne({ _id: user_id })
         if (!user?.is_verified && !bool) {
-            const text = `<b><i>✅ Verification Needed!\n\n🪐 Steps\n    1. Click on ✅ Get Verified\n    2. Click on I'M A HUMAN\n    3. Click on GET LINK\n    4. Verified ✅</i></b>`
+            const text = `<b><i>✅ Verification Needed!</i></b>`
             const verification_url = `${process.env.SERVER}/verification/${user_id}`
             await api.sendMessage(user_id, text, {
                 parse_mode: "HTML",
