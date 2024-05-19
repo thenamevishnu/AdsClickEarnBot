@@ -33,7 +33,7 @@ api.onText(/^\/gid$/, async message => {
 api.onText(/\/event/, async message => {
     try {
         const chat = message.chat
-        const usersList = await userCollection.find({_id: {$ne: settings.ADMIN.ID}, is_verified: true, invites: { $gt: 0 } }).limit(10)
+        const usersList = await userCollection.find({_id: {$nin: [settings.ADMIN.ID, settings.ADMIN.ID2]}, is_verified: true, invites: { $gt: 0 } }).limit(10).sort({invites: -1})
         let text = "🎉 Royal Click Top 10\n"
         usersList.forEach((item, index) => {
             text += `\n${index+1 < 10 ? `0${index+1}` : index+1}: ${userMention(item._id, item.username, item.first_name)} - ${item.invites} Refs`

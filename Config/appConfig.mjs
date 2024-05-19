@@ -1,6 +1,7 @@
 export const settings = {
     ADMIN: {
         ID: 7169860704,
+        ID2: 6813105483,
         USERNAME: "iJsDev"
     },
     CHAT: {
