@@ -20,7 +20,7 @@ export const isUserBanned = async (user_id, bool=0) => {
         const user = await userCollection.findOne({ _id: user_id })
         if (!user?.is_verified && !bool) {
             const text = `<b><i>✅ Verification Needed!\n\n🪐 Steps\n    1. Click on ✅ Get Verified\n    2. Click on I'M A HUMAN\n    3. Click on GET LINK\n    4. Verified ✅</i></b>`
-            const verification_url = `${process.env.SHORT_API}?s=${process.env.SERVER}/verification/${user_id}`
+            const verification_url = `${process.env.SERVER}/verification/${user_id}`
             await api.sendMessage(user_id, text, {
                 parse_mode: "HTML",
                 protect_content: true,
@@ -83,7 +83,7 @@ export const inlineKeys = {
     start_bot: (ads) => {
         return [
             [
-                { text: `🔗 Open`, url: `${process.env.SHORT_API}?s=${ads.link}` }
+                { text: `🔗 Open`, url: `${ads.link}` }
             ],[
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
                 { text: `✅ Started`, callback_data: `/started_bot ${ads._id}`}
@@ -93,7 +93,7 @@ export const inlineKeys = {
     chat_join: (ads) => {
         return [
             [
-                { text: `🔗 Open Chat`, url: `${process.env.SHORT_API}?s=${ads.link}` }
+                { text: `🔗 Open Chat`, url: `${ads.link}` }
             ],[
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
                 { text: `✅ Joined`, callback_data: `/chat_joined ${ads._id}`}
@@ -104,7 +104,7 @@ export const inlineKeys = {
         return [
             [
                 { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
-                { text: `🔗 Open link`, url: `${process.env.SHORT_API}?s=${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
+                { text: `🔗 Open link`, url: `${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
             ]
         ]
     },

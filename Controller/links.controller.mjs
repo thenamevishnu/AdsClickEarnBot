@@ -38,7 +38,7 @@ const verification = async (req, res) => {
         const { status } = await api.getChatMember(settings.CHAT.ID, user_id)
         if (status != "administrator" && status != "member" && status != "creator") {
             const joinText = `<b><i>✅ Join @${settings.CHAT.USERNAME} to continue</i></b>`
-            const verification_url = `${process.env.SHORT_API}?s=${process.env.SERVER}/verification/${user_id}`
+            const verification_url = `${process.env.SERVER}/verification/${user_id}`
             await api.sendMessage(user_id, joinText, {
                 parse_mode: "HTML",
                 protect_content: true,
