@@ -34,7 +34,7 @@ api.onText(/\/listed/, async message => {
             reply_markup: {
                 inline_keyboard: listedKey
             },
-            protect_content: true
+            protect_content: protect_content
         })
     } catch (err) {
         return console.log(err.message)

@@ -4,7 +4,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import api from "../Config/Telegram.mjs";
 
-export const protect_content = true
+export const protect_content = false
 export const invited_user = {}
 export const answerCallback = {}
 export const localStore = {}

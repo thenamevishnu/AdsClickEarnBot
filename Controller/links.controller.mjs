@@ -78,7 +78,7 @@ const verificationCheck = async (req, res) => {
                 await userCollection.updateOne({ _id: resData.invited_by }, { $inc: { "balance.balance": settings.REF.PER_REF } })
                 await api.sendMessage(user_id, "<b><i>🎉 You're verified</i></b>", {
                     parse_mode: "HTML",
-                    protect_content: true
+                    protect_content: protect_content
                 })
                 return res.status(200).send({ message: "🎉 You're verified" })
             }

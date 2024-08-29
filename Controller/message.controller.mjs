@@ -1321,7 +1321,7 @@ api.on("message", async message => {
             })
             return await api.sendMessage(pendingTask.done_by, `<b><i>🔴 Your micro task response [#${pendingTask.campaign_id}] has been rejected by the advertiser\n📃 Reason: ${message.text}</i></b>`, {
                 parse_mode: "HTML",
-                protect_content: true
+                protect_content: protect_content
             })
         } catch (err) {
             return console.log(err.message)
