@@ -30,7 +30,7 @@ api.onText(/^\/gid$/, async message => {
     }
 })
 
-api.onText(/^\/event$/, async message => {
+api.onText(/^\/leaderboard$/, async message => {
     try {
         const chat = message.chat
         const usersList = await userCollection.find({_id: {$nin: [settings.ADMIN.ID, settings.ADMIN.ID2]}, is_verified: true, invites: { $gt: 0 } }).limit(10).sort({invites: -1})

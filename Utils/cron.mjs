@@ -8,3 +8,4 @@ cronJob.schedule("* * * * *", async () => {
         console.log(err.message)
     }
 })
+

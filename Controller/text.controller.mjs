@@ -198,16 +198,10 @@ api.onText(/^👭 Referrals$/, async message => {
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
         const user = await userCollection.findOne({_id: from.id})
-        const send = `👭 You have total : ${user.invites} Referrals\n\n💷 Per Refer: $${settings.REF.PER_REF}\n\n💸 Total Earned : $${user.balance.referral.toFixed(4)}\n\n🔗 Your Referral Link : https://t.me/${settings.BOT.USERNAME}?start=${from.id}\n\n🎉 You will earn 10% of each user earnings from tasks, and 10% of USD they deposit in bot. Share your refer link and earn money ✅`
-        const text = `<b><i>👭 You have total : ${user.invites} Referrals\n\n💷 Per Refer: $${settings.REF.PER_REF}\n\n💸 Total Earned : $${user.balance.referral.toFixed(4)}\n\n🔗 Your Referral Link : https://t.me/${settings.BOT.USERNAME}?start=${from.id}\n\n🎉 You will earn 10% of each user"s earnings from tasks, and 10% of USD they deposit in bot. Share your refer link and earn money ✅</i></b>`
+        const text = `<b><i>👭 You have total : ${user.invites} Referrals\n\n💸 Total Earned : $${user.balance.referral.toFixed(4)}\n\n🔗 Your Referral Link : https://t.me/${settings.BOT.USERNAME}?start=${from.id}\n\n🎉 You will earn 10% of each user"s earnings from tasks, and 10% of USD they deposit in bot. Share your refer link and earn money ✅</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             protect_content: protect_content,
-            reply_markup: {
-                inline_keyboard: [
-                    [{ text: "Share Link", url: `https://t.me/share/url?url=${send}` }]
-                ]
-            },
             disable_web_page_preview: true
         })
     } catch (err) {
