@@ -1,8 +1,8 @@
 export const settings = {
     ADMIN: {
-        ID: 7169860704,
+        ID: 7270677117,
         ID2: 6813105483,
-        USERNAME: "iJsDev"
+        USERNAME: "CelestixSoftDev"
     },
     CHAT: {
         ID: -1001995172897,
@@ -10,9 +10,9 @@ export const settings = {
     },
     BOT: {
         VERSION: "v1.0.3",
-        USERNAME: "RoyalClickBot",
-        NAME: "Royal Click",
-        ID: 6617978738
+        USERNAME: "AdsClickEarnBot",
+        NAME: "Ads Click Earn Bot",
+        ID: 7924773157
     },
     COST: {
         PER_CLICK: {
@@ -34,7 +34,7 @@ export const settings = {
     PAYMENT: {
         MIN: {
             DEPOSIT: 1,
-            WITHDRAW: 5
+            WITHDRAW: 2
         }
     }
 }

@@ -43,6 +43,10 @@ const payment = new Schema({
     },
     txID: {
         type: String
+    },
+    txs: {
+        type: Array,
+        default: []
     }
 }, {
     timestamps: true

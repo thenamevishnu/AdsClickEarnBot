@@ -9,7 +9,7 @@ import { createOrderId } from "../Utils/helper.mjs"
 const onPaymentIPN = async (req, res) => {
     try {
         const postData = req.body
-        const apiSecretKey = postData.type == "payment" ? process.env.OXAPAY_MERCHANT : process.env.OXAPAY_PAYOUT
+        const apiSecretKey = (postData.type == "payment" || postData.type == "invoice") ? process.env.OXAPAY_MERCHANT : process.env.OXAPAY_PAYOUT
         const hmacHeader = req.headers['hmac']
         const calculatedHmac = createHmac("sha512", apiSecretKey).update(JSON.stringify(postData)).digest("hex")
         if (calculatedHmac === hmacHeader) {
@@ -17,43 +17,24 @@ const onPaymentIPN = async (req, res) => {
             const status = postData.status
             const payInfo = await paymentCollection.findOne({
                 user_id: chat_id,
-                trackId: postData.trackId
+                trackId: postData.track_id
             })
 
-            if (postData.type === "payment") {
+            if (postData.type === "payment" || postData.type === "invoice") {
 
-                if (status === "Waiting" && !payInfo) {
+                if (status === "Paying" && !payInfo) {
                     const createdDoc = await paymentCollection.create({
                         user_id: Number(chat_id),
                         amount: parseFloat(postData.amount).toFixed(4),
                         type: postData.type,
                         status: status,
                         currency: "USDT",
-                        orderId: postData.orderId,
+                        orderId: postData.order_id,
                         date: postData.date,
-                        trackId: postData.trackId
+                        trackId: postData.track_id,
+                        txs: postData.txs
                     })
                     if (createdDoc?._id) {
-                        await api.sendMessage(chat_id, `<b><i>⌛ Awaiting payment...</i></b>`, {
-                            parse_mode: "HTML",
-                            protect_content: protect_content
-                        })
-                    }
-                }
-
-                if (status === "Confirming" && payInfo.status === "Waiting") {
-                    const updatedDoc = await paymentCollection.updateOne({
-                        user_id: chat_id,
-                        trackId: postData.trackId
-                    }, {
-                        payAmount: postData.payAmount,
-                        payCurrency: postData.payCurrency,
-                        network: postData.network,
-                        status: status,
-                        payDate: postData.payDate,
-                        txID: postData.txID
-                    })
-                    if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {
                         await api.sendMessage(chat_id, `<b><i>⌛ Awaiting blockchain network confirmation...</i></b>`, {
                             parse_mode: "HTML",
                             protect_content: protect_content
@@ -61,12 +42,12 @@ const onPaymentIPN = async (req, res) => {
                     }
                 }
 
-                if (status === "Paid" && payInfo.status === "Confirming") {
+                if (status === "Paid" && payInfo.status === "Paying") {
                     const updatedDoc = await paymentCollection.updateOne({
                         user_id: chat_id,
-                        trackId: postData.trackId
+                        trackId: postData.track_id
                     }, {
-                        status: status
+                        status: status 
                     })
                     if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {
                         await api.sendMessage(chat_id, `<b><i>✅ Payment is confirmed by the network and has been credited to your account</i></b>`, {
@@ -92,21 +73,6 @@ const onPaymentIPN = async (req, res) => {
                         })
                     }
                 }
-                
-                if (status === "Expired" && payInfo.status != "Paid") {
-                    const updatedDoc = await paymentCollection.updateOne({
-                        user_id: chat_id,
-                        trackId: postData.trackId
-                    }, {
-                        status: status
-                    })
-                    if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {
-                        await api.sendMessage(chat_id, `<b><i>❌ Invoice (#${postData.orderId}) expired.</i></b>`, {
-                            parse_mode: "HTML",
-                            protect_content: protect_content
-                        })
-                    }
-                }
 
             } else if (postData.type === "payout") {
                 
@@ -121,7 +87,7 @@ const onPaymentIPN = async (req, res) => {
                         orderId: orderId,
                         date: postData.date,
                         network: postData.network,
-                        trackId: postData.trackId
+                        trackId: postData.track_id
                     })
                     if (createdDoc?._id) {
                         await api.sendMessage(chat_id, `<b><i>⌛ Your payout request sent and awaiting blockchain network confirmation...</i></b>`, {
@@ -131,13 +97,13 @@ const onPaymentIPN = async (req, res) => {
                     }
                 }
 
-                if (status === "Complete" && payInfo.status === "Confirming") {
+                if (status === "Confirmed" && payInfo.status === "Confirming") {
                     const updatedDoc = await paymentCollection.updateOne({
                         user_id: chat_id,
-                        trackId: postData.trackId
+                        trackId: postData.track_id
                     }, {
                         status: status,
-                        txID: postData.txID,
+                        txID: postData.tx_hash,
                         address: postData.address
                     })
                     if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {

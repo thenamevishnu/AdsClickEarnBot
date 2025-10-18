@@ -1423,11 +1423,17 @@ api.on("message", async message => {
             const address = message.text
             answerCallback[from.id] = null
             const CALLBACK_URL = `${process.env.SERVER}/payments/callback`
-            const { status } = await createPayout(from.id, address, amount, CALLBACK_URL)
-            if (status) {
+            const status = await createPayout(from.id, address, amount, CALLBACK_URL)
+            if (status == 400) {
+                return await api.sendMessage(from.id, `<b><i>❌ Payout failed!</i></b>`, {
+                    parse_mode: "HTML",
+                    protect_content: protect_content
+                })
+            }
+            if (status == 200) {
                 await userCollection.updateOne({_id: from.id},{$set: {"balance.withdrawable": -(amount)}})
             }
-            const text = `<b><i>✅ Requested payout of $${amount} to ${address} is ${status || "Failed"}!</i></b>`
+            const text = `<b><i>✅ Requested payout of $${amount} to ${address} is ${status == 200 ? "Processing" : "Failed"}!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 protect_content: protect_content
@@ -1457,8 +1463,8 @@ api.on("message", async message => {
             answerCallback[from.id] = null
             const CALLBACK_URL = `${process.env.SERVER}/payments/callback`
             const orderid = createOrderId()
-            const { payLink } = await createPaymentLink(from.id, amount, CALLBACK_URL, orderid)
-            if (!payLink) {
+            const payment_info = await createPaymentLink(from.id, amount, CALLBACK_URL, orderid)
+            if (!payment_info?.payment_url) {
                 const text = `<b><i>❌ We can't generate a payment link.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
@@ -1481,7 +1487,7 @@ api.on("message", async message => {
                 reply_markup: {
                     inline_keyboard: [
                         [
-                            { text: "PAY NOW", url: payLink}
+                            { text: "PAY NOW", url: payment_info?.payment_url }
                         ]
                     ]
                 }
