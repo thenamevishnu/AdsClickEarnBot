@@ -52,6 +52,7 @@ const verification = async (req, res) => {
         }
         return res.render("verification", { user_id: user_id, server: process.env.SERVER })
     } catch (err) {
+        console.log(err)
         return res.status(200).send({message: "❌ Internal server error!"})
     }
 }
