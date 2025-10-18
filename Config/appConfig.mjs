@@ -6,7 +6,7 @@ export const settings = {
     },
     CHAT: {
         ID: -1001995172897,
-        USERNAME: "RoyalClickCommunity"
+        USERNAME: "AdsClickEarnGroup"
     },
     BOT: {
         VERSION: "v1.0.3",
