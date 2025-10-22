@@ -223,8 +223,8 @@ export const onSuccessVisitSite = async (campaignId, user_id) => {
         const earn = (cpc * settings.GIVEAWAY).toFixed(4)
         const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
         await adsCollection.updateOne({ _id: campaignId }, { $addToSet: { completed: Number(user_id) }, $inc: { remaining_budget: -(cpc) } })
-        const userUpdate = await userCollection.findOneAndUpdate({ _id: user_id }, { $inc: { "balance.withdrawable": earn } })
-        await userCollection.updateOne({ _id: userUpdate.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission } })
+        const userUpdate = await userCollection.findOneAndUpdate({ _id: user_id }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
+        await userCollection.updateOne({ _id: userUpdate.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
         return `✅ Task completed: +$${earn}`
     } catch (err) {
         return "❌ Error happend!"
@@ -235,12 +235,13 @@ export const getAdminPanel = () => {
     const text = `<b><i>🎯 Dashboard of admins</i></b>`
     const key = [
         [
-            { text: "📉 User Stat", callback_data: `/admin_user_stat` }
+            { text: "📉 User Stat", callback_data: `/admin_user_stat` },
+            { text: "📤 Mailing", callback_data: "/admin_mailing" }
         ],[
             { text: `🔴 Ban User`, callback_data: `/admin_ban_user` },
             { text: `🟢 Unban User`, callback_data: `/admin_unban_user` }
         ], [
-            { text: "📤 Mailing", callback_data: "/admin_mailing" }
+            { text: "💵 Add Balance", callback_data: "/admin_add_balance" }
         ]
     ]
     return {

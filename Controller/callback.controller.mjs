@@ -200,8 +200,8 @@ api.on("callback_query", async callback => {
             const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
             const text = `<b><i>✅ Task completed: +${earn}</i></b>`
             await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
-            const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn } })
-            await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission } })
+            const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn, "balance.earned": earn } })
+            await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -263,8 +263,8 @@ api.on("callback_query", async callback => {
             const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
             const text = `<b><i>✅ Task completed: +${earn}</i></b>`
             await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
-            const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn } })
-            await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission } })
+            const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn, "balance.earned": earn } })
+            await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -516,8 +516,8 @@ api.on("callback_query", async callback => {
             const earn = (pendingTask.cpc * settings.GIVEAWAY).toFixed(4)
             if (response.matchedCount == 1 && response.modifiedCount == 1) {
                 const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
-                const updateUser = await userCollection.findOneAndUpdate({ _id: pendingTask.done_by }, { $inc: { "balance.withdrawable": earn } })
-                await userCollection.updateOne({ _id: updateUser.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission } })
+                const updateUser = await userCollection.findOneAndUpdate({ _id: pendingTask.done_by }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
+                await userCollection.updateOne({ _id: updateUser.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
             }
             const text = `<b><i>✅ You micro task response [#${pendingTask.campaign_id}] has been approved by advertiser.\n🎁 Earned: +$${earn}</i></b>`
             await api.editMessageText(`<b><i>✅ The response [#${pendingTask.campaign_id}] has been approved.</i></b>`, {
@@ -669,13 +669,14 @@ api.on("callback_query", async callback => {
                         banned: { $sum: { $toInt: "$banned" } },
                         verified: { $sum: { $toInt: "$is_verified" } },
                         withdrawable: { $sum: "$balance.withdrawable" },
+                        earned: { $sum: "$balance.earned" },
                         balance: { $sum: "$balance.balance" },
                         referral: { $sum: "$balance.referral" },
                         payouts: { $sum: "$balance.payouts" },
                     }
                 }
             ])
-            text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: $${users?.[0]?.balance?.toFixed(4)}\nWithdrawable: $${users?.[0]?.withdrawable?.toFixed(4)}\nReferral: $${users?.[0]?.referral?.toFixed(4)}\nPayouts: $${users?.[0]?.payouts?.toFixed(4)}</i></b>`
+            text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: $${users?.[0]?.balance?.toFixed(4)}\nWithdrawable: $${users?.[0]?.withdrawable?.toFixed(4)}\nReferral: $${users?.[0]?.referral?.toFixed(4)}\nPayouts: $${users?.[0]?.payouts?.toFixed(4)}\nEarned: $${users?.[0]?.earned?.toFixed(4)}</i></b>`
             return await api.editMessageText(text, {
                 parse_mode: "HTML",
                 chat_id: from.id,
@@ -765,6 +766,50 @@ api.on("callback_query", async callback => {
                     }
                 } else {
                     cronTask.stop()
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/admin_add_balance") {
+        try {
+            const key = [
+                [
+                    { text: "💶 Balance", callback_data: "/admin_add_balance_to balance" },
+                    { text: "💷 Deposits", callback_data: "/admin_add_balance_to deposits" }
+                ], [
+                    { text: "💰 Withdrawable", callback_data: "/admin_add_balance_to withdrawable" },
+                    { text: "🏧 Payouts", callback_data: "/admin_add_balance_to payouts" }
+                ]
+            ]
+            const text = `🛰️ <i>Select the type you want to add balance</i>`
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                reply_markup: {
+                    inline_keyboard: key
+                }
+            })
+        } catch (err) {
+            return console.log(err.message)
+        }
+    }
+
+    if (command === "/admin_add_balance_to") {
+        try {
+            const type = params[0]
+            const text = `<i>🆔 Enter the user Telegram ID:</i>`
+            localStore[from.id]["balance_add_to"] = type
+            answerCallback[from.id] = "ADMIN_USER_ID_FOR_ADD_BALANCE"
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                protect_content: true,
+                reply_markup: {
+                    keyboard: [["🔴 Cancel"]],
+                    resize_keyboard: true
                 }
             })
         } catch (err) {

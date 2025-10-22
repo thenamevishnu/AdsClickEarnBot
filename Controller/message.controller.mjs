@@ -1206,8 +1206,8 @@ api.on("message", async message => {
             const earn = (ads.cpc * settings.GIVEAWAY).toFixed(4)
             const commission = ( earn * settings.REF.INCOME.TASK ).toFixed(4)
             await adsCollection.updateOne({ _id: ads_id },{$inc: {remaining_budget: -(ads.cpc)}, $addToSet:{completed: from.id}})
-            const user = await userCollection.findOneAndReplace({ _id: from.id }, { $inc: { "balance.withdrawable": earn } })
-            await userCollection.updateOne({ _id: user.invited_by }, { $inc: { "balance.withdrawable": commission } })
+            const user = await userCollection.findOneAndReplace({ _id: from.id }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
+            await userCollection.updateOne({ _id: user.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
             const text = `<b><i>✅ Task completed, you've received +$${earn}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
@@ -1622,6 +1622,73 @@ api.on("message", async message => {
             })
         } catch (err) {
             return console.log(err.message)
+        }
+    }
+
+    if (waitfor === "ADMIN_USER_ID_FOR_ADD_BALANCE") {
+        try {
+            if (isNaN(message.text)) {
+                return await api.sendMessage(from.id, `<i>✖️ Enter valid UserID</i>`, {
+                    parse_mode: "HTML",
+                    protect_content: true
+                })
+            }
+            const userid = message.text
+            const type = localStore[from.id]["balance_add_to"]
+            const userinfo = await userCollection.findOne({ _id: userid })
+            const balance = userinfo.balance[type]
+            localStore[from.id]["userid_to_add_balance"] = userid
+            answerCallback[from.id] = "ADMIN_ENTER_BALANCE_TO_ADD"
+            return await api.sendMessage(from.id, `<i>💷 Enter the amount you want to add\n\n💰 ${type.replace(type[0], type[0].toUpperCase())}: $${balance.toFixed(4)}</i>`, {
+                parse_mode: "HTML",
+                protect_content: true
+            })
+        } catch (err) {
+            console.log(err)
+            return await api.sendMessage(from.id, `<i>❌ Error occured</i>`, {
+                parse_mode: "HTML",
+                protect_content: true
+            })
+        }
+    }
+
+    if (waitfor === "ADMIN_ENTER_BALANCE_TO_ADD") {
+        try {
+            if (isNaN(message.text)) {
+                return await api.sendMessage(from.id, `<i>✖️ Enter valid amount</i>`, {
+                    parse_mode: "HTML",
+                    protect_content: true
+                })
+            }
+            const amount = parseFloat(message.text).toFixed(4)
+            const type = localStore[from.id]["balance_add_to"]
+            const userid = localStore[from.id]["userid_to_add_balance"]
+            answerCallback[from.id] = null
+            const obj = {}
+            if (type === "deposits") {
+                obj.add = { "balance.balance": amount, [`balance.${type}`]: amount }
+            } else {
+                obj.add = { [`balance.${type}`]: amount }
+            }
+            await userCollection.updateOne({ _id: userid }, { $inc: obj.add })
+            await api.sendMessage(from.id, `<i>☑️ Balance added:\n\n🆔 UserID: ${userid}\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: $${amount}</i>`, {
+                parse_mode: "HTML",
+                protect_content: true,
+                reply_markup: {
+                    keyboard: keyList.mainKey,
+                    resize_keyboard: true
+                }
+            })
+            return await api.sendMessage(userid, `<i>✅ Balance added by Admin\n\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: $${amount}</i>`, {
+                parse_mode: "HTML",
+                protect_content: true
+            })
+        } catch (err) {
+            console.log(err)
+            return await api.sendMessage(from.id, `<i>❌ Error occured</i>`, {
+                parse_mode: "HTML",
+                protect_content: true
+            })
         }
     }
 

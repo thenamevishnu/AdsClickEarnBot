@@ -68,7 +68,7 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
         if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         answerCallback[from.id] = null
-        const text = `<b><i>💰 Balance: $${user.balance.balance.toFixed(4)}\n\n💶 Withdrawable: $${user.balance.withdrawable.toFixed(4)}</i></b>`
+        const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(2)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(2)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(2)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(2)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(2)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(2)}</b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             protect_content: protect_content,
