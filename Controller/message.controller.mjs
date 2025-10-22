@@ -11,10 +11,12 @@ import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 api.on("message", async message => {
     if (message.chat.type !== "private") return
     const u = await userCollection.findOne({ _id: message.from.id });
-    u.username = message.from.username;
-    u.first_name = message.from.first_name;
-    u.last_name = message.from.last_name;
-    await u.save()
+    if (u) {
+        u.username = message.from.username;
+        u.first_name = message.from.first_name;
+        u.last_name = message.from.last_name;
+        await u.save()
+    }
 
     if (message.text && getKeyArray().includes(message.text)) return
 
