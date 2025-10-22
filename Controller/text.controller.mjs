@@ -47,7 +47,7 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
         const text = `<b><i>🚀 Welcome to ${settings.BOT.NAME}\n\nThis bot allows you to earn by completing simple tasks.\n\nYou can also create your own ads with /advertise</i></b>`
         return await api.sendMessage(from.id, text, { 
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.mainKey,
                 resize_keyboard: true
@@ -71,7 +71,7 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
         const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(2)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(2)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(2)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(2)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(2)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(2)}</b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.balanceKey,
                 resize_keyboard: true
@@ -96,7 +96,7 @@ api.onText(/^➕ Deposit$/, async message => {
         ]
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: key
             }
@@ -117,14 +117,14 @@ api.onText(/^➖ Payout$/, async message => {
             const text = `<b><i>❌ Minimum withdrawal is $${settings.PAYMENT.MIN.WITHDRAW.toFixed(4)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = `<b><i>💵 Enter the amount you want to withdraw</i></b>`
         answerCallback[from.id] = "PAYOUT_AMOUNT"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
                     ["🚫 Cancel"]
@@ -137,6 +137,10 @@ api.onText(/^➖ Payout$/, async message => {
     }
 })
 
+api.onText("/home", async message => {
+    return await api.sendMessage(message.chat.id, "<i>🏡 Home</i>", { parse_mode: "HTML" })
+})
+
 api.onText(/^🔄 Convert$/, async message => {
     try {
         if(message.chat.type != "private") return
@@ -147,7 +151,7 @@ api.onText(/^🔄 Convert$/, async message => {
         answerCallback[from.id] = "CONVERT_BALANCE"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
                     ["🚫 Cancel"]
@@ -184,7 +188,7 @@ api.onText(/^📃 History$/, async message => {
         })
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content
+            protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
         return console.log(err.message)
@@ -201,7 +205,7 @@ api.onText(/^👭 Referrals$/, async message => {
         const text = `<b><i>👭 You have total : ${user.invites} Referrals\n\n💸 Total Earned : $${user.balance.referral.toFixed(4)}\n\n🔗 Your Referral Link : https://t.me/${settings.BOT.USERNAME}?start=${from.id}\n\n🎉 You will earn 10% of each user"s earnings from tasks, and 10% of USD they deposit in bot. Share your refer link and earn money ✅</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             disable_web_page_preview: true
         })
     } catch (err) {
@@ -219,7 +223,7 @@ api.onText(/^⚙️ Settings$/, async message => {
         const text = `<b><i>🛎️ Notification: ${ user.notification ? "✅" : "❌" }\n\n📅 Since: ${new Date(user.createdAt).toLocaleString("en-IN")}</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: [
                     [{ text: `${user.notification ? `🔕 Turn OFF` : `🔔 Turn ON` } Notification`, callback_data: `/notification ${user.notification ? false : true}` }]
@@ -240,7 +244,7 @@ api.onText(/^⁉️ info$/, async message => {
         const text = `<b><i>🤖 ${settings.BOT.NAME} - ${settings.BOT.VERSION}\n\n🎯 Introducing ${settings.BOT.NAME} – your all-in-one marketplace for promoting Telegram bots, chats/channels, websites, and engaging in micro tasks, including viewing posts!\n\n🛰️ With ${settings.BOT.NAME}, users can effortlessly promote their Telegram creations and websites to a vast audience, attracting potential followers and customers. Whether you're a bot developer, a chat/channel administrator, or a website owner, this platform offers a seamless solution for enhancing visibility and driving engagement.\n\n🪐 But that's not all! In addition to promoting content, users can explore a wide range of micro tasks, from liking posts to subscribing to channels. Plus, with the ability to view posts, users can interact with content while earning rewards for their engagement.\n\n🚁 Join our dynamic community of promoters and task participants today, and discover the endless possibilities with ${settings.BOT.NAME}!\n\n👥 Users: ${totalUsers}\n\n💬 Community Chat: @${settings.CHAT.USERNAME}</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content
+            protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
         return console.log(err.message)
@@ -273,13 +277,13 @@ api.onText(/^🎯 Micro Task$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.microTask(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.micro_task(ads)
             }
@@ -301,7 +305,7 @@ api.onText(/^🛰️ Tele Task$|^⛔ Cancel$/, async message => {
         const text = `<b><i>🛰️ Telegram Tasks</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.teleKey,
                 resize_keyboard: true
@@ -338,13 +342,13 @@ api.onText(/^🤖 Start Bots$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.botAds(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.start_bot(ads)
             }
@@ -366,7 +370,7 @@ api.onText(/^💻 Web Task$|^🛑 Cancel$/, async message => {
         const text = `<b><i>🔗 Web related tasks</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.webKey,
                 resize_keyboard: true
@@ -403,13 +407,13 @@ api.onText(/^🔗 Visit Sites$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.siteAds(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.visit_site(ads, from.id)
             }
@@ -445,20 +449,20 @@ api.onText(/^📄 View Posts$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.postAds(ads)
         const endTime = Math.floor(new Date().getTime()/1000) + ads.duration
         await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.post_view(ads, endTime)
             }
         })
         return await api.copyMessage(from.id, ads.chat_id, ads.post_id, {
-            protect_content: protect_content
+            protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
         return console.log(err.message)
@@ -491,13 +495,13 @@ api.onText(/^💬 Join Chats$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.chatAds(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.chat_join(ads)
             }
@@ -518,7 +522,7 @@ api.onText(/^📊 Advertise$|^\/advertise$|^🔙 Advertise$/, async message => {
         const text = `<b><i>🚀 Here you can create new ad and check current ads status</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.advertiseKey,
                 resize_keyboard: true
@@ -541,7 +545,7 @@ api.onText(/^➕ New Ad$|^❌ Cancel$/, async message => {
         const text = `<b><i>🛰️ Here you can create new ad choose an option from below</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.newAdsKey,
                 resize_keyboard: true
@@ -564,7 +568,7 @@ api.onText(/^🤖 New Bots$/, async message => {
         answerCallback[from.id] = "NEW_BOT_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
                     ["❌ Cancel"]
@@ -589,7 +593,7 @@ api.onText(/^🔗 New Sites$/, async message => {
         answerCallback[from.id] = "NEW_SITE_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
                     ["❌ Cancel"]
@@ -614,7 +618,7 @@ api.onText(/^📄 New Posts$/, async message => {
         answerCallback[from.id] = "NEW_POST_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
                     ["❌ Cancel"]
@@ -639,7 +643,7 @@ api.onText(/^💬 New Chats$/, async message => {
         answerCallback[from.id] = "NEW_CHAT_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
                     ["❌ Cancel"]
@@ -664,7 +668,7 @@ api.onText(/^🎯 New Micro$/, async message => {
         const text = `<b><i>🔠 Enter a title for the ad</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
                     ["❌ Cancel"]
@@ -689,7 +693,7 @@ api.onText(/^📊 My Ads$|^✖️ Cancel$/, async message => {
         const text = `<b><i>🚀 Here you can manage all your running/expired ads.</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.myAdsKey,
                 resize_keyboard: true
@@ -713,14 +717,14 @@ api.onText(/^🤖 My Bots$/, async message => {
             const text = `<b><i>🤖 No bot ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         ads.forEach(item => {
             const text = adsText.botAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
                 }
@@ -744,14 +748,14 @@ api.onText(/^🔗 My Sites$/, async message => {
             const text = `<b><i>🔗 No site ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         ads.forEach(item => {
             const text = adsText.siteAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
                 },
@@ -776,14 +780,14 @@ api.onText(/^📄 My Posts$/, async message => {
             const text = `<b><i>📄 No post ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         ads.forEach(item => {
             const text = adsText.postAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
                 }
@@ -807,14 +811,14 @@ api.onText(/^💬 My Chats$/, async message => {
             const text = `<b><i>💬 No chat ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         ads.forEach(item => {
             const text = adsText.chatAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
                 },
@@ -839,14 +843,14 @@ api.onText(/^🎯 My Micro$/, async message => {
             const text = `<b><i>🎯 No micro tasks available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
         ads.forEach(item => {
             const text = adsText.microTask(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
                 },

@@ -37,7 +37,7 @@ const onPaymentIPN = async (req, res) => {
                     if (createdDoc?._id) {
                         await api.sendMessage(chat_id, `<b><i>⌛ Awaiting blockchain network confirmation...</i></b>`, {
                             parse_mode: "HTML",
-                            protect_content: protect_content
+                            protect_content: settings.PROTECTED_CONTENT
                         })
                     }
                 }
@@ -52,7 +52,7 @@ const onPaymentIPN = async (req, res) => {
                     if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {
                         await api.sendMessage(chat_id, `<b><i>✅ Payment is confirmed by the network and has been credited to your account</i></b>`, {
                             parse_mode: "HTML",
-                            protect_content: protect_content
+                            protect_content: settings.PROTECTED_CONTENT
                         })
                         const deposit = parseFloat(postData.amount).toFixed(4)
                         const commission = (deposit * settings.REF.INCOME.DEPOSIT).toFixed(4)
@@ -92,7 +92,7 @@ const onPaymentIPN = async (req, res) => {
                     if (createdDoc?._id) {
                         await api.sendMessage(chat_id, `<b><i>⌛ Your payout request sent and awaiting blockchain network confirmation...</i></b>`, {
                             parse_mode: "HTML",
-                            protect_content: protect_content
+                            protect_content: settings.PROTECTED_CONTENT
                         })
                     }
                 }
@@ -109,7 +109,7 @@ const onPaymentIPN = async (req, res) => {
                     if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {
                         await api.sendMessage(chat_id, `<b><i>✅ Payout is confirmed by the network.</i></b>`, {
                             parse_mode: "HTML",
-                            protect_content: protect_content
+                            protect_content: settings.PROTECTED_CONTENT
                         })
                         const payout = parseFloat(postData.amount).toFixed(4)
                         await userCollection.updateOne({

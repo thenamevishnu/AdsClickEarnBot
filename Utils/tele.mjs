@@ -4,7 +4,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import api from "../Config/Telegram.mjs";
 
-export const protect_content = false
+export const protect_content = settings.PROTECTED_CONTENT
 export const invited_user = {}
 export const answerCallback = {}
 export const localStore = {}
@@ -234,6 +234,9 @@ export const onSuccessVisitSite = async (campaignId, user_id) => {
 export const getAdminPanel = () => {
     const text = `<b><i>🎯 Dashboard of admins</i></b>`
     const key = [
+        [
+            {text: `Protected Content: ${settings.PROTECTED_CONTENT ? "✅ Enabled" : "❌ Disabled"}`, callback_data: `/admin_protected_content`},
+        ],
         [
             { text: "📉 User Stat", callback_data: `/admin_user_stat` },
             { text: "📤 Mailing", callback_data: "/admin_mailing" }

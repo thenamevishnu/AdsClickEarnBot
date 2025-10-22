@@ -8,7 +8,7 @@ api.onText(/^\/id$/, async message => {
         const from = message.from
         return await api.sendMessage(message.chat.id, from.id, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_to_message_id: message.message_id
         })
     } catch (err) {
@@ -22,7 +22,7 @@ api.onText(/^\/gid$/, async message => {
         if(chat.type != "group" && chat.type != "supergroup") return
         return await api.sendMessage(chat.id, chat.id, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_to_message_id: message.message_id
         })
     } catch (err) {
@@ -40,7 +40,7 @@ api.onText(/^\/leaderboard$/, async message => {
         })
         return await api.sendMessage(chat.id, `<b><i>${text}</i></b>`, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_to_message_id: message.message_id
         })
     } catch (err) {

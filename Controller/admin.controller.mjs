@@ -12,7 +12,7 @@ api.onText(/^\/admin$/, async message => {
         const response = getAdminPanel()
         return await api.sendMessage(from.id, response.text, {
             parse_mode: "HTML",
-            protect_content: protect_content,
+            protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: response.key
             }
@@ -34,7 +34,7 @@ api.onText(/\/listed/, async message => {
             reply_markup: {
                 inline_keyboard: listedKey
             },
-            protect_content: protect_content
+            protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
         return console.log(err.message)

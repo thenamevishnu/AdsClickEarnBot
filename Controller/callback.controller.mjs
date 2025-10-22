@@ -29,7 +29,7 @@ api.on("callback_query", async callback => {
             }
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
                         ["🚫 Cancel"]
@@ -38,7 +38,10 @@ api.on("callback_query", async callback => {
                 }
             })
         }catch(err){
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -61,7 +64,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -87,7 +93,10 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML"
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -135,7 +144,7 @@ api.on("callback_query", async callback => {
             const text = `<b><i>🛰️ Forward a message from <a href='${ads.link}'>@${ads.username}</a></i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
                         ["⛔ Cancel"]
@@ -145,7 +154,10 @@ api.on("callback_query", async callback => {
             })
             return await api.deleteMessage(from.id, callback.message.message_id)
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -208,7 +220,10 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML"
             }) 
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -271,7 +286,10 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML"
             }) 
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -293,7 +311,10 @@ api.on("callback_query", async callback => {
                 disable_web_page_preview: true
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -310,7 +331,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -323,7 +347,10 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML"
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -352,7 +379,10 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML"
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -366,7 +396,7 @@ api.on("callback_query", async callback => {
             const text = `<b><i>🎯 Submit your proof to validate this task.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
                         ["🔴 Cancel"]
@@ -375,7 +405,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -426,7 +459,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -437,10 +473,13 @@ api.on("callback_query", async callback => {
             const [proof_id, done_by] = params
             return await api.copyMessage(from.id, done_by, proof_id, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -452,7 +491,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "MICRO_TASK_REJECTION_REASON"
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
                         ["✖️ Cancel"]
@@ -462,7 +501,10 @@ api.on("callback_query", async callback => {
             })
             return await api.deleteMessage(from.id, callback.message.message_id)
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -474,7 +516,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>❌ This task already rejected or completed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: keyList.mainKey,
                         resize_keyboard: true
@@ -496,7 +538,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -527,10 +572,13 @@ api.on("callback_query", async callback => {
             })
             return await api.sendMessage(pendingTask.done_by, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -543,7 +591,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>🔠 Enter a title for the ad</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
                             ["✖️ Cancel"]
@@ -557,7 +605,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
                             ["✖️ Cancel"]
@@ -572,7 +620,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${response.cpc.toFixed(4)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
                             ["✖️ Cancel"]
@@ -587,7 +635,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Remaining Budget: $${response.remaining_budget.toFixed(4)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
                             ["✖️ Cancel"]
@@ -597,7 +645,10 @@ api.on("callback_query", async callback => {
                 })
             }
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -607,12 +658,12 @@ api.on("callback_query", async callback => {
         try {
             const [post] = params
             return await api.copyMessage(from.id, from.id, post, {
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b><i>❌ Post not found!</i></b>", {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }
     }
@@ -620,13 +671,33 @@ api.on("callback_query", async callback => {
 
     // admin section
 
+    if (command === "/admin_protected_content") {
+        try {
+            settings.PROTECTED_CONTENT = !settings.PROTECTED_CONTENT
+            const key = callback.message.reply_markup.inline_keyboard
+            key.shift()
+            key.unshift([{ text: `Protected Content: ${settings.PROTECTED_CONTENT ? "✅ Enabled" : "❌ Disabled"}`, callback_data: `/admin_protected_content` }])
+            return await api.editMessageReplyMarkup({
+                inline_keyboard: key
+            }, {
+                chat_id: from.id,
+                message_id: callback.message.message_id
+            })
+        } catch (err) {
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
     if (command === "/admin_ban_user") {
         try {
             const text = `<b><i>🎯 Enter the targeted userId to ban.</i></b>`
             answerCallback[from.id] = "ADMIN_BAN_USER"
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
                         ["🔴 Cancel"]
@@ -635,7 +706,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -645,7 +719,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "ADMIN_UNBAN_USER"
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
                         ["🔴 Cancel"]
@@ -654,7 +728,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -683,7 +760,10 @@ api.on("callback_query", async callback => {
                 message_id: callback.message.message_id
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -693,7 +773,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "ADMIN_MAILING"
             return api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
                         ["🔴 Cancel"]
@@ -702,7 +782,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -715,7 +798,10 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML"
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -730,7 +816,7 @@ api.on("callback_query", async callback => {
             messageStat.success = 0
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.mainKey,
                     resize_keyboard: true
@@ -742,7 +828,7 @@ api.on("callback_query", async callback => {
                     try {
                         await api.copyMessage(userInfo._id, from.id, message_id, {
                             parse_mode: "HTML",
-                            protect_content: protect_content
+                            protect_content: settings.PROTECTED_CONTENT
                         })
                         messageStat.success++
                         messageStat.sent++
@@ -754,14 +840,14 @@ api.on("callback_query", async callback => {
                     if (messageStat.sent != 0 && messageStat.sent % 100 == 0) {
                         await api.sendMessage(from.id, `<b><i>✅ Mail Status: ${JSON.stringify(messageStat)}</i></b>`, {
                             parse_mode: "HTML",
-                            protect_content: protect_content,
+                            protect_content: settings.PROTECTED_CONTENT,
                         })
                     }
                     if (messageStat.sent === totalUsers) {
                         cronTask.stop()
                         await api.sendMessage(from.id, `<b><i>✅ Mail Completed: ${JSON.stringify(messageStat)}</i></b>`, {
                             parse_mode: "HTML",
-                            protect_content: protect_content,
+                            protect_content: settings.PROTECTED_CONTENT,
                         })
                     }
                 } else {
@@ -769,7 +855,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -794,7 +883,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -813,7 +905,10 @@ api.on("callback_query", async callback => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 

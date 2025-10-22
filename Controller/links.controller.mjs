@@ -18,7 +18,7 @@ const visitSite = async (req, res) => {
             const response = await onSuccessVisitSite(campaign, id)
             await api.sendMessage(id, `<b><i>${response}</i></b>`, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         }, duration * 1000)
         const obj = {
@@ -79,11 +79,11 @@ const verificationCheck = async (req, res) => {
                 // await userCollection.updateOne({ _id: resData.invited_by }, { $inc: { "balance.balance": settings.REF.PER_REF } })
                 await api.sendMessage(resData.invited_by, "<b><i>🎉 One of your referral has been verified</i></b>", {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
                 await api.sendMessage(user_id, "<b><i>🎉 You're verified</i></b>", {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
                 return res.status(200).send({ message: "🎉 You're verified" })
             }

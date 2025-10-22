@@ -42,7 +42,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You should forward a message from bot.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const timeNow = Math.floor(new Date().getTime() / 1000)
@@ -50,7 +50,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ The message you forwarded is too old.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const bot_username = forward.username
@@ -59,7 +59,7 @@ api.on("message", async message => {
             const text = `<b><i>🔗 Enter the refer link or url of the bot.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -72,7 +72,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid url.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const link = message.text
@@ -80,7 +80,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid url.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const urlParts = new URL(link)
@@ -89,7 +89,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid bot url or refer link.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["link"] = link
@@ -97,7 +97,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -110,7 +110,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const title = message.text
@@ -118,7 +118,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["title"] = title
@@ -126,7 +126,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -139,7 +139,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const description = message.text
@@ -147,7 +147,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["description"] = description
@@ -155,7 +155,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${settings.COST.PER_CLICK.BOT_ADS.toFixed(4)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -168,7 +168,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -176,7 +176,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.BOT_ADS.toFixed(4)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["cpc"] = amount
@@ -184,7 +184,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -197,7 +197,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -206,7 +206,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: from.id })
@@ -214,7 +214,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["budget"] = amount
@@ -237,7 +237,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You bot ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
                     resize_keyboard: true
@@ -257,7 +257,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like an invalid url.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["link"] = message.text
@@ -265,7 +265,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -278,7 +278,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const title = message.text
@@ -286,7 +286,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["title"] = title
@@ -294,7 +294,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -307,7 +307,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const description = message.text
@@ -315,7 +315,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["description"] = description
@@ -324,7 +324,7 @@ api.on("message", async message => {
             const text = `<b><i>⌚ Provide the duration in seconds that people stay on the site.\n\n⏳ Minimum duration is 10 seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -337,7 +337,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid duration.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const duration = parseInt(message.text)
@@ -345,7 +345,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Duration should be from 10 to 120 seconds</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["duration"] = duration
@@ -354,7 +354,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per visit.\n\n💰 Minimum: $${perVisit} for ${duration} seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -367,7 +367,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -377,7 +377,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${perVisit} per ${duration} seconds.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["cpc"] = amount
@@ -385,7 +385,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -398,7 +398,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -407,7 +407,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: from.id })
@@ -415,7 +415,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["budget"] = amount
@@ -438,7 +438,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You site ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
                     resize_keyboard: true
@@ -457,14 +457,14 @@ api.on("message", async message => {
             const post_id = message.message_id
             await api.sendMessage(from.id, "👇 Preview 👇")
             await api.copyMessage(from.id, from.id, post_id, {
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
             localStore[from.id]["post_id"] = post_id
             answerCallback[from.id] = "NEW_POST_ADS_TITLE"
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -477,7 +477,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const title = message.text
@@ -485,7 +485,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["title"] = title
@@ -493,7 +493,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -506,7 +506,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const description = message.text
@@ -514,7 +514,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["description"] = description
@@ -523,7 +523,7 @@ api.on("message", async message => {
             const text = `<b><i>⌚ Provide the duration in seconds that people should view.\n\n⏳ Minimum duration is 10 seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -536,7 +536,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid duration.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const duration = parseInt(message.text)
@@ -544,7 +544,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Duration should be from 10 to 120 seconds</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["duration"] = duration
@@ -553,7 +553,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per view.\n\n💰 Minimum: $${perVisit} for ${duration} seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -566,7 +566,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -576,7 +576,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${perVisit} per ${duration} seconds.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["cpc"] = amount
@@ -584,7 +584,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -597,7 +597,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -606,7 +606,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: from.id })
@@ -614,7 +614,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["budget"] = amount
@@ -637,7 +637,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You post ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
                     resize_keyboard: true
@@ -659,7 +659,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Enter a valid username</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             let username = null
@@ -669,7 +669,7 @@ api.on("message", async message => {
                         const text = `<b><i>❌ Looks like a private channel, we only accept public channels or chats!</i></b>`
                         return await api.sendMessage(from.id, text, {
                             parse_mode: "HTML",
-                            protect_content: protect_content
+                            protect_content: settings.PROTECTED_CONTENT
                         })
                     }
                     username = forward.username
@@ -681,7 +681,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like it is not a chat/channel!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             let isValidUsername = false
@@ -698,7 +698,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like it is not a chat/channel!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const { status: botStatus } = await api.getChatMember(chats_id, settings.BOT.ID)
@@ -706,7 +706,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Add this bot as an administrator in @${username}!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["username"] = username
@@ -716,7 +716,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -729,7 +729,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const title = message.text
@@ -737,7 +737,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["title"] = title
@@ -745,7 +745,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -758,7 +758,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const description = message.text
@@ -766,7 +766,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["description"] = description
@@ -774,7 +774,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per join.\n\n💰 Minimum: $${settings.COST.PER_CLICK.CHAT_ADS.toFixed(4)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -787,7 +787,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -795,7 +795,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.CHAT_ADS.toFixed(4)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["cpc"] = amount
@@ -803,7 +803,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -816,7 +816,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -825,7 +825,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: from.id })
@@ -833,7 +833,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["budget"] = amount
@@ -856,7 +856,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You chat ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
                     resize_keyboard: true
@@ -875,7 +875,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const title = message.text
@@ -883,7 +883,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["title"] = title
@@ -891,7 +891,7 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description/what people should do in this ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -904,7 +904,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const description = message.text
@@ -912,7 +912,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 500</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["description"] = description
@@ -920,7 +920,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per task.\n\n💰 Minimum: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(4)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -933,7 +933,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -941,7 +941,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(4)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["cpc"] = amount
@@ -949,7 +949,7 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -962,7 +962,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -971,7 +971,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: from.id })
@@ -979,7 +979,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["budget"] = amount
@@ -1002,7 +1002,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You micro task created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
                     resize_keyboard: true
@@ -1021,7 +1021,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const title = message.text
@@ -1029,7 +1029,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const ads_id = localStore[from.id]["ads_id"]
@@ -1038,7 +1038,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad title updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
                     resize_keyboard: true
@@ -1055,7 +1055,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const description = message.text
@@ -1063,7 +1063,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const ads_id = localStore[from.id]["ads_id"]
@@ -1072,7 +1072,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad description updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
                     resize_keyboard: true
@@ -1089,7 +1089,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -1099,7 +1099,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ CPC should be greater than $${ads.cpc.toFixed(4)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             answerCallback[from.id] = null
@@ -1107,7 +1107,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad cpc updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
                     resize_keyboard: true
@@ -1124,7 +1124,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -1132,7 +1132,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Budget should be greater than 0.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: from.id })
@@ -1140,7 +1140,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const ads_id = localStore[from.id]["ads_id"]
@@ -1149,7 +1149,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad budget updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
                     resize_keyboard: true
@@ -1172,21 +1172,21 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task disabled or deleted!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             if (ads.completed.includes(from.id) || ads.skip.includes(from.id)) {
                 const text = `<b><i>❌ You've already completed/skipped</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             if (!forward || forward.username != ads.username) {
                 const text = `<b><i>🛰️ Forward a message from <a href='${ads.link}'>@${ads.username}</a></i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const currentTime = Math.floor(new Date().getTime() / 1000)
@@ -1194,7 +1194,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ The message you forwarded is too old.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             if (ads.remaining_budget < ads.cpc) {
@@ -1202,7 +1202,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const earn = (ads.cpc * settings.GIVEAWAY).toFixed(4)
@@ -1213,7 +1213,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Task completed, you've received +$${earn}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.teleKey,
                     resize_keyboard: true
@@ -1234,21 +1234,21 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task disabled or deleted!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             if (ads.skip.includes(from.id)) {
                 const text = `<b><i>❌ Task already skipped</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             if (ads.completed.includes(from.id)) {
                 const text = `<b><i>❌ Task already completed</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 }) 
             }
             if (ads.remaining_budget < ads.cpc) {
@@ -1256,7 +1256,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const sendTo = ads.chat_id
@@ -1274,7 +1274,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Submitted. Wait for advertiser approval.</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.mainKey,
                     resize_keyboard: true
@@ -1282,7 +1282,7 @@ api.on("message", async message => {
             })
             return await api.sendMessage(sendTo, `<b><i>🆔 CampaignID: #${ads._id}\n🎯 Type: MICRO STASK\n✅ Submitted: ${from.first_name}\n\n📊 Advertise => 📊 My Ads => 🎯 My Micro to see list</i></b>`, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -1297,7 +1297,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Only text message is allowed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             answerCallback[from.id] = null
@@ -1307,7 +1307,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ This task already rejected or completed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: keyList.myAdsKey,
                         resize_keyboard: true
@@ -1321,7 +1321,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ The response [#${pendingTask.campaign_id}] has been rejected.\n📃 Reason: ${message.text}</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
                     resize_keyboard: true
@@ -1329,7 +1329,7 @@ api.on("message", async message => {
             })
             return await api.sendMessage(pendingTask.done_by, `<b><i>🔴 Your micro task response [#${pendingTask.campaign_id}] has been rejected by the advertiser\n📃 Reason: ${message.text}</i></b>`, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -1346,7 +1346,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Amount should be greater than 0 and less than or equal to $${user.balance.withdrawable.toFixed(4)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: keyList.balanceKey,
                         resize_keyboard: true
@@ -1368,7 +1368,7 @@ api.on("message", async message => {
             }
             return await api.sendMessage(from.id, `<b><i>${text}</i></b>`, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.balanceKey,
                     resize_keyboard: true
@@ -1385,7 +1385,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid amount!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             } 
             const amount = parseFloat(message.text).toFixed(4)
@@ -1395,7 +1395,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ ${amount < minPay ? `Minimum payout is $${minPay}` : `You don't have enough balance.`}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             localStore[from.id]["payout"] = amount
@@ -1403,7 +1403,7 @@ api.on("message", async message => {
             const text = `<b><i>📤 Enter your USDT-TRC20 address for withdrawal.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -1416,7 +1416,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid address!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const isOk = isValidTRXAddress(message.text)
@@ -1424,7 +1424,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid address!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(localStore[from.id]["payout"]).toFixed(4)
@@ -1435,7 +1435,7 @@ api.on("message", async message => {
             if (status == 400) {
                 return await api.sendMessage(from.id, `<b><i>❌ Payout failed!</i></b>`, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             if (status == 200) {
@@ -1444,7 +1444,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Requested payout of $${amount} to ${address} is ${status == 200 ? "Processing" : "Failed"}!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -1457,7 +1457,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid amount!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const amount = parseFloat(message.text).toFixed(4)
@@ -1465,7 +1465,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum deposit $${settings.PAYMENT.MIN.DEPOSIT.toFixed(4)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             answerCallback[from.id] = null
@@ -1476,13 +1476,13 @@ api.on("message", async message => {
                 const text = `<b><i>❌ We can't generate a payment link.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content,
+                    protect_content: settings.PROTECTED_CONTENT,
 
                 })
             }
             await api.sendMessage(from.id, `<b><i>⌛ Generating payment link...</i></b>`, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.balanceKey,
                     resize_keyboard: true
@@ -1491,7 +1491,7 @@ api.on("message", async message => {
             const text = `<b><i><code>🆔 #${orderid}</code>\n\n💵 Amount: $${amount}\n⌛ Expire in 30 minutes</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
                         [
@@ -1513,7 +1513,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Enter userId in numberic.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: Number(message.text) })
@@ -1521,7 +1521,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid userId or user not found.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             answerCallback[from.id] = null
@@ -1529,7 +1529,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ User already banned.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             await userCollection.updateOne({_id: Number(message.text)},{$set:{banned: true}})
@@ -1537,7 +1537,7 @@ api.on("message", async message => {
             const text2 = `<b><i>❌ You're banned</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup:{
                     keyboard: keyList.mainKey,
                     resize_keyboard: true
@@ -1545,7 +1545,7 @@ api.on("message", async message => {
             })
             return await api.sendMessage(Number(message.text), text2, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -1558,7 +1558,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Enter userId in numberic.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             const user = await userCollection.findOne({ _id: Number(message.text) })
@@ -1566,7 +1566,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid userId or user not found.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             answerCallback[from.id] = null
@@ -1574,7 +1574,7 @@ api.on("message", async message => {
                 const text = `<b><i>✅ User already unbanned</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
-                    protect_content: protect_content
+                    protect_content: settings.PROTECTED_CONTENT
                 })
             }
             await userCollection.updateOne({_id: Number(message.text)},{$set:{banned: false}})
@@ -1582,7 +1582,7 @@ api.on("message", async message => {
             const text2 = `<b><i>✅ You're unbanned</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup:{
                     keyboard: keyList.mainKey,
                     resize_keyboard: true
@@ -1590,7 +1590,7 @@ api.on("message", async message => {
             })
             return await api.sendMessage(Number(message.text), text2, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return console.log(err.message)
@@ -1604,15 +1604,15 @@ api.on("message", async message => {
             answerCallback[from.id] = null
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
-                protect_content: protect_content
+                protect_content: settings.PROTECTED_CONTENT
             })
             await api.copyMessage(from.id, from.id, message_id, {
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 parse_mode: "HTML"
             })
             return await api.sendMessage(from.id, "<i><b>✅ Are you sure?</b></i>", {
                 parse_mode: "HTML",
-                protect_content: protect_content,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
                         [

@@ -36,5 +36,6 @@ export const settings = {
             DEPOSIT: 1,
             WITHDRAW: 2
         }
-    }
+    },
+    PROTECTED_CONTENT: true
 }
