@@ -170,20 +170,17 @@ api.onText(/^📃 History$/, async message => {
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
-        let text = `<b><i>📃 Here you can see the latest 10 waiting, pending, completed transaction history</i></b>`
+        let text = `<b><i>📃 Here you can see the latest 10 Pending & Completed transaction history</i></b>`
         const history = await paymentCollection.find({ user_id: from.id }).sort({ createdAt: -1 }).limit(10)
         if (history.length == 0) {
             text += `\n\n<b><i>💫 No Transaction Found!</i></b>`
         }
         history.forEach(item => {
-            if (item.status == "Waiting" && item.type == "payment") {
-                text += `\n\n<b><i>⌚ Status: ${item.status}  [<a href='https://oxapay.com/mpay/${item.trackId}'>Pay Now</a>]\n🛰️ Type: Deposit\n💷 Amount: $${item.amount.toFixed(6)}\n🆔 OrderID: ${item.orderId}</i></b>`   
-            }
-            if ((item.status == "Confirming" || item.status == "Paid") && item.type == "payment") {
-                text += `\n\n<b><i>${item.status == "Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.payAmount.toFixed(6)} ${item.currency}\n🆔 txID: ${item.txID}</i></b>`   
+            if ((item.status == "Paying" || item.status == "Paid") && (item.type == "payment" || item.type == "invoice")) {
+                text += `\n\n<b><i>${item.status == "Paying" ? "⌛" : "✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.amount.toFixed(6)} ${item.currency}\n🆔 TrackID: ${item.trackId}</i></b>`   
             }
             if (item.type == "payout") {
-                text += `\n\n<b><i>${item.status=="Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Payout\n💷 Amount: $${item.amount.toFixed(6)}\n🆔 txID: ${item.txID}</i></b>`   
+                text += `\n\n<b><i>${item.status == "Confirming" ?"⌛":"✅"} Status: ${item.status}\n🛰️ Type: Payout\n💷 Amount: $${item.amount.toFixed(6)}\n🆔 Track ID: ${item.trackId}</i></b>`   
             }
         })
         return await api.sendMessage(from.id, text, {

@@ -78,7 +78,7 @@ export const keyList = {
         ["🔙 Advertise"]
     ],
     balanceKey: [
-        ["➕ Deposit", "➖ Payout"],
+        ["➕ Deposit", "💷 Balance", "➖ Payout"],
         ["🔄 Convert", "📃 History"],
         ["🔙 Home"]
     ]
