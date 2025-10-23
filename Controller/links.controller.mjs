@@ -2,7 +2,7 @@ import api from "../Config/Telegram.mjs"
 import { settings } from "../Config/appConfig.mjs"
 import { adsCollection } from "../Models/ads.model.mjs"
 import { userCollection } from "../Models/user.model.mjs"
-import { onSuccessVisitSite } from "../Utils/tele.mjs"
+import { keyList, onSuccessVisitSite } from "../Utils/tele.mjs"
 
 const visitSite = async (req, res) => {
     try {
@@ -83,7 +83,11 @@ const verificationCheck = async (req, res) => {
                 })
                 await api.sendMessage(user_id, "<b><i>🎉 You're verified</i></b>", {
                     parse_mode: "HTML",
-                    protect_content: settings.PROTECTED_CONTENT
+                    protect_content: settings.PROTECTED_CONTENT,
+                    reply_markup: {
+                        keyboard: keyList.mainKey,
+                        resize_keyboard: true
+                    }
                 })
                 return res.status(200).send({ message: "🎉 You're verified" })
             }
