@@ -686,6 +686,9 @@ api.on("callback_query", async callback => {
                     }
                 }
             ])
+            if (!isNaN(stats?.[0]?.total_invited) && stats?.[0]?.total_invited > user.invites) {
+                user.invites = stats[0]?.total_invited
+            }
             const text = `<b>📈 Your Referral Stats\n\n━━━━━━━━━━━━━━━━━━━━\n👤 Total Invites: ${stats[0]?.total_invited || 0}\n✅ Verified Users: ${stats[0]?.verified || 0}\n🚫 Blocked Accounts: ${stats[0]?.blocked_bot || 0}\n🔴 Banned Accounts: ${stats[0]?.banned || 0}\n━━━━━━━━━━━━━━━━━━━━\n\n💵 Total Earned: $${user.balance.earned.toFixed(6)}\n\n✨ Keep spreading the word and watch your earnings grow! 🚀</b>`
             return await api.editMessageText(text, {
                 chat_id: from.id,
