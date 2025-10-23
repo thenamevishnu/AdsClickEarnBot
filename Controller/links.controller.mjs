@@ -77,7 +77,7 @@ const verificationCheck = async (req, res) => {
             const resData = await userCollection.findOneAndUpdate({ _id: user_id, is_verified: false }, { $set: { ip: ip, is_verified: true } })
             if (resData) {
                 await userCollection.updateOne({ _id: resData.invited_by }, { $inc: { "balance.balance": settings.REF.PER_REF, "balance.referral": settings.REF.PER_REF, "balance.earned": settings.REF.PER_REF } })
-                await api.sendMessage(resData.invited_by, `<b><i>🎉 One of your referral has been verified: +${settings.REF.PER_REF}</i></b>`, {
+                await api.sendMessage(resData.invited_by, `<b><i>🎉 One of your referral has been verified: +$${settings.REF.PER_REF}</i></b>`, {
                     parse_mode: "HTML",
                     protect_content: settings.PROTECTED_CONTENT
                 })
