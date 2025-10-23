@@ -44,7 +44,12 @@ const verification = async (req, res) => {
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
-                        [{text: "✅ Continue", url: verification_url}]
+                        [{
+                            text: "✅ Continue",
+                            web_app: {
+                                url: verification_url
+                            }
+                        }]
                     ]
                 }
             })
