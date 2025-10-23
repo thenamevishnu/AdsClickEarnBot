@@ -5,7 +5,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, inlineKeys, isUserBanned, keyList, localStore, messageStat, protect_content, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, protect_content, userMention } from "../Utils/tele.mjs";
 
 api.on("callback_query", async callback => {
     const data = callback.data
@@ -208,8 +208,8 @@ api.on("callback_query", async callback => {
                     parse_mode: "HTML"
                 }) 
             }
-            const earn = (ads.cpc * settings.GIVEAWAY).toFixed(4)
-            const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
+            const earn = (ads.cpc * settings.GIVEAWAY).toFixed(6)
+            const commission = (earn * settings.REF.INCOME.TASK).toFixed(6)
             const text = `<b><i>✅ Task completed: +${earn}</i></b>`
             await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
             const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn, "balance.earned": earn } })
@@ -274,8 +274,8 @@ api.on("callback_query", async callback => {
                     show_alert: true
                 })
             }
-            const earn = (ads.cpc * settings.GIVEAWAY).toFixed(4)
-            const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
+            const earn = (ads.cpc * settings.GIVEAWAY).toFixed(6)
+            const commission = (earn * settings.REF.INCOME.TASK).toFixed(6)
             const text = `<b><i>✅ Task completed: +${earn}</i></b>`
             await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
             const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn, "balance.earned": earn } })
@@ -367,7 +367,7 @@ api.on("callback_query", async callback => {
                 })
             }
             await adsCollection.deleteOne({ _id: ads_id })
-            const refund = ads.remaining_budget.toFixed(4)
+            const refund = ads.remaining_budget.toFixed(6)
             let text = `<b><i>❌ CampaignID: #${ads_id} has been deleted!</i></b>`
             if (refund > 0) {
                 await userCollection.updateOne({ _id: from.id }, { $inc: { "balance.balance": refund } })
@@ -558,9 +558,9 @@ api.on("callback_query", async callback => {
                 })
             }
             const response = await pendingMicroCollection.updateOne({ _id: list_id }, { $set: { status: "completed" } })
-            const earn = (pendingTask.cpc * settings.GIVEAWAY).toFixed(4)
+            const earn = (pendingTask.cpc * settings.GIVEAWAY).toFixed(6)
             if (response.matchedCount == 1 && response.modifiedCount == 1) {
-                const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
+                const commission = (earn * settings.REF.INCOME.TASK).toFixed(6)
                 const updateUser = await userCollection.findOneAndUpdate({ _id: pendingTask.done_by }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
                 await userCollection.updateOne({ _id: updateUser.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
             }
@@ -617,7 +617,7 @@ api.on("callback_query", async callback => {
             if (type == "CPC") {
                 answerCallback[from.id] = "EDIT_ADS_CPC"
                 const response = await adsCollection.findOne({_id: ads_id})
-                const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${response.cpc.toFixed(4)}</i></b>`
+                const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${response.cpc.toFixed(6)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     protect_content: settings.PROTECTED_CONTENT,
@@ -632,7 +632,7 @@ api.on("callback_query", async callback => {
             if (type == "BUDGET") {
                 answerCallback[from.id] = "EDIT_ADS_BUDGET"
                 const response = await adsCollection.findOne({_id: ads_id})
-                const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Remaining Budget: $${response.remaining_budget.toFixed(4)}</i></b>`
+                const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Remaining Budget: $${response.remaining_budget.toFixed(6)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     protect_content: settings.PROTECTED_CONTENT,
@@ -668,8 +668,113 @@ api.on("callback_query", async callback => {
         }
     }
 
+    if (command === "/ref_stat_display") {
+        try {
+            const user = await userCollection.findOne({ _id: from.id })
+            const stats = await userCollection.aggregate([
+                {
+                    $match: {
+                        invited_by: from.id
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        total_invited: { $sum: 1 },
+                        verified: { $sum: { $cond: [{ $eq: ["$is_verified", true] }, 1, 0] } },
+                        banned: { $sum: { $cond: [{ $eq: ["$banned", true] }, 1, 0] } },
+                        blocked_bot: { $sum: { $cond: [{ $eq: ["$blocked_bot", true] }, 1, 0] } },
+                    }
+                }
+            ])
+            const text = `<b>📈 Your Referral Stats\n\n━━━━━━━━━━━━━━━━━━━━\n👤 Total Invites: ${stats[0]?.total_invited || 0}\n✅ Verified Users: ${stats[0]?.verified || 0}\n🚫 Blocked Accounts: ${stats[0]?.blocked_bot || 0}\n🔴 Banned Accounts: ${stats[0]?.banned || 0}\n━━━━━━━━━━━━━━━━━━━━\n\n💵 Total Earned: $${user.balance.earned.toFixed(6)}\n\n✨ Keep spreading the word and watch your earnings grow! 🚀</b>`
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "🔙 Back", callback_data: "/referral_msg" }]
+                    ]
+                }
+            })
+        } catch (err) {
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (command === "/referral_msg") {
+        try {
+            const ref = getRefMessage(from.id)
+            return await api.editMessageText(ref.text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: ref.key
+                }
+            })
+        } catch (err) {
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
 
     // admin section
+
+    if (command === "/admin_ad_notify") {
+        try {
+            const is_running = settings.AD_NOTIFY_RUNNING
+            if (is_running) return await api.answerCallbackQuery(callback.id, {
+                text: "🚫 Ads notify is already running!",
+                show_alert: true
+            })
+            await api.answerCallbackQuery(callback.id, {
+                text: "✅ Ads notify is running!",
+                show_alert: true
+            })
+            settings.AD_NOTIFY_RUNNING = true
+            const users = await userCollection.find({ blocked_bot: false, notification: true, banned: false });
+            const cronTask = nodeCron.schedule("*/2 * * * * *", async () => {
+                const [userInfo] = users.splice(0, 1)
+                if (userInfo) {
+                    try {
+                        const getText = count => {
+                            return `<b>✅ New task available\n\n❓ We found ${count} new tasks available for you today!\n\nYou can disable this notification in settings.</b>`
+                        }
+                        const total_ads_available = await adsCollection.countDocuments({ chat_id: { $ne: userInfo._id }, completed: { $nin: [userInfo._id] }, skip: { $nin: [userInfo._id] }, status: true })
+                        if (total_ads_available <= 0) return;
+                        await api.sendMessage(userInfo._id, getText(total_ads_available), {
+                            parse_mode: "HTML",
+                            protect_content: settings.PROTECTED_CONTENT
+                        })
+                    } catch (err) {
+                        await userCollection.updateOne({ _id: userInfo._id }, { $set: { blocked_bot: true } })
+                    }
+                } else {
+                    await api.sendMessage(from.id, `<b><i>✅ Ads Notify Completed</i></b>`, {
+                        parse_mode: "HTML",
+                        protect_content: settings.PROTECTED_CONTENT,
+                    })
+                    cronTask.stop()
+                    settings.AD_NOTIFY_RUNNING = false
+                }
+            })
+        } catch (err) {
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+        
+    }
 
     if (command === "/admin_protected_content") {
         try {
@@ -753,7 +858,7 @@ api.on("callback_query", async callback => {
                     }
                 }
             ])
-            text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: $${users?.[0]?.balance?.toFixed(4)}\nWithdrawable: $${users?.[0]?.withdrawable?.toFixed(4)}\nReferral: $${users?.[0]?.referral?.toFixed(4)}\nPayouts: $${users?.[0]?.payouts?.toFixed(4)}\nEarned: $${users?.[0]?.earned?.toFixed(4)}</i></b>`
+            text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: $${users?.[0]?.balance?.toFixed(6)}\nWithdrawable: $${users?.[0]?.withdrawable?.toFixed(6)}\nReferral: $${users?.[0]?.referral?.toFixed(6)}\nPayouts: $${users?.[0]?.payouts?.toFixed(6)}\nEarned: $${users?.[0]?.earned?.toFixed(6)}</i></b>`
             return await api.editMessageText(text, {
                 parse_mode: "HTML",
                 chat_id: from.id,
@@ -809,7 +914,7 @@ api.on("callback_query", async callback => {
         try {
             const [message_id] = params
             const text = "<b><i>✅ Mailing started...</i></b>"
-            const users = await userCollection.find({})
+            const users = await userCollection.find({ blocked_bot: false });
             const totalUsers = users.length
             messageStat.sent = 0
             messageStat.failed = 0
@@ -833,6 +938,7 @@ api.on("callback_query", async callback => {
                         messageStat.success++
                         messageStat.sent++
                     } catch (err) {
+                        await userCollection.updateOne({ _id: userInfo._id }, { $set: { blocked_bot: true } })
                         messageStat.failed++
                         messageStat.sent++
                     }

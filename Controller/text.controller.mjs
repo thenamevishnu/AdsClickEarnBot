@@ -3,7 +3,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, inlineKeys, invited_user, isUserBanned, keyList, listedKey, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, getRefMessage, inlineKeys, invited_user, isUserBanned, keyList, listedKey, protect_content, showAdsText, userMention } from "../Utils/tele.mjs";
 
 // start message
 
@@ -68,7 +68,7 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
         if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         answerCallback[from.id] = null
-        const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(2)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(2)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(2)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(2)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(2)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(2)}</b>`
+        const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             protect_content: settings.PROTECTED_CONTENT,
@@ -114,7 +114,7 @@ api.onText(/^➖ Payout$/, async message => {
         if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         if (user.balance.withdrawable < settings.PAYMENT.MIN.WITHDRAW) {
-            const text = `<b><i>❌ Minimum withdrawal is $${settings.PAYMENT.MIN.WITHDRAW.toFixed(4)}</i></b>`
+            const text = `<b><i>❌ Minimum withdrawal is $${settings.PAYMENT.MIN.WITHDRAW.toFixed(6)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 protect_content: settings.PROTECTED_CONTENT
@@ -177,13 +177,13 @@ api.onText(/^📃 History$/, async message => {
         }
         history.forEach(item => {
             if (item.status == "Waiting" && item.type == "payment") {
-                text += `\n\n<b><i>⌚ Status: ${item.status}  [<a href='https://oxapay.com/mpay/${item.trackId}'>Pay Now</a>]\n🛰️ Type: Deposit\n💷 Amount: $${item.amount.toFixed(4)}\n🆔 OrderID: ${item.orderId}</i></b>`   
+                text += `\n\n<b><i>⌚ Status: ${item.status}  [<a href='https://oxapay.com/mpay/${item.trackId}'>Pay Now</a>]\n🛰️ Type: Deposit\n💷 Amount: $${item.amount.toFixed(6)}\n🆔 OrderID: ${item.orderId}</i></b>`   
             }
             if ((item.status == "Confirming" || item.status == "Paid") && item.type == "payment") {
-                text += `\n\n<b><i>${item.status == "Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.payAmount.toFixed(4)} ${item.currency}\n🆔 txID: ${item.txID}</i></b>`   
+                text += `\n\n<b><i>${item.status == "Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.payAmount.toFixed(6)} ${item.currency}\n🆔 txID: ${item.txID}</i></b>`   
             }
             if (item.type == "payout") {
-                text += `\n\n<b><i>${item.status=="Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Payout\n💷 Amount: $${item.amount.toFixed(4)}\n🆔 txID: ${item.txID}</i></b>`   
+                text += `\n\n<b><i>${item.status=="Confirming"?"🤔":"✅"} Status: ${item.status}\n🛰️ Type: Payout\n💷 Amount: $${item.amount.toFixed(6)}\n🆔 txID: ${item.txID}</i></b>`   
             }
         })
         return await api.sendMessage(from.id, text, {
@@ -200,13 +200,15 @@ api.onText(/^👭 Referrals$/, async message => {
         if(message.chat.type != "private") return
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
-        const user = await userCollection.findOne({_id: from.id})
-        const text = `<b><i>👭 You have total : ${user.invites} Referrals\n\n💸 Total Earned : $${user.balance.referral.toFixed(4)}\n\n🔗 Your Referral Link : https://t.me/${settings.BOT.USERNAME}?start=${from.id}\n\n🎉 You will earn 10% of each user"s earnings from tasks, and 10% of USD they deposit in bot. Share your refer link and earn money ✅</i></b>`
-        return await api.sendMessage(from.id, text, {
+        if (userStatusCheck) return
+        const ref = getRefMessage(from.id)
+        return await api.sendMessage(from.id, ref.text, {
             parse_mode: "HTML",
             protect_content: settings.PROTECTED_CONTENT,
-            disable_web_page_preview: true
+            disable_web_page_preview: true,
+            reply_markup: {
+                inline_keyboard: ref.key
+            }
         })
     } catch (err) {
         return console.log(err.message)

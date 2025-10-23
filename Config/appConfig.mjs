@@ -27,7 +27,7 @@ export const settings = {
         PER_REF: 0.001,
         INCOME: {
             TASK: 0.1,
-            DEPOSIT: 0.1
+            DEPOSIT: 0.05
         }  
     },
     GIVEAWAY: 0.5,
@@ -37,5 +37,6 @@ export const settings = {
             WITHDRAW: 2
         }
     },
-    PROTECTED_CONTENT: true
+    PROTECTED_CONTENT: true,
+    AD_NOTIFY_RUNNING: false
 }

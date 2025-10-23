@@ -26,7 +26,12 @@ export const isUserBanned = async (user_id, bool=0) => {
                 protect_content: true,
                 reply_markup: {
                     inline_keyboard: [
-                        [{text: "✅ Get Verified", url: verification_url}]
+                        [{
+                            text: "✅ Get Verified",
+                            web_app: {
+                                url: verification_url
+                            }
+                        }]
                     ]
                 }
             })
@@ -77,6 +82,16 @@ export const keyList = {
         ["🔄 Convert", "📃 History"],
         ["🔙 Home"]
     ]
+}
+
+export const getRefMessage = (id) => {
+    const shareText = `https://t.me/share/url?url=${encodeURIComponent(`**💸 Start Earning Effortlessly with ${settings.BOT.USERNAME}!\n\n🚀 Earn passive income by completing simple tasks.\n💵 Instant cashouts available anytime, no delays.\n\n🤖 Start Now: https://t.me/${settings.BOT.USERNAME}?start=${id}**`)}`
+    const text = `<b>🌍 Invite & Earn Instantly!\n\n💸 How It Works:\n\n✅ Earn $${settings.REF.PER_REF} for every active user you invite to our bot.\n✅ Get ${settings.REF.INCOME.TASK * 100}% of your referrals’ task earnings.\n✅ Receive ${settings.REF.INCOME.DEPOSIT * 100}% from every deposit your referrals make.\n\n🔗 Your referral link: https://t.me/${settings.BOT.USERNAME}?start=${id}\n\n⚠️ Note: Invite only real users — fake or duplicate accounts can lead to suspension or loss of rewards.\n\n🚀 Start inviting, grow your team, and boost your income today!</b>`
+    const key = [
+        [{ text: "📈 Referral Statistics", callback_data: "/ref_stat_display" }],
+        [{ text: "🔗 Share Link", url: shareText }]
+    ]
+    return { text, key }
 }
 
 export const inlineKeys = {
@@ -238,6 +253,7 @@ export const getAdminPanel = () => {
             {text: `Protected Content: ${settings.PROTECTED_CONTENT ? "✅ Enabled" : "❌ Disabled"}`, callback_data: `/admin_protected_content`},
         ],
         [
+            {text: "🔔 Ad Notify", callback_data: "/admin_ad_notify"},
             { text: "📉 User Stat", callback_data: `/admin_user_stat` },
             { text: "📤 Mailing", callback_data: "/admin_mailing" }
         ],[

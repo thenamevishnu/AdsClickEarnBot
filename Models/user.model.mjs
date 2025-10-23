@@ -6,6 +6,7 @@ const user = new Schema({
     first_name: { type: String, required: true },
     last_name: { type: String },
     username: { type: String },
+    blocked_bot: { type: Boolean, default: false },
     balance: {
         withdrawable: { type: Number, default: 0 },
         balance: { type: Number, default: 0 },

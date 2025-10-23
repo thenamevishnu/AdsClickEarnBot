@@ -25,7 +25,7 @@ const onPaymentIPN = async (req, res) => {
                 if (status === "Paying" && !payInfo) {
                     const createdDoc = await paymentCollection.create({
                         user_id: Number(chat_id),
-                        amount: parseFloat(postData.amount).toFixed(4),
+                        amount: parseFloat(postData.amount).toFixed(6),
                         type: postData.type,
                         status: status,
                         currency: "USDT",
@@ -54,13 +54,14 @@ const onPaymentIPN = async (req, res) => {
                             parse_mode: "HTML",
                             protect_content: settings.PROTECTED_CONTENT
                         })
-                        const deposit = parseFloat(postData.amount).toFixed(4)
-                        const commission = (deposit * settings.REF.INCOME.DEPOSIT).toFixed(4)
+                        const deposit = parseFloat(postData.amount).toFixed(6)
+                        const commission = (deposit * settings.REF.INCOME.DEPOSIT).toFixed(6)
                         const userUpdate = await userCollection.findOneAndUpdate({
                             _id: chat_id
                         }, {
                             $inc: {
-                                "balance.balance": deposit
+                                "balance.balance": deposit,
+                                "balance.deposits": deposit
                             }
                         })
                         await userCollection.updateOne({
@@ -68,7 +69,8 @@ const onPaymentIPN = async (req, res) => {
                         }, {
                             $inc: {
                                 "balance.withdrawable": commission,
-                                "balance.referral": commission
+                                "balance.referral": commission,
+                                "balance.earned": commission
                             }
                         })
                     }
@@ -80,7 +82,7 @@ const onPaymentIPN = async (req, res) => {
                     const orderId = createOrderId()
                     const createdDoc = await paymentCollection.create({
                         user_id: Number(chat_id),
-                        amount: parseFloat(postData.amount).toFixed(4),
+                        amount: parseFloat(postData.amount).toFixed(6),
                         type: postData.type,
                         status: status,
                         currency: "USDT",
@@ -111,7 +113,7 @@ const onPaymentIPN = async (req, res) => {
                             parse_mode: "HTML",
                             protect_content: settings.PROTECTED_CONTENT
                         })
-                        const payout = parseFloat(postData.amount).toFixed(4)
+                        const payout = parseFloat(postData.amount).toFixed(6)
                         await userCollection.updateOne({
                             _id: chat_id
                         }, {
