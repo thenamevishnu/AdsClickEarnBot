@@ -722,7 +722,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, `<b>❌ Make sure the bot (@${settings.BOT.USERNAME}) is an administrator in your chat/channel!</b>`, {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
