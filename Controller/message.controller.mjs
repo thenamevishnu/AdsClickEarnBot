@@ -65,7 +65,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -103,7 +106,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -132,7 +138,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -161,7 +170,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -190,7 +202,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -247,7 +262,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -271,7 +289,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -300,7 +321,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -330,7 +354,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -360,7 +387,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -391,7 +421,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -448,7 +481,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -470,7 +506,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -499,7 +538,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -529,7 +571,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -559,7 +604,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -590,7 +638,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -647,7 +698,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -754,7 +808,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -783,7 +840,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -812,7 +872,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -869,7 +932,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -900,7 +966,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -929,7 +998,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -958,7 +1030,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1015,7 +1090,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1051,7 +1129,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1085,7 +1166,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1120,7 +1204,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1162,7 +1249,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1226,7 +1316,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1291,7 +1384,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1338,7 +1434,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1381,7 +1480,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1412,7 +1514,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1453,7 +1558,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1507,7 +1615,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1554,7 +1665,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1599,7 +1713,10 @@ api.on("message", async message => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1629,7 +1746,10 @@ api.on("message", async message => {
                 }
             })
         } catch (err) {
-            return console.log(err.message)
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
         }
     }
 
@@ -1652,7 +1772,6 @@ api.on("message", async message => {
                 protect_content: true
             })
         } catch (err) {
-            console.log(err)
             return await api.sendMessage(from.id, `<i>❌ Error occured</i>`, {
                 parse_mode: "HTML",
                 protect_content: true
@@ -1692,7 +1811,6 @@ api.on("message", async message => {
                 protect_content: true
             })
         } catch (err) {
-            console.log(err)
             return await api.sendMessage(from.id, `<i>❌ Error occured</i>`, {
                 parse_mode: "HTML",
                 protect_content: true

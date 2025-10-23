@@ -54,7 +54,10 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -78,7 +81,10 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -102,7 +108,10 @@ api.onText(/^➕ Deposit$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -133,11 +142,14 @@ api.onText(/^➖ Payout$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
-api.onText("/home", async message => {
+api.onText("/ads_run_command", async message => {
     return await api.sendMessage(message.chat.id, "<i>🏡 Home</i>", { parse_mode: "HTML" })
 })
 
@@ -160,7 +172,10 @@ api.onText(/^🔄 Convert$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -188,7 +203,10 @@ api.onText(/^📃 History$/, async message => {
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -208,7 +226,10 @@ api.onText(/^👭 Referrals$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -230,7 +251,10 @@ api.onText(/^⚙️ Settings$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -246,7 +270,10 @@ api.onText(/^⁉️ info$/, async message => {
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -288,7 +315,10 @@ api.onText(/^🎯 Micro Task$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -311,7 +341,10 @@ api.onText(/^🛰️ Tele Task$|^⛔ Cancel$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -353,7 +386,10 @@ api.onText(/^🤖 Start Bots$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -376,7 +412,10 @@ api.onText(/^💻 Web Task$|^🛑 Cancel$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -418,7 +457,10 @@ api.onText(/^🔗 Visit Sites$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -464,7 +506,10 @@ api.onText(/^📄 View Posts$/, async message => {
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -506,7 +551,10 @@ api.onText(/^💬 Join Chats$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -528,7 +576,10 @@ api.onText(/^📊 Advertise$|^\/advertise$|^🔙 Advertise$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -551,7 +602,10 @@ api.onText(/^➕ New Ad$|^❌ Cancel$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -576,7 +630,10 @@ api.onText(/^🤖 New Bots$/, async message => {
             } 
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -601,7 +658,10 @@ api.onText(/^🔗 New Sites$/, async message => {
             } 
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -626,7 +686,10 @@ api.onText(/^📄 New Posts$/, async message => {
             } 
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -651,7 +714,10 @@ api.onText(/^💬 New Chats$/, async message => {
             } 
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -676,7 +742,10 @@ api.onText(/^🎯 New Micro$/, async message => {
             } 
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -699,7 +768,10 @@ api.onText(/^📊 My Ads$|^✖️ Cancel$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -730,7 +802,10 @@ api.onText(/^🤖 My Bots$/, async message => {
             })
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -762,7 +837,10 @@ api.onText(/^🔗 My Sites$/, async message => {
             })
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -793,7 +871,10 @@ api.onText(/^📄 My Posts$/, async message => {
             })
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -825,7 +906,10 @@ api.onText(/^💬 My Chats$/, async message => {
             })
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -857,6 +941,9 @@ api.onText(/^🎯 My Micro$/, async message => {
             })
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })

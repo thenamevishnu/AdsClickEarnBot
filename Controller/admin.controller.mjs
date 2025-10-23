@@ -18,7 +18,10 @@ api.onText(/^\/admin$/, async message => {
             }
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
 
@@ -37,6 +40,9 @@ api.onText(/\/listed/, async message => {
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
-        return console.log(err.message)
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            protect_content: settings.PROTECTED_CONTENT
+        })
     }
 })
