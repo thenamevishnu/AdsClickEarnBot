@@ -922,9 +922,8 @@ api.on("callback_query", async callback => {
             messageStat.sent = 0
             messageStat.failed = 0
             messageStat.success = 0
-            await api.editMessageText(text, {
-                chat_id: from.id,
-                message_id: callback.message.message_id,
+            await api.deleteMessage(from.id, callback.message.message_id)
+            await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
