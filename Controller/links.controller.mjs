@@ -41,7 +41,7 @@ const verification = async (req, res) => {
             const verification_url = `${process.env.SERVER}/verification/${user_id}`
             await api.sendMessage(user_id, joinText, {
                 parse_mode: "HTML",
-                protect_content: true,
+                protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
                         [{text: "✅ Continue", url: verification_url}]
