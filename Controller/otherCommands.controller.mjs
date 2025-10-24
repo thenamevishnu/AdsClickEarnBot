@@ -1,50 +1,13 @@
 import api from "../Config/Telegram.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { protect_content, userMention } from "../Utils/tele.mjs";
+import { userMention } from "../Utils/tele.mjs";
 
 api.onText(/^\/id$/, async message => {
     try {
         const from = message.from
-        return await api.sendMessage(message.chat.id, from.id, {
-            parse_mode: "HTML",
-            protect_content: settings.PROTECTED_CONTENT,
-            reply_to_message_id: message.message_id
-        })
-    } catch (err) {
-        return await api.sendMessage(message.chat.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
-api.onText(/^\/gid$/, async message => {
-    try {
-        const chat = message.chat
-        if(chat.type != "group" && chat.type != "supergroup") return
-        return await api.sendMessage(chat.id, chat.id, {
-            parse_mode: "HTML",
-            protect_content: settings.PROTECTED_CONTENT,
-            reply_to_message_id: message.message_id
-        })
-    } catch (err) {
-        return await api.sendMessage(message.chat.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
-api.onText(/^\/leaderboard$/, async message => {
-    try {
-        const chat = message.chat
-        const usersList = await userCollection.find({_id: {$nin: [settings.ADMIN.ID, settings.ADMIN.ID2]}, is_verified: true, blocked_bot: false, banned: false, invites: { $gt: 0 } }).limit(10).sort({invites: -1})
-        let text = `🎉 @${settings.BOT.USERNAME} Top 10\n`
-        usersList.forEach((item, index) => {
-            text += `\n${index+1 < 10 ? `0${index+1}` : index+1}: ${userMention(item._id, item.username, item.first_name)} - ${item.invites} Refs`
-        })
-        return await api.sendMessage(chat.id, `<b><i>${text}</i></b>`, {
+        const text = `<b>🆔 Telegram ID: <code>${from.id}</code>${message.chat.type != "private" && `\n🆔 Group ID: <code>${message.chat.id}</code>`}</b>`
+        return await api.sendMessage(message.chat.id, text, {
             parse_mode: "HTML",
             protect_content: settings.PROTECTED_CONTENT,
             reply_to_message_id: message.message_id

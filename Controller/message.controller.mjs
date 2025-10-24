@@ -1,12 +1,13 @@
 import { isUri } from "valid-url";
 import api from "../Config/Telegram.mjs";
-import { answerCallback, getKeyArray, isUserBanned, keyList, localStore, protect_content, shortID } from "../Utils/tele.mjs";
+import { answerCallback, getKeyArray, isUserBanned, keyList, localStore, shortID } from "../Utils/tele.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { createPaymentLink, createPayout } from "../Utils/oxapay.mjs";
 import { createOrderId, isValidTRXAddress } from "../Utils/helper.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
+import { deletedAdsModel } from "../Models/deleted_ads.model.mjs";
 
 api.on("message", async message => {
     if (message.chat.type !== "private") return
@@ -243,7 +244,10 @@ api.on("message", async message => {
                 short = shortID()
                 const response = await adsCollection.findOne({ _id: short })
                 if (!response) {
-                    break
+                    const res = await deletedAdsModel.findOne({ _id: short })
+                    if (!res) {
+                        break;
+                    }
                 }
             }
             localStore[from.id]["_id"] = short
@@ -462,7 +466,10 @@ api.on("message", async message => {
                 short = shortID()
                 const response = await adsCollection.findOne({ _id: short })
                 if (!response) {
-                    break
+                    const res = await deletedAdsModel.findOne({ _id: short })
+                    if (!res) {
+                        break;
+                    }
                 }
             }
             localStore[from.id]["_id"] = short
@@ -679,7 +686,10 @@ api.on("message", async message => {
                 short = shortID()
                 const response = await adsCollection.findOne({ _id: short })
                 if (!response) {
-                    break
+                    const res = await deletedAdsModel.findOne({ _id: short })
+                    if (!res) {
+                        break;
+                    }
                 }
             }
             localStore[from.id]["_id"] = short
@@ -913,7 +923,10 @@ api.on("message", async message => {
                 short = shortID()
                 const response = await adsCollection.findOne({ _id: short })
                 if (!response) {
-                    break
+                    const res = await deletedAdsModel.findOne({ _id: short })
+                    if (!res) {
+                        break;
+                    }
                 }
             }
             localStore[from.id]["_id"] = short
@@ -1071,7 +1084,10 @@ api.on("message", async message => {
                 short = shortID()
                 const response = await adsCollection.findOne({ _id: short })
                 if (!response) {
-                    break
+                    const res = await deletedAdsModel.findOne({ _id: short })
+                    if (!res) {
+                        break;
+                    }
                 }
             }
             localStore[from.id]["_id"] = short

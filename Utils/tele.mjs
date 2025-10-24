@@ -10,6 +10,18 @@ export const answerCallback = {}
 export const localStore = {}
 export const messageStat = {}
 
+const ads = [{
+    text: "Fast & Secure Crypto Pay!",
+    url: "https://oxapay.com/?ref=50087312"
+}]
+
+const getRandomAds = () => {
+    const randomIndex = Math.floor(Math.random() * ads.length)
+    return ads[randomIndex]
+}
+
+export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn $${settings.REF.PER_REF} USD for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: @${settings.CHAT.USERNAME}\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
+
 export const userMention = (user_id, username, first_name) => {
     const mention = username ? `@${username}` : `<a href='tg://user?id=${user_id}'>${first_name}</a>`
     return mention
@@ -45,15 +57,22 @@ export const isUserBanned = async (user_id, bool=0) => {
 }
 
 export const shortID = () => {
-    const short = new ShortUniqueId({ length: 10 })
-    return short.rnd()
+    const string = "1234567890abcdef"
+    let j = 0
+    let rnd = ""
+    while (j < 20) {
+        const randomIndex = Math.floor(Math.random() * string.length)
+        rnd += string[randomIndex]
+        j++
+    }
+    return rnd
 } 
 
 export const keyList = {
     mainKey: [
         ["🛰️ Tele Task", "🎯 Micro Task", "💻 Web Task"],
         ["💷 Balance", "👭 Referrals", "⚙️ Settings"],
-        ["📊 Advertise", "⁉️ info"]
+        ["📊 Advertise", "❓ FAQ"]
     ],
     teleKey: [
         ["🤖 Start Bots", "📄 View Posts", "💬 Join Chats"],
@@ -89,7 +108,22 @@ export const getRefMessage = (id) => {
     const text = `<b>🌍 Invite & Earn Instantly!\n\n💸 How It Works:\n\n✅ Earn $${settings.REF.PER_REF} for every active user you invite to our bot.\n✅ Get ${settings.REF.INCOME.TASK * 100}% of your referrals’ task earnings.\n✅ Receive ${settings.REF.INCOME.DEPOSIT * 100}% from every deposit your referrals make.\n\n🔗 Your referral link: https://t.me/${settings.BOT.USERNAME}?start=${id}\n\n⚠️ Note: Invite only real users — fake or duplicate accounts can lead to suspension or loss of rewards.\n\n🚀 Start inviting, grow your team, and boost your income today!</b>`
     const key = [
         [{ text: "📈 Referral Statistics", callback_data: "/ref_stat_display" }],
-        [{ text: "🔗 Share Link", url: shareText }]
+        [{ text: "🔗 Share Link", url: shareText }],
+        [{ text: "🏆 Leaderboard", callback_data: "/leaderboard" }]
+    ]
+    return { text, key }
+}
+
+export const getFaq = () => {
+    const text = `<b>📚 FAQ — Your Quick Guide</b>\n\nHave questions? We've got you covered! Check out these answers to get started and make the most of the bot.`
+    const key = [
+        [{ text: `🤖 What is ${settings.BOT.USERNAME}?`, callback_data: "/faq 0" }],
+        [{ text: "💰 How can I earn money?", callback_data: "/faq 1" }],
+        [{ text: "👥 How does the referral system work?", callback_data: "/faq 2" }],
+        [{ text: "📢 Can I promote my own business?", callback_data: "/faq 3" }],
+        [{ text: "💳 How do I withdraw my earnings?", callback_data: "/faq 4" }],
+        [{ text: "⏰ When are rewards credited?", callback_data: "/faq 5" }],
+        [{ text: "🛠 Need Help?", callback_data: "/faq 6" }]
     ]
     return { text, key }
 }

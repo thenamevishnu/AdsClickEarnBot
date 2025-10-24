@@ -5,7 +5,8 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, protect_content, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, protect_content, userMention } from "../Utils/tele.mjs";
+import { deletedAdsModel } from "../Models/deleted_ads.model.mjs";
 
 api.on("callback_query", async callback => {
     const data = callback.data
@@ -52,7 +53,7 @@ api.on("callback_query", async callback => {
             const [notify] = params
             await userCollection.updateOne({ _id: from.id }, { $set: { notification: notify } })
             const user = await userCollection.findOne({ _id: from.id })
-            const text = `<b><i>🛎️ Notification: ${ user.notification ? "✅" : "❌" }\n\n📅 Since: ${new Date(user.createdAt).toLocaleString("en-IN")}</i></b>`
+            const text = `<b>⚙️ Account settings\n\n🆔 Telegram ID: <code>${from.id}</code>\n🛎️ Notification: ${user.notification ? "🔔 On" : "🔕 Off" }\n🔒 Verification Status : ${user.is_verified ? "✅ Verified" : "⛔️ Not Verified"}\n\n📅 Since: ${new Date(user.createdAt).toLocaleString("en-IN").toUpperCase()}</b>`
             return await api.editMessageText(text, {
                 parse_mode: "HTML",
                 chat_id: from.id,
@@ -69,6 +70,50 @@ api.on("callback_query", async callback => {
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
+    }
+
+    if (command === "/faq") {
+        try {
+            const [index] = params
+            const answers = [
+                `${settings.BOT.NAME} is a Telegram earning platform where users can complete simple tasks, engage with posts, visit websites, and earn real rewards. You can also run your own ad campaigns to promote your business or projects!`,
+                `You can earn through multiple methods: Start Bots — Interact with partner bots; View Posts — Watch sponsored posts or content; Join Chats — Join groups or channels to earn rewards; Micro Tasks — Complete small, easy missions; Visit Sites — Open websites and get paid.`,
+                `Invite your friends and earn extra bonuses! ${settings.REF.INCOME.TASK * 100}% of your invitee’s task earnings, ${settings.REF.INCOME.DEPOSIT * 100}% of your invitee’s deposits, and an extra $${settings.REF.PER_REF} for every verified referral. There’s no limit — the more you invite, the more you earn!`,
+                `Yes! You can create ad campaigns to promote bots, groups, websites, or tasks. Reach real users who engage with your content.`,
+                `You can withdraw through Oxapay or any other crypto wallet — a fast and secure crypto payment gateway.`,
+                `Rewards are added instantly after task completion. Referral and deposit bonuses update automatically.`,
+                `If you face any issue, reach out to Support or check our Official Channel for updates.`
+            ]
+            const text = `<b><i>${callback.message.reply_markup.inline_keyboard[index][0].text}\n\n${answers[index]}</i></b>`
+            return await api.editMessageText(text, {
+                parse_mode: "HTML",
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "🔙 Back", callback_data: "/faq_home" }]
+                    ]
+                }
+            })
+        } catch (err) {
+            console.log(err)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if(command === "/faq_home"){
+        const { text, key } = getFaq()
+        return await api.editMessageText(text, {
+            parse_mode: "HTML",
+            chat_id: from.id,
+            message_id: callback.message.message_id,
+            reply_markup: {
+                inline_keyboard: key
+            }
+        })
     }
 
     // task skip
@@ -366,6 +411,7 @@ api.on("callback_query", async callback => {
                     parse_mode: "HTML"
                 })
             }
+            await deletedAdsModel.create(ads.toObject())
             await adsCollection.deleteOne({ _id: ads_id })
             const refund = ads.remaining_budget.toFixed(6)
             let text = `<b><i>❌ CampaignID: #${ads_id} has been deleted!</i></b>`
@@ -379,6 +425,7 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML"
             })
         } catch (err) {
+            console.log(err)
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
                 protect_content: settings.PROTECTED_CONTENT
@@ -719,6 +766,62 @@ api.on("callback_query", async callback => {
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: ref.key
+                }
+            })
+        } catch (err) {
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (command === "/leaderboard") {
+        try {
+            const data = await userCollection.aggregate([
+                {
+                    $match: {
+                        invited_by: { $ne: settings.ADMIN.ID }
+                    }
+                },{
+                    $group: {
+                        _id: "$invited_by",
+                        verified_ref: {
+                            $sum: { $cond: ["$is_verified", 1, 0] }
+                        }
+                    }
+                }, {
+                    $lookup: {
+                        from: "users",
+                        localField: "_id",
+                        foreignField: "_id",
+                        as: "user"
+                    }
+                }, {
+                    $limit: 15
+                }, {
+                    $sort: {
+                        verified_ref: -1
+                    }
+                }
+            ])
+            const info = data.map(user => ({
+                id: user._id,
+                name: user.user[0]?.first_name,
+                username: user.user[0]?.username,
+                verified_ref: user.verified_ref
+            }))
+            const nos = ["🥇","🥈","🥉"]
+            const text = `<b>🏆 Referral Leaderboard (Top 15)\n📅 Duration: <code>October 25 – November 25, 2025</code>\n\n${info.map((user, index) => `${nos[index] ? `${nos[index]}` : (index + 1) < 10 ? `#0${index + 1}` : `#${index + 1}`}. ${userMention(user.id, user.username, user.name)} - ${user.verified_ref} Referrals`).join("\n")}\n\n🏆 $20.00 reward split for top 3!\n🥇 $10.00 | 🥈 $6.00 | 🥉 $4.00\n\n🏆 Winners get rewards within 24 hrs!\n🔥 Keep referring to win more!</b>`
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "🔙 Back", callback_data: "/referral_msg" }]
+                    ]
                 }
             })
         } catch (err) {

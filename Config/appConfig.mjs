@@ -8,6 +8,10 @@ export const settings = {
         ID: -1001995172897,
         USERNAME: "AdsClickEarnGroup"
     },
+    CHANNEL: {
+        ID: -1002098189284,
+        USERNAME: "AdsClickEarnUpdates"
+    },
     BOT: {
         VERSION: "v1.0.3",
         USERNAME: "AdsClickEarnBot",
