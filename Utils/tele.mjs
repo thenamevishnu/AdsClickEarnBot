@@ -32,7 +32,7 @@ export const userMention = (user_id, username, first_name) => {
 }
 
 export const sendMessageToTaskChannel = async (ad_id, user_id, username, first_name, ad_type, reward) => {
-    const text = `✅ Task Completed\n\n🆔 Ad ID: ${ad_id}\n👤 User: ${userMention(user_id, username, first_name)}\n📌 Task Type: ${ad_type}\n💰 Reward: $${reward}\n\n🤖 Bot: @${settings.BOT.USERNAME}`
+    const text = `<b>✅ Task Completed\n\n🆔 Ad ID: <code>${ad_id}</code>\n👤 User: ${userMention(user_id, username, first_name)}\n📌 Task Type: ${ad_type}\n💰 Reward: <code>$${parseFloat(reward).toFixed(6)}</code>\n\n🤖 Bot: @${settings.BOT.USERNAME}</b>`
     return await api.sendMessage(settings.CHANNEL.TASK.ID, text, {
         parse_mode: "HTML",
         disable_web_page_preview: true,
