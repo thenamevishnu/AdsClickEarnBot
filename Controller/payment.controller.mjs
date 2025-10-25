@@ -2,7 +2,6 @@ import { createHmac } from "crypto"
 import { userCollection } from "../Models/user.model.mjs"
 import { paymentCollection } from "../Models/payment.model.mjs"
 import api from "../Config/Telegram.mjs"
-import { protect_content } from "../Utils/tele.mjs"
 import { settings } from "../Config/appConfig.mjs"
 import { createOrderId } from "../Utils/helper.mjs"
 
@@ -37,6 +36,7 @@ const onPaymentIPN = async (req, res) => {
                     if (createdDoc?._id) {
                         await api.sendMessage(chat_id, `<b><i>⌛ Awaiting blockchain network confirmation...</i></b>`, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT
                         })
                     }
@@ -52,6 +52,7 @@ const onPaymentIPN = async (req, res) => {
                     if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {
                         await api.sendMessage(chat_id, `<b><i>✅ Payment is confirmed by the network and has been credited to your account</i></b>`, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT
                         })
                         const deposit = parseFloat(postData.amount).toFixed(6)
@@ -94,6 +95,7 @@ const onPaymentIPN = async (req, res) => {
                     if (createdDoc?._id) {
                         await api.sendMessage(chat_id, `<b><i>⌛ Your payout request sent and awaiting blockchain network confirmation...</i></b>`, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT
                         })
                     }
@@ -111,6 +113,7 @@ const onPaymentIPN = async (req, res) => {
                     if (updatedDoc.matchedCount==1 && updatedDoc.modifiedCount==1) {
                         await api.sendMessage(chat_id, `<b><i>✅ Payout is confirmed by the network.</i></b>`, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT
                         })
                         const payout = parseFloat(postData.amount).toFixed(6)

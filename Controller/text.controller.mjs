@@ -3,7 +3,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, invited_user, isUserBanned, keyList, listedKey, protect_content, showAdsText, userMention, welcomeMessage } from "../Utils/tele.mjs";
+import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, invited_user, isUserBanned, keyList, showAdsText, userMention, welcomeMessage } from "../Utils/tele.mjs";
 
 // start message
 
@@ -39,13 +39,15 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
                 const userCount = await userCollection.countDocuments()
                 const txt = `<b>🦉 Users: <code>${userCount}</code>\n🚀 UserName: ${userMention(from.id, from.username, from.first_name)}\n🆔 UserID: <code>${from.id}</code>\n☄️ InvitedBy: <code>${invited_user[from.id] == settings.ADMIN.ID ? `You` : `${invited_user[from.id]}`}</code></b>` 
                 await api.sendMessage(settings.ADMIN.ID, txt, {
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 })
             }
         }
         if(userStatusCheck) return
         return await api.sendMessage(from.id, welcomeMessage, { 
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             disable_web_page_preview: true,
             reply_markup: {
@@ -56,6 +58,7 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -74,6 +77,7 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
         const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.balanceKey,
@@ -83,6 +87,7 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -102,6 +107,7 @@ api.onText(/^➕ Deposit$/, async message => {
         ]
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: key
@@ -110,6 +116,7 @@ api.onText(/^➕ Deposit$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -126,6 +133,7 @@ api.onText(/^➖ Payout$/, async message => {
             const text = `<b><i>❌ Minimum withdrawal is $${settings.PAYMENT.MIN.WITHDRAW.toFixed(6)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -133,6 +141,7 @@ api.onText(/^➖ Payout$/, async message => {
         answerCallback[from.id] = "PAYOUT_AMOUNT"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
@@ -144,6 +153,7 @@ api.onText(/^➖ Payout$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -159,6 +169,7 @@ api.onText(/^🔄 Convert$/, async message => {
         answerCallback[from.id] = "CONVERT_BALANCE"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
@@ -170,6 +181,7 @@ api.onText(/^🔄 Convert$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -196,11 +208,13 @@ api.onText(/^📃 History$/, async message => {
         })
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -215,6 +229,7 @@ api.onText(/^👭 Referrals$/, async message => {
         const ref = getRefMessage(from.id)
         return await api.sendMessage(from.id, ref.text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             disable_web_page_preview: true,
             reply_markup: {
@@ -224,6 +239,7 @@ api.onText(/^👭 Referrals$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -239,6 +255,7 @@ api.onText(/^⚙️ Settings$/, async message => {
         const text = `<b>⚙️ Account settings\n\n🆔 Telegram ID: <code>${from.id}</code>\n🛎️ Notification: ${user.notification ? "🔔 On" : "🔕 Off"}\n🔒 Verification Status : ${user.is_verified ? "✅ Verified" : "⛔️ Not Verified"}\n\n📅 Since: ${new Date(user.createdAt).toLocaleString("en-IN").toUpperCase()}</b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: [
@@ -249,6 +266,7 @@ api.onText(/^⚙️ Settings$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -263,11 +281,13 @@ api.onText(/^\/info$/, async message => {
         const text = `<b><i>🤖 ${settings.BOT.NAME} - ${settings.BOT.VERSION}\n\n🎯 Introducing ${settings.BOT.NAME} – your all-in-one marketplace for promoting Telegram bots, chats/channels, websites, and engaging in micro tasks, including viewing posts!\n\n🛰️ With ${settings.BOT.NAME}, users can effortlessly promote their Telegram creations and websites to a vast audience, attracting potential followers and customers. Whether you're a bot developer, a chat/channel administrator, or a website owner, this platform offers a seamless solution for enhancing visibility and driving engagement.\n\n🪐 But that's not all! In addition to promoting content, users can explore a wide range of micro tasks, from liking posts to subscribing to channels. Plus, with the ability to view posts, users can interact with content while earning rewards for their engagement.\n\n🚁 Join our dynamic community of promoters and task participants today, and discover the endless possibilities with ${settings.BOT.NAME}!\n\n💬 Community Chat: @${settings.CHAT.USERNAME}\n🔔 Updates: @${settings.CHANNEL.USERNAME}</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -278,6 +298,7 @@ api.onText(/^❓ FAQ$/, async message => {
     const { text, key } = getFaq()
     return await api.sendMessage(message.from.id, text, {
         parse_mode: "HTML",
+        disable_web_page_preview: true,
         protect_content: settings.PROTECTED_CONTENT,
         reply_markup: {
             inline_keyboard: key
@@ -311,12 +332,14 @@ api.onText(/^🎯 Micro Task$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.microTask(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.micro_task(ads)
@@ -325,6 +348,7 @@ api.onText(/^🎯 Micro Task$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -342,6 +366,7 @@ api.onText(/^🛰️ Tele Task$|^⛔ Cancel$/, async message => {
         const text = `<b><i>🛰️ Telegram Tasks</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.teleKey,
@@ -351,6 +376,7 @@ api.onText(/^🛰️ Tele Task$|^⛔ Cancel$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -382,12 +408,14 @@ api.onText(/^🤖 Start Bots$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.botAds(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.start_bot(ads)
@@ -396,6 +424,7 @@ api.onText(/^🤖 Start Bots$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -413,6 +442,7 @@ api.onText(/^💻 Web Task$|^🛑 Cancel$/, async message => {
         const text = `<b><i>🔗 Web related tasks</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.webKey,
@@ -422,6 +452,7 @@ api.onText(/^💻 Web Task$|^🛑 Cancel$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -453,12 +484,14 @@ api.onText(/^🔗 Visit Sites$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.siteAds(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.visit_site(ads, from.id)
@@ -467,6 +500,7 @@ api.onText(/^🔗 Visit Sites$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -498,6 +532,7 @@ api.onText(/^📄 View Posts$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -505,6 +540,7 @@ api.onText(/^📄 View Posts$/, async message => {
         const endTime = Math.floor(new Date().getTime()/1000) + ads.duration
         await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.post_view(ads, endTime)
@@ -516,6 +552,7 @@ api.onText(/^📄 View Posts$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -547,12 +584,14 @@ api.onText(/^💬 Join Chats$/, async message => {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
         const text = showAdsText.chatAds(ads)
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.chat_join(ads)
@@ -561,6 +600,7 @@ api.onText(/^💬 Join Chats$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -577,6 +617,7 @@ api.onText(/^📊 Advertise$|^\/advertise$|^🔙 Advertise$/, async message => {
         const text = `<b><i>🚀 Here you can create new ad and check current ads status</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.advertiseKey,
@@ -586,6 +627,7 @@ api.onText(/^📊 Advertise$|^\/advertise$|^🔙 Advertise$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -603,6 +645,7 @@ api.onText(/^➕ New Ad$|^❌ Cancel$/, async message => {
         const text = `<b><i>🛰️ Here you can create new ad choose an option from below</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.newAdsKey,
@@ -612,6 +655,7 @@ api.onText(/^➕ New Ad$|^❌ Cancel$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -629,6 +673,7 @@ api.onText(/^🤖 New Bots$/, async message => {
         answerCallback[from.id] = "NEW_BOT_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
@@ -640,6 +685,7 @@ api.onText(/^🤖 New Bots$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -657,6 +703,7 @@ api.onText(/^🔗 New Sites$/, async message => {
         answerCallback[from.id] = "NEW_SITE_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
@@ -668,6 +715,7 @@ api.onText(/^🔗 New Sites$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -685,6 +733,7 @@ api.onText(/^📄 New Posts$/, async message => {
         answerCallback[from.id] = "NEW_POST_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
@@ -696,6 +745,7 @@ api.onText(/^📄 New Posts$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -713,6 +763,7 @@ api.onText(/^💬 New Chats$/, async message => {
         answerCallback[from.id] = "NEW_CHAT_ADS"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
@@ -724,6 +775,7 @@ api.onText(/^💬 New Chats$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -741,6 +793,7 @@ api.onText(/^🎯 New Micro$/, async message => {
         const text = `<b><i>🔠 Enter a title for the ad</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: [
@@ -752,6 +805,7 @@ api.onText(/^🎯 New Micro$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -769,6 +823,7 @@ api.onText(/^📊 My Ads$|^✖️ Cancel$/, async message => {
         const text = `<b><i>🚀 Here you can manage all your running/expired ads.</i></b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 keyboard: keyList.myAdsKey,
@@ -778,6 +833,7 @@ api.onText(/^📊 My Ads$|^✖️ Cancel$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -796,6 +852,7 @@ api.onText(/^🤖 My Bots$/, async message => {
             const text = `<b><i>🤖 No bot ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -803,6 +860,7 @@ api.onText(/^🤖 My Bots$/, async message => {
             const text = adsText.botAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
@@ -812,6 +870,7 @@ api.onText(/^🤖 My Bots$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -830,6 +889,7 @@ api.onText(/^🔗 My Sites$/, async message => {
             const text = `<b><i>🔗 No site ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -837,6 +897,7 @@ api.onText(/^🔗 My Sites$/, async message => {
             const text = adsText.siteAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
@@ -847,6 +908,7 @@ api.onText(/^🔗 My Sites$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -865,6 +927,7 @@ api.onText(/^📄 My Posts$/, async message => {
             const text = `<b><i>📄 No post ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -872,6 +935,7 @@ api.onText(/^📄 My Posts$/, async message => {
             const text = adsText.postAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
@@ -881,6 +945,7 @@ api.onText(/^📄 My Posts$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -899,6 +964,7 @@ api.onText(/^💬 My Chats$/, async message => {
             const text = `<b><i>💬 No chat ads available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -906,6 +972,7 @@ api.onText(/^💬 My Chats$/, async message => {
             const text = adsText.chatAds(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
@@ -916,6 +983,7 @@ api.onText(/^💬 My Chats$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }
@@ -934,6 +1002,7 @@ api.onText(/^🎯 My Micro$/, async message => {
             const text = `<b><i>🎯 No micro tasks available</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -941,6 +1010,7 @@ api.onText(/^🎯 My Micro$/, async message => {
             const text = adsText.microTask(item)
             api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(item)
@@ -951,6 +1021,7 @@ api.onText(/^🎯 My Micro$/, async message => {
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     }

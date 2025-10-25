@@ -1,4 +1,3 @@
-import ShortUniqueId from "short-unique-id";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";

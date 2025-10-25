@@ -5,7 +5,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, protect_content, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, userMention } from "../Utils/tele.mjs";
 import { deletedAdsModel } from "../Models/deleted_ads.model.mjs";
 
 api.on("callback_query", async callback => {
@@ -30,6 +30,7 @@ api.on("callback_query", async callback => {
             }
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
@@ -41,6 +42,7 @@ api.on("callback_query", async callback => {
         }catch(err){
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -56,6 +58,7 @@ api.on("callback_query", async callback => {
             const text = `<b>⚙️ Account settings\n\n🆔 Telegram ID: <code>${from.id}</code>\n🛎️ Notification: ${user.notification ? "🔔 On" : "🔕 Off" }\n🔒 Verification Status : ${user.is_verified ? "✅ Verified" : "⛔️ Not Verified"}\n\n📅 Since: ${new Date(user.createdAt).toLocaleString("en-IN").toUpperCase()}</b>`
             return await api.editMessageText(text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 reply_markup: {
@@ -67,6 +70,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -87,6 +91,7 @@ api.on("callback_query", async callback => {
             const text = `<b><i>${callback.message.reply_markup.inline_keyboard[index][0].text}\n\n${answers[index]}</i></b>`
             return await api.editMessageText(text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 reply_markup: {
@@ -99,6 +104,7 @@ api.on("callback_query", async callback => {
             console.log(err)
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -108,6 +114,7 @@ api.on("callback_query", async callback => {
         const { text, key } = getFaq()
         return await api.editMessageText(text, {
             parse_mode: "HTML",
+            disable_web_page_preview: true,
             chat_id: from.id,
             message_id: callback.message.message_id,
             reply_markup: {
@@ -127,7 +134,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             await adsCollection.updateOne({ _id: ads_id },{ $addToSet:{ skip: from.id } })
@@ -135,11 +143,13 @@ api.on("callback_query", async callback => {
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             })
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -156,7 +166,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 })
             }
             if (ads.skip.includes(from.id)) {
@@ -164,7 +175,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             if (ads.completed.includes(from.id)) {
@@ -172,7 +184,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             if (ads.remaining_budget < ads.cpc) {
@@ -181,7 +194,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             localStore[from.id]["ads_id"] = ads_id
@@ -189,6 +203,7 @@ api.on("callback_query", async callback => {
             const text = `<b><i>🛰️ Forward a message from <a href='${ads.link}'>@${ads.username}</a></i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
@@ -201,6 +216,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -225,7 +241,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 })
             }
             if (ads.skip.includes(from.id)) {
@@ -233,7 +250,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             if (ads.completed.includes(from.id)) {
@@ -241,7 +259,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             if (ads.remaining_budget < ads.cpc) {
@@ -250,7 +269,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             const earn = (ads.cpc * settings.GIVEAWAY).toFixed(6)
@@ -262,11 +282,13 @@ api.on("callback_query", async callback => {
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             }) 
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -283,7 +305,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 })
             }
             if (ads.skip.includes(from.id)) {
@@ -291,7 +314,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             if (ads.completed.includes(from.id)) {
@@ -299,7 +323,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             if (ads.remaining_budget < ads.cpc) {
@@ -308,7 +333,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 }) 
             }
             const { status: userStatus } = await api.getChatMember(ads.chats_id, from.id)
@@ -328,11 +354,13 @@ api.on("callback_query", async callback => {
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             }) 
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -350,6 +378,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 reply_markup: {
                     inline_keyboard: inlineKeys.adsManageKey(ads)
                 },
@@ -358,6 +387,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -371,6 +401,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 reply_markup: {
                     inline_keyboard: inlineKeys.confirmDelete(ads_id)
                 }
@@ -378,6 +409,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -389,11 +421,13 @@ api.on("callback_query", async callback => {
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             })
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -408,7 +442,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 })
             }
             await deletedAdsModel.create(ads.toObject())
@@ -422,12 +457,14 @@ api.on("callback_query", async callback => {
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             })
         } catch (err) {
             console.log(err)
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -443,6 +480,7 @@ api.on("callback_query", async callback => {
             const text = `<b><i>🎯 Submit your proof to validate this task.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
@@ -454,6 +492,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -468,7 +507,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 })
             }
             const completed = list[Number(index)]
@@ -501,6 +541,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 reply_markup: {
                     inline_keyboard: key
                 }
@@ -508,6 +549,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -520,11 +562,13 @@ api.on("callback_query", async callback => {
             const [proof_id, done_by] = params
             return await api.copyMessage(from.id, done_by, proof_id, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -538,6 +582,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "MICRO_TASK_REJECTION_REASON"
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
@@ -550,6 +595,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -563,6 +609,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>❌ This task already rejected or completed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: keyList.mainKey,
@@ -575,6 +622,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 reply_markup: {
                     inline_keyboard: [
                         [
@@ -587,6 +635,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -601,7 +650,8 @@ api.on("callback_query", async callback => {
                 return await api.editMessageText(text, {
                     chat_id: from.id,
                     message_id: callback.message.message_id,
-                    parse_mode: "HTML"
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true
                 })
             }
             const response = await pendingMicroCollection.updateOne({ _id: list_id }, { $set: { status: "completed" } })
@@ -615,15 +665,18 @@ api.on("callback_query", async callback => {
             await api.editMessageText(`<b><i>✅ The response [#${pendingTask.campaign_id}] has been approved.</i></b>`, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             })
             return await api.sendMessage(pendingTask.done_by, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -638,6 +691,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>🔠 Enter a title for the ad</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
@@ -652,6 +706,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
@@ -667,6 +722,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${response.cpc.toFixed(6)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
@@ -682,6 +738,7 @@ api.on("callback_query", async callback => {
                 const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Remaining Budget: $${response.remaining_budget.toFixed(6)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: [
@@ -694,6 +751,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -710,6 +768,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b><i>❌ Post not found!</i></b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -741,6 +800,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
@@ -751,6 +811,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -763,6 +824,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: ref.key
@@ -771,6 +833,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -817,6 +880,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
@@ -827,6 +891,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -859,6 +924,7 @@ api.on("callback_query", async callback => {
                         if (total_ads_available <= 0) return;
                         await api.sendMessage(userInfo._id, getText(total_ads_available), {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT
                         })
                     } catch (err) {
@@ -867,6 +933,7 @@ api.on("callback_query", async callback => {
                 } else {
                     await api.sendMessage(from.id, `<b><i>✅ Ads Notify Completed</i></b>`, {
                         parse_mode: "HTML",
+                        disable_web_page_preview: true,
                         protect_content: settings.PROTECTED_CONTENT,
                     })
                     cronTask.stop()
@@ -876,6 +943,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -897,6 +965,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -908,6 +977,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "ADMIN_BAN_USER"
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
@@ -919,6 +989,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -930,6 +1001,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "ADMIN_UNBAN_USER"
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
@@ -941,6 +1013,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -967,12 +1040,14 @@ api.on("callback_query", async callback => {
             text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: $${users?.[0]?.balance?.toFixed(6)}\nWithdrawable: $${users?.[0]?.withdrawable?.toFixed(6)}\nReferral: $${users?.[0]?.referral?.toFixed(6)}\nPayouts: $${users?.[0]?.payouts?.toFixed(6)}\nEarned: $${users?.[0]?.earned?.toFixed(6)}</i></b>`
             return await api.editMessageText(text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 chat_id: from.id,
                 message_id: callback.message.message_id
             })
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -984,6 +1059,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "ADMIN_MAILING"
             return api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
@@ -995,6 +1071,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1006,11 +1083,13 @@ api.on("callback_query", async callback => {
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             })
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1028,6 +1107,7 @@ api.on("callback_query", async callback => {
             await api.deleteMessage(from.id, callback.message.message_id)
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.mainKey,
@@ -1040,6 +1120,7 @@ api.on("callback_query", async callback => {
                     try {
                         await api.copyMessage(userInfo._id, from.id, message_id, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT
                         })
                         messageStat.success++
@@ -1053,6 +1134,7 @@ api.on("callback_query", async callback => {
                     if (messageStat.sent != 0 && messageStat.sent % 100 == 0) {
                         await api.sendMessage(from.id, `<b><i>✅ Mail Status: ${JSON.stringify(messageStat)}</i></b>`, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT,
                         })
                     }
@@ -1060,6 +1142,7 @@ api.on("callback_query", async callback => {
                         cronTask.stop()
                         await api.sendMessage(from.id, `<b><i>✅ Mail Completed: ${JSON.stringify(messageStat)}</i></b>`, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT,
                         })
                     }
@@ -1070,6 +1153,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1091,6 +1175,7 @@ api.on("callback_query", async callback => {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 reply_markup: {
                     inline_keyboard: key
                 }
@@ -1098,6 +1183,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1111,6 +1197,7 @@ api.on("callback_query", async callback => {
             answerCallback[from.id] = "ADMIN_USER_ID_FOR_ADD_BALANCE"
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: true,
                 reply_markup: {
                     keyboard: [["🔴 Cancel"]],
@@ -1120,6 +1207,7 @@ api.on("callback_query", async callback => {
         } catch (err) {
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }

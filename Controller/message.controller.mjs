@@ -46,6 +46,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You should forward a message from bot.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -54,6 +55,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ The message you forwarded is too old.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -63,11 +65,13 @@ api.on("message", async message => {
             const text = `<b><i>🔗 Enter the refer link or url of the bot.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -79,6 +83,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid url.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -87,6 +92,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid url.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -96,6 +102,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid bot url or refer link.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -104,11 +111,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -120,6 +129,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -128,6 +138,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -136,11 +147,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -152,6 +165,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -160,6 +174,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -168,11 +183,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${settings.COST.PER_CLICK.BOT_ADS.toFixed(6)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -184,6 +201,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -192,6 +210,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.BOT_ADS.toFixed(6)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -200,11 +219,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -216,6 +237,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -225,6 +247,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -233,6 +256,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -259,6 +283,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You bot ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
@@ -268,6 +293,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -282,6 +308,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like an invalid url.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -290,11 +317,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -306,6 +335,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -314,6 +344,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -322,11 +353,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -338,6 +371,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -346,6 +380,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -355,11 +390,13 @@ api.on("message", async message => {
             const text = `<b><i>⌚ Provide the duration in seconds that people stay on the site.\n\n⏳ Minimum duration is 10 seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -371,6 +408,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid duration.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -379,6 +417,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Duration should be from 10 to 120 seconds</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -388,11 +427,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per visit.\n\n💰 Minimum: $${perVisit} for ${duration} seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -404,6 +445,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -414,6 +456,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${perVisit} per ${duration} seconds.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -422,11 +465,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -438,6 +483,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -447,6 +493,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -455,6 +502,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -481,6 +529,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You site ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
@@ -490,6 +539,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -510,11 +560,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -526,6 +578,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -534,6 +587,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -542,11 +596,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -558,6 +614,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -566,6 +623,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -575,11 +633,13 @@ api.on("message", async message => {
             const text = `<b><i>⌚ Provide the duration in seconds that people should view.\n\n⏳ Minimum duration is 10 seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -591,6 +651,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid duration.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -599,6 +660,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Duration should be from 10 to 120 seconds</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -608,11 +670,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per view.\n\n💰 Minimum: $${perVisit} for ${duration} seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -624,6 +688,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -634,6 +699,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${perVisit} per ${duration} seconds.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -642,11 +708,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -658,6 +726,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -667,6 +736,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -675,6 +745,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -701,6 +772,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You post ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
@@ -710,6 +782,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -726,6 +799,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Enter a valid username</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -736,6 +810,7 @@ api.on("message", async message => {
                         const text = `<b><i>❌ Looks like a private channel, we only accept public channels or chats!</i></b>`
                         return await api.sendMessage(from.id, text, {
                             parse_mode: "HTML",
+                            disable_web_page_preview: true,
                             protect_content: settings.PROTECTED_CONTENT
                         })
                     }
@@ -748,6 +823,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like it is not a chat/channel!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -765,6 +841,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like it is not a chat/channel!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -773,6 +850,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Add this bot as an administrator in @${username}!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -783,11 +861,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a title for the ad</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, `<b>❌ Make sure the bot (@${settings.BOT.USERNAME}) is an administrator in your chat/channel!</b>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -799,6 +879,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -807,6 +888,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -815,11 +897,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description for the ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -831,6 +915,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -839,6 +924,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -847,11 +933,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per join.\n\n💰 Minimum: $${settings.COST.PER_CLICK.CHAT_ADS.toFixed(6)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -863,6 +951,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -871,6 +960,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.CHAT_ADS.toFixed(6)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -879,11 +969,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -895,6 +987,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -904,6 +997,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -912,6 +1006,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -938,6 +1033,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You chat ads created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
@@ -947,6 +1043,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -960,6 +1057,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -968,6 +1066,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -976,11 +1075,13 @@ api.on("message", async message => {
             const text = `<b><i>🔠 Enter a description/what people should do in this ad.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -992,6 +1093,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1000,6 +1102,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 500</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1008,11 +1111,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the cost per task.\n\n💰 Minimum: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(6)}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1024,6 +1129,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1032,6 +1138,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(6)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1040,11 +1147,13 @@ api.on("message", async message => {
             const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1056,6 +1165,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1065,6 +1175,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1073,6 +1184,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1099,6 +1211,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ You micro task created</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.newAdsKey,
@@ -1108,6 +1221,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1121,6 +1235,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid title.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1129,6 +1244,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Title length should be from 5 to 80</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1138,6 +1254,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad title updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
@@ -1147,6 +1264,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1158,6 +1276,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid description.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1166,6 +1285,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Description length should be from 10 to 255</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1175,6 +1295,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad description updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
@@ -1184,6 +1305,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1195,6 +1317,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid amount.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1205,6 +1328,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ CPC should be greater than $${ads.cpc.toFixed(6)}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1213,6 +1337,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad cpc updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
@@ -1222,6 +1347,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1233,6 +1359,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Looks like invalid budget.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1241,6 +1368,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Budget should be greater than 0.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1249,6 +1377,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1258,6 +1387,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Ad budget updated!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
@@ -1267,6 +1397,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1284,6 +1415,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task disabled or deleted!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1291,6 +1423,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You've already completed/skipped</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1298,6 +1431,7 @@ api.on("message", async message => {
                 const text = `<b><i>🛰️ Forward a message from <a href='${ads.link}'>@${ads.username}</a></i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1306,6 +1440,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ The message you forwarded is too old.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1314,6 +1449,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1325,6 +1461,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Task completed, you've received +$${earn}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.teleKey,
@@ -1334,6 +1471,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1349,6 +1487,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task disabled or deleted!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1356,6 +1495,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task already skipped</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1363,6 +1503,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task already completed</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 }) 
             }
@@ -1371,6 +1512,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Task paused due to insufficient budget</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1389,6 +1531,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ Submitted. Wait for advertiser approval.</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.mainKey,
@@ -1397,11 +1540,13 @@ api.on("message", async message => {
             })
             return await api.sendMessage(sendTo, `<b><i>🆔 CampaignID: #${ads._id}\n🎯 Type: MICRO STASK\n✅ Submitted: ${from.first_name}\n\n📊 Advertise => 📊 My Ads => 🎯 My Micro to see list</i></b>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1415,6 +1560,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Only text message is allowed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1425,6 +1571,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ This task already rejected or completed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: keyList.myAdsKey,
@@ -1439,6 +1586,7 @@ api.on("message", async message => {
             const text = `<b><i>✅ The response [#${pendingTask.campaign_id}] has been rejected.\n📃 Reason: ${message.text}</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.myAdsKey,
@@ -1447,11 +1595,13 @@ api.on("message", async message => {
             })
             return await api.sendMessage(pendingTask.done_by, `<b><i>🔴 Your micro task response [#${pendingTask.campaign_id}] has been rejected by the advertiser\n📃 Reason: ${message.text}</i></b>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1465,6 +1615,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Only number is allowed.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1475,6 +1626,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ You don't have enough balance.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: keyList.balanceKey,
@@ -1486,6 +1638,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Amount should be greater than 0 and less than or equal to $${user.balance.withdrawable.toFixed(6)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
                         keyboard: keyList.balanceKey,
@@ -1508,6 +1661,7 @@ api.on("message", async message => {
             }
             return await api.sendMessage(from.id, `<b><i>${text}</i></b>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.balanceKey,
@@ -1517,6 +1671,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1528,6 +1683,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid amount!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             } 
@@ -1538,6 +1694,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ ${amount < minPay ? `Minimum payout is $${minPay}` : `You don't have enough balance.`}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1546,11 +1703,13 @@ api.on("message", async message => {
             const text = `<b><i>📤 Enter your USDT-TRC20 address for withdrawal.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1562,6 +1721,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid address!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1570,6 +1730,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid address!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1581,6 +1742,7 @@ api.on("message", async message => {
             if (status == 400) {
                 return await api.sendMessage(from.id, `<b><i>❌ Payout failed!</i></b>`, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1590,11 +1752,13 @@ api.on("message", async message => {
             const text = `<b><i>✅ Requested payout of $${amount} to ${address} is ${status == 200 ? "Processing" : "Failed"}!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1606,6 +1770,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid amount!</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1614,6 +1779,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Minimum deposit $${settings.PAYMENT.MIN.DEPOSIT.toFixed(6)}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1625,12 +1791,14 @@ api.on("message", async message => {
                 const text = `<b><i>❌ We can't generate a payment link.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
 
                 })
             }
             await api.sendMessage(from.id, `<b><i>⌛ Generating payment link...</i></b>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: keyList.balanceKey,
@@ -1640,6 +1808,7 @@ api.on("message", async message => {
             const text = `<b><i><code>🆔 #${orderid}</code>\n\n💵 Amount: $${amount}\n⌛ Expire in 30 minutes</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
@@ -1652,6 +1821,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1665,6 +1835,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Enter userId in numberic.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1673,6 +1844,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid userId or user not found.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1681,6 +1853,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ User already banned.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1689,6 +1862,7 @@ api.on("message", async message => {
             const text2 = `<b><i>❌ You're banned</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup:{
                     keyboard: keyList.mainKey,
@@ -1697,11 +1871,13 @@ api.on("message", async message => {
             })
             return await api.sendMessage(Number(message.text), text2, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1713,6 +1889,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Enter userId in numberic.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1721,6 +1898,7 @@ api.on("message", async message => {
                 const text = `<b><i>❌ Invalid userId or user not found.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1729,6 +1907,7 @@ api.on("message", async message => {
                 const text = `<b><i>✅ User already unbanned</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT
                 })
             }
@@ -1737,6 +1916,7 @@ api.on("message", async message => {
             const text2 = `<b><i>✅ You're unbanned</i></b>`
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup:{
                     keyboard: keyList.mainKey,
@@ -1745,11 +1925,13 @@ api.on("message", async message => {
             })
             return await api.sendMessage(Number(message.text), text2, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1762,14 +1944,17 @@ api.on("message", async message => {
             answerCallback[from.id] = null
             await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
             await api.copyMessage(from.id, from.id, message_id, {
                 protect_content: settings.PROTECTED_CONTENT,
-                parse_mode: "HTML"
+                parse_mode: "HTML",
+                disable_web_page_preview: true
             })
             return await api.sendMessage(from.id, "<i><b>✅ Are you sure?</b></i>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     inline_keyboard: [
@@ -1783,6 +1968,7 @@ api.on("message", async message => {
         } catch (err) {
             return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
             })
         }
@@ -1793,6 +1979,7 @@ api.on("message", async message => {
             if (isNaN(message.text)) {
                 return await api.sendMessage(from.id, `<i>✖️ Enter valid UserID</i>`, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: true
                 })
             }
@@ -1804,11 +1991,13 @@ api.on("message", async message => {
             answerCallback[from.id] = "ADMIN_ENTER_BALANCE_TO_ADD"
             return await api.sendMessage(from.id, `<i>💷 Enter the amount you want to add\n\n💰 ${type.replace(type[0], type[0].toUpperCase())}: $${balance.toFixed(6)}</i>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: true
             })
         } catch (err) {
             return await api.sendMessage(from.id, `<i>❌ Error occured</i>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: true
             })
         }
@@ -1819,6 +2008,7 @@ api.on("message", async message => {
             if (isNaN(message.text)) {
                 return await api.sendMessage(from.id, `<i>✖️ Enter valid amount</i>`, {
                     parse_mode: "HTML",
+                    disable_web_page_preview: true,
                     protect_content: true
                 })
             }
@@ -1835,6 +2025,7 @@ api.on("message", async message => {
             await userCollection.updateOne({ _id: userid }, { $inc: obj.add })
             await api.sendMessage(from.id, `<i>☑️ Balance added:\n\n🆔 UserID: ${userid}\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: $${amount}</i>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: true,
                 reply_markup: {
                     keyboard: keyList.mainKey,
@@ -1843,11 +2034,13 @@ api.on("message", async message => {
             })
             return await api.sendMessage(userid, `<i>✅ Balance added by Admin\n\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: $${amount}</i>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: true
             })
         } catch (err) {
             return await api.sendMessage(from.id, `<i>❌ Error occured</i>`, {
                 parse_mode: "HTML",
+                disable_web_page_preview: true,
                 protect_content: true
             })
         }

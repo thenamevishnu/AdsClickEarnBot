@@ -7,12 +7,7 @@ import linkRoute from "./Router/links.route.mjs"
 import paymentRoute from "./Router/payment.route.mjs"
 import verificationRoute from "./Router/verify.route.mjs"
 import "./Utils/cron.mjs"
-
-import "./Controller/text.controller.mjs"
-import "./Controller/message.controller.mjs"
-import "./Controller/callback.controller.mjs"
-import "./Controller/admin.controller.mjs"
-import "./Controller/otherCommands.controller.mjs"
+import "./telegram.mjs"
 
 const app = express()
 
