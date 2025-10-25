@@ -10,7 +10,11 @@ export const settings = {
     },
     CHANNEL: {
         ID: -1002098189284,
-        USERNAME: "AdsClickEarnUpdates"
+        USERNAME: "AdsClickEarnUpdates",
+        TASK: {
+            ID: -1003254476266,
+            USERNAME: "AdsClickEarnTask"
+        }
     },
     BOT: {
         VERSION: "v1.0.3",

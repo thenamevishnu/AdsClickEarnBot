@@ -5,7 +5,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, sendMessageToTaskChannel, userMention } from "../Utils/tele.mjs";
 import { deletedAdsModel } from "../Models/deleted_ads.model.mjs";
 
 api.on("callback_query", async callback => {
@@ -279,6 +279,7 @@ api.on("callback_query", async callback => {
             await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
             const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn, "balance.earned": earn } })
             await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
+            sendMessageToTaskChannel(ads_id, from.id, from.username, from.first_name, "VIEW POST", earn)
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -351,6 +352,7 @@ api.on("callback_query", async callback => {
             await adsCollection.updateOne({ _id: ads_id }, { $inc: { remaining_budget: -(ads.cpc) }, $addToSet: { completed: from.id } })
             const userUpdate = await userCollection.findOneAndUpdate({ _id: from.id }, { $set: { "balance.withdrawable": earn, "balance.earned": earn } })
             await userCollection.updateOne({ _id: userUpdate.invited_by }, { $set: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
+            sendMessageToTaskChannel(ads_id, from.id, from.username, from.first_name, "CHAT JOIN", earn)
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -668,6 +670,7 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML",
                 disable_web_page_preview: true
             })
+            sendMessageToTaskChannel(pendingTask.campaign_id, pendingTask.done_by, pendingTask.done_by_username, pendingTask.done_by_first_name, "MICRO TASK", earn)
             return await api.sendMessage(pendingTask.done_by, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,

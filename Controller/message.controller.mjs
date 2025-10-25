@@ -1,6 +1,6 @@
 import { isUri } from "valid-url";
 import api from "../Config/Telegram.mjs";
-import { answerCallback, getKeyArray, isUserBanned, keyList, localStore, shortID } from "../Utils/tele.mjs";
+import { answerCallback, getKeyArray, isUserBanned, keyList, localStore, sendMessageToTaskChannel, shortID } from "../Utils/tele.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
@@ -1459,6 +1459,7 @@ api.on("message", async message => {
             const user = await userCollection.findOneAndReplace({ _id: from.id }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
             await userCollection.updateOne({ _id: user.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
             const text = `<b><i>✅ Task completed, you've received +$${earn}</i></b>`
+            sendMessageToTaskChannel(ads_id, from.id, from.username, from.first_name, "START BOT", earn)
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,

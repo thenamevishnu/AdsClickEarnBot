@@ -31,6 +31,15 @@ export const userMention = (user_id, username, first_name) => {
     return mention
 }
 
+export const sendMessageToTaskChannel = async (ad_id, user_id, username, first_name, ad_type, reward) => {
+    const text = `✅ Task Completed\n\n🆔 Ad ID: ${ad_id}\n👤 User: ${userMention(user_id, username, first_name)}\n📌 Task Type: ${ad_type}\n💰 Reward: $${reward}\n\n🤖 Bot: @${settings.BOT.USERNAME}`
+    return await api.sendMessage(settings.CHANNEL.TASK.ID, text, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+        protect_content: settings.PROTECTED_CONTENT
+    })
+}
+
 export const isUserBanned = async (user_id, bool=0) => {
     try {
         const user = await userCollection.findOne({ _id: user_id })
@@ -278,6 +287,7 @@ export const onSuccessVisitSite = async (campaignId, user_id) => {
         await adsCollection.updateOne({ _id: campaignId }, { $addToSet: { completed: Number(user_id) }, $inc: { remaining_budget: -(cpc) } })
         const userUpdate = await userCollection.findOneAndUpdate({ _id: user_id }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
         await userCollection.updateOne({ _id: userUpdate.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
+        sendMessageToTaskChannel(campaignId, user_id, userUpdate.username, userUpdate.first_name, "VIEW SITE", earn)
         return `✅ Task completed: +$${earn}`
     } catch (err) {
         return "❌ Error happend!"
