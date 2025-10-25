@@ -306,17 +306,9 @@ export const getAdminPanel = () => {
 export const listedKey = [
     [
         {
-            text: "Telegramic", url: "https://telegramic.org/bot/royalclickbot"
+            text: "Telegramic", url: "https://telegramic.org/bot/adsclickearnbot"
         }, {
-            text: "TDirectory", url: "https://tdirectory.me/bot/RoyalClickBot.dhtml"
-        }
-    ], [
-        {
-            text: "Telegram Channels", url: "https://telegramchannels.me/bots/royalclickbot"
-        }, {
-            text: "Tgdir", url: "https://tgdir.org/bot/RoyalClickBot/"
-        }, {
-            text: "Botostore", url: "https://botostore.com/c/RoyalClickBot/"
+            text: "Telegram Channels", url: "https://telegramchannels.me/bots/adsclickearnbot"
         }
     ]
 ]
