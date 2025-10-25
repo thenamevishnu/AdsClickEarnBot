@@ -1461,8 +1461,27 @@ api.on("message", async message => {
 
     if (waitfor === "CONVERT_BALANCE") {
         try {
+            if (!message?.text || isNaN(message?.text)) {
+                const text = `<b><i>❌ Only number is allowed.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: settings.PROTECTED_CONTENT
+                })
+            }
             const user = await userCollection.findOne({ _id: from.id })
             const amount = parseFloat(message.text).toFixed(6)
+            if (user.balance.withdrawable <= 0) {
+                answerCallback[from.id] = null
+                const text = `<b><i>❌ You don't have enough balance.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    protect_content: settings.PROTECTED_CONTENT,
+                    reply_markup: {
+                        keyboard: keyList.balanceKey,
+                        resize_keyboard: true
+                    }
+                })
+            }
             if (amount < 0 || amount > user.balance.withdrawable) {
                 const text = `<b><i>❌ Amount should be greater than 0 and less than or equal to $${user.balance.withdrawable.toFixed(6)}</i></b>`
                 return await api.sendMessage(from.id, text, {

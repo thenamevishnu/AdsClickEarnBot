@@ -1,7 +1,5 @@
 import api from "../Config/Telegram.mjs";
 import { settings } from "../Config/appConfig.mjs";
-import { userCollection } from "../Models/user.model.mjs";
-import { userMention } from "../Utils/tele.mjs";
 
 api.onText(/^\/id$/, async message => {
     try {
@@ -18,4 +16,9 @@ api.onText(/^\/id$/, async message => {
             protect_content: settings.PROTECTED_CONTENT
         })
     }
+})
+
+api.onText("/ads_run_command", async message => {
+    if (message.chat.type != "private") return
+    return await api.sendMessage(message.chat.id, "<i>🏡 Home</i>", { parse_mode: "HTML" })
 })

@@ -71,7 +71,7 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
         if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         answerCallback[from.id] = null
-        const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
+        const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             protect_content: settings.PROTECTED_CONTENT,
@@ -149,18 +149,13 @@ api.onText(/^➖ Payout$/, async message => {
     }
 })
 
-api.onText("/ads_run_command", async message => {
-    if (message.chat.type != "private") return
-    return await api.sendMessage(message.chat.id, "<i>🏡 Home</i>", { parse_mode: "HTML" })
-})
-
 api.onText(/^🔄 Convert$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
-        const text = `<b><i>🔄 Convert withdrawable to balance</i></b>`
+        const text = `<b><i>🔄 Convert your withdrawable balance to available balance.\n\n💶 Enter the amount to convert.</i></b>`
         answerCallback[from.id] = "CONVERT_BALANCE"
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
