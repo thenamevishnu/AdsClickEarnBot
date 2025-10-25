@@ -10,6 +10,11 @@ export const answerCallback = {}
 export const localStore = {}
 export const messageStat = {}
 
+const listedLinks = {
+    "Telegramic": "https://telegramic.org/bot/adsclickearnbot",
+    "Telegram Channels": "https://telegramchannels.me/bots/adsclickearnbot"
+}
+
 const ads = [{
     text: "Fast & Secure Crypto Pay!",
     url: "https://oxapay.com/?ref=50087312"
@@ -20,7 +25,7 @@ const getRandomAds = () => {
     return ads[randomIndex]
 }
 
-export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn $${settings.REF.PER_REF} USD for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: @${settings.CHAT.USERNAME}\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
+export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn $${settings.REF.PER_REF} USD for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: <a href="${listedLinks["Telegramic"]}">Telegramic</a>\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
 
 export const userMention = (user_id, username, first_name) => {
     const mention = username ? `@${username}` : `<a href='tg://user?id=${user_id}'>${first_name}</a>`
@@ -306,9 +311,9 @@ export const getAdminPanel = () => {
 export const listedKey = [
     [
         {
-            text: "Telegramic", url: "https://telegramic.org/bot/adsclickearnbot"
+            text: "Telegramic", url: listedLinks["Telegramic"]
         }, {
-            text: "Telegram Channels", url: "https://telegramchannels.me/bots/adsclickearnbot"
+            text: "Telegram Channels", url: listedLinks["Telegram Channels"]
         }
     ]
 ]
