@@ -38,7 +38,7 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
             if (createdUser?._id) {
                 await userCollection.updateOne({ _id: createdUser.invited_by },{$inc:{invites: 1}})
                 const userCount = await userCollection.countDocuments()
-                const txt = `<b>🦉 Users: <code>${userCount}</code>\n🚀 UserName: ${userMention(from.id, from.username, from.first_name)}\n🆔 UserID: <code>${from.id}</code>\n☄️ InvitedBy: <code>${invited_user[from.id] == settings.ADMIN.ID ? `You` : `${invited_user[from.id]}`}</code></b>` 
+                const txt = `<b>🦉 Users: <code>${userCount}</code>\n🚀 UserName: ${userMention(from.id, from.username, from.first_name)}\n🆔 UserID: <code>${from.id}</code>\n☄️ InvitedBy: <code>${invited_user == settings.ADMIN.ID ? `You` : `${invited_user}`}</code></b>` 
                 await api.sendMessage(settings.ADMIN.ID, txt, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true
