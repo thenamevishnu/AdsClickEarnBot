@@ -4,7 +4,6 @@ import { userCollection } from "../Models/user.model.mjs";
 import api from "../Config/Telegram.mjs";
 
 export const protect_content = settings.PROTECTED_CONTENT
-export const invited_user = {}
 export const answerCallback = {}
 export const localStore = {}
 export const messageStat = {}
@@ -24,7 +23,7 @@ const getRandomAds = () => {
     return ads[randomIndex]
 }
 
-export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn $${settings.REF.PER_REF} USD for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: <a href="${listedLinks["Telegramic"]}">Telegramic</a>\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
+export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn ${settings.REF.PER_REF} ${settings.CURRENCY} for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: <a href="${listedLinks["Telegramic"]}">Telegramic</a>\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
 
 export const userMention = (user_id, username, first_name) => {
     const mention = username ? `@${username}` : `<a href='tg://user?id=${user_id}'>${first_name}</a>`
@@ -32,7 +31,7 @@ export const userMention = (user_id, username, first_name) => {
 }
 
 export const sendMessageToTaskChannel = async (ad_id, user_id, username, first_name, ad_type, reward) => {
-    const text = `<b>✅ Task Completed\n\n🆔 Ad ID: <code>${ad_id}</code>\n👤 User: ${userMention(user_id, username, first_name)}\n📌 Task Type: ${ad_type}\n💰 Reward: <code>$${parseFloat(reward).toFixed(6)}</code>\n\n🤖 Bot: @${settings.BOT.USERNAME}</b>`
+    const text = `<b>✅ Task Completed\n\n🆔 Ad ID: <code>${ad_id}</code>\n👤 User: ${userMention(user_id, username, first_name)}\n📌 Task Type: ${ad_type}\n💰 Reward: <code>${parseFloat(reward).toFixed(6)} ${settings.CURRENCY}</code>\n\n🤖 Bot: @${settings.BOT.USERNAME}</b>`
     return await api.sendMessage(settings.CHANNEL.TASK.ID, text, {
         parse_mode: "HTML",
         disable_web_page_preview: true,
@@ -108,21 +107,24 @@ export const keyList = {
         ["🤖 My Bots", "🎯 My Micro", "🔗 My Sites"],
         ["📄 My Posts", "💬 My Chats"],
         ["🔙 Advertise"]
-    ],
-    balanceKey: [
-        ["➕ Deposit", "💷 Balance", "➖ Payout"],
-        ["🔄 Convert", "📃 History"],
-        ["🔙 Home"]
     ]
 }
 
+export const balance_key = [
+    [{ text: "📥 Deposit", callback_data: "/deposit" }, { text: "📤 Withdraw", callback_data: "/withdraw" }],
+    [{ text: "🔄 Convert", callback_data: "/convert_balance" }, { text: "🕛 History", callback_data: "/history" }]
+]
+
 export const getRefMessage = (id) => {
     const shareText = `https://t.me/share/url?url=${encodeURIComponent(`**💸 Start Earning Effortlessly with ${settings.BOT.USERNAME}!\n\n🚀 Earn passive income by completing simple tasks.\n💵 Instant cashouts available anytime, no delays.\n\n🤖 Start Now: https://t.me/${settings.BOT.USERNAME}?start=${id}**`)}`
-    const text = `<b>🌍 Invite & Earn Instantly!\n\n💸 How It Works:\n\n✅ Earn $${settings.REF.PER_REF} for every active user you invite to our bot.\n✅ Get ${settings.REF.INCOME.TASK * 100}% of your referrals’ task earnings.\n✅ Receive ${settings.REF.INCOME.DEPOSIT * 100}% from every deposit your referrals make.\n\n🔗 Your referral link: https://t.me/${settings.BOT.USERNAME}?start=${id}\n\n⚠️ Note: Invite only real users — fake or duplicate accounts can lead to suspension or loss of rewards.\n\n🚀 Start inviting, grow your team, and boost your income today!</b>`
+    const text = `<b>🌍 Invite & Earn Instantly!\n\n💸 How It Works:\n\n✅ Earn ${settings.REF.PER_REF} ${settings.CURRENCY} for every active user you invite to our bot.\n✅ Get ${settings.REF.INCOME.TASK * 100}% of your referrals’ task earnings.\n✅ Receive ${settings.REF.INCOME.DEPOSIT * 100}% from every deposit your referrals make.\n\n🔗 Your referral link: https://t.me/${settings.BOT.USERNAME}?start=${id}\n\n⚠️ Note: Invite only real users — fake or duplicate accounts can lead to suspension or loss of rewards.\n\n🚀 Start inviting, grow your team, and boost your income today!</b>`
     const key = [
-        [{ text: "📈 Referral Statistics", callback_data: "/ref_stat_display" }],
-        [{ text: "🔗 Share Link", url: shareText }],
-        [{ text: "🏆 Leaderboard", callback_data: "/leaderboard" }]
+        [
+            { text: "🔗 Share Link", url: shareText }
+        ], [
+            { text: "📈 Referral Statistics", callback_data: "/ref_stat_display" },
+            { text: "🏆 Leaderboard", callback_data: "/leaderboard" }
+        ]
     ]
     return { text, key }
 }
@@ -223,23 +225,23 @@ export const getKeyArray = () => {
 
 export const adsText = {
     botAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n🤖 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n🤖 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     siteAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🔗 Link: ${info.link}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     postAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🆔 PostID: ${info.post_id}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🆔 PostID: ${info.post_id}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     chatAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n💬 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n💬 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     microTask: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: \n ${info.description}\n\n💷 CPC: $${parseFloat(info.cpc).toFixed(4)}\n💶 Budget: $${parseFloat(info.budget).toFixed(4)}\n💵 Remaining Budget: $${parseFloat(info.remaining_budget).toFixed(4)}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: \n ${info.description}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     }
 }
@@ -260,8 +262,8 @@ export const showAdsText = {
         return `<b><i>${warningText}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
     },
     microTask: (ads) => {
-        const reward = ( ads.cpc * settings.GIVEAWAY).toFixed(4)
-        return `<b><i>${warningText}\n\n🆔 CampaignID: #${ads._id} [Keep this ID]\n🎁 Reward: $${reward}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
+        const reward = ( ads.cpc * settings.GIVEAWAY).toFixed(6)
+        return `<b><i>${warningText}\n\n🆔 CampaignID: #${ads._id} [Keep this ID]\n🎁 Reward: ${reward} ${settings.CURRENCY}\n\n🚀 ${ads.title}\n\n🛰️ ${ads.description}</i></b>`
     }
 }
 
@@ -282,13 +284,13 @@ export const onSuccessVisitSite = async (campaignId, user_id) => {
             return "❌ Campaign disabled!"
         }
         const cpc = getCampaign.cpc
-        const earn = (cpc * settings.GIVEAWAY).toFixed(4)
-        const commission = (earn * settings.REF.INCOME.TASK).toFixed(4)
+        const earn = (cpc * settings.GIVEAWAY).toFixed(6)
+        const commission = (earn * settings.REF.INCOME.TASK).toFixed(6)
         await adsCollection.updateOne({ _id: campaignId }, { $addToSet: { completed: Number(user_id) }, $inc: { remaining_budget: -(cpc) } })
         const userUpdate = await userCollection.findOneAndUpdate({ _id: user_id }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
         await userCollection.updateOne({ _id: userUpdate.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
         sendMessageToTaskChannel(campaignId, user_id, userUpdate.username, userUpdate.first_name, "VIEW SITE", earn)
-        return `✅ Task completed: +$${earn}`
+        return `✅ Task completed: +${earn} ${settings.CURRENCY}`
     } catch (err) {
         return "❌ Error happend!"
     }

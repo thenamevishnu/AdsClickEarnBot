@@ -21,7 +21,8 @@ const user = new Schema({
     banned: { type: Boolean, default: false },
     invites: { type: Number, default: 0 },
     invited_by: { type: Number, default: settings.ADMIN.ID },
-    notification: { type: Boolean, default: true }
+    notification: { type: Boolean, default: true },
+    last_active: { type: Number, default: Math.floor(new Date().getTime() / 1000) }
 }, {
     timestamps: true
 })

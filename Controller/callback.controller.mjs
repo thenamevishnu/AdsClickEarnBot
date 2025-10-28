@@ -5,10 +5,12 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, sendMessageToTaskChannel, userMention } from "../Utils/tele.mjs";
+import { adsText, answerCallback, balance_key, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, sendMessageToTaskChannel, userMention } from "../Utils/tele.mjs";
 import { deletedAdsModel } from "../Models/deleted_ads.model.mjs";
+import { paymentCollection } from "../Models/payment.model.mjs";
 
 api.on("callback_query", async callback => {
+    if (callback.message.chat.type != "private") return;
     const data = callback.data
     const params = data.split(" ")
     const command = params[0]
@@ -20,13 +22,167 @@ api.on("callback_query", async callback => {
 
     // payments
 
+    if (command === "/balance") {
+        try {
+            const user = await userCollection.findOne({ _id: from.id })
+            answerCallback[from.id] = null
+            // const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
+            const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}</b>\n\n💰 You can convert main balance into ads balance.`
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: balance_key
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (command === "/convert_balance") {
+        try {
+            const [response] = params
+            const user = await userCollection.findOne({ _id: from.id })
+            if (response == "no") {
+                const text = `<b>❌ Conversion cancelled.\n\nNo funds were transferred. You can try again later.</b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT,
+                    reply_markup: {
+                        inline_keyboard: [[{ text: "🔙 Back", callback_data: "/balance" }]]
+                    }
+                })
+            }
+            if (response == "yes") {
+                const amt = user.balance.withdrawable
+                user.balance.balance += user.balance.withdrawable
+                user.balance.withdrawable = 0
+                await user.save()
+                const text = `<b>✅ Conversion successful.\n\nYou’ve successfully converted <code>${amt.toFixed(6)}</code> ${settings.CURRENCY} from your main balance to your ads balance.\n\nYour ads balance is now <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}.</b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT,
+                    reply_markup: {
+                        inline_keyboard: [[{ text: "🔙 Back", callback_data: "/balance" }]]
+                    }
+                })
+            }
+            if (user.balance.withdrawable <= 0) {
+                return await api.answerCallbackQuery(callback.id, {
+                    text: "<b>❌ You don't have any balance to convert.</b>",
+                    show_alert: true
+                })
+            }
+            const amount = user.balance.withdrawable;
+            const text = `<b>🔄 Convert to Ads Balance\n\nYou’re about to convert <code>${amount.toFixed(6)}</code> ${settings.CURRENCY} from your main balance to your ads balance.\n\nWould you like to proceed with this conversion?</b>`;
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: "✅ Yes", callback_data: "/convert_balance yes" },
+                            { text: "❌ No", callback_data: "/convert_balance no" }
+                        ], [
+                            {text: "🔙 Back", callback_data: "/balance"}
+                        ]
+                    ]
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (command === "/deposit") {
+        try {
+            const text = `<b><i>📥 Choose your payment method!</i></b>`
+            const key = [
+                [
+                    { text: "OxaPay", callback_data: "/pay OxaPay" }
+                ], [
+                    { text: "🔙 Back", callback_data: "/balance" }
+                ]
+            ]
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: key
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (command === "/withdraw") {
+        try {
+            const user = await userCollection.findOne({ _id: from.id })
+            if (user.balance.withdrawable < settings.PAYMENT.MIN.WITHDRAW) {
+                const text = `❌ Minimum withdrawal is ${settings.PAYMENT.MIN.WITHDRAW.toFixed(6)} ${settings.CURRENCY}`
+                return await api.answerCallbackQuery(callback.id, {
+                    text,
+                    show_alert: true
+                })
+            }
+            const text = `<b><i>💵 Enter the amount you want to withdraw</i></b>`
+            answerCallback[from.id] = "PAYOUT_AMOUNT"
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    keyboard: [
+                        ["🔴 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
     if (command === "/pay") {
         try{
             const [method] = params
             let text;
-            if (method == "CRYPTO") {
-                text = `<b><i>💷 Enter the amount in USDT you want to deposit!</i></b>`
-                answerCallback[from.id] = "PAY_WITH_CRYPTO"
+            if (method == "OxaPay") {
+                text = `<b><i>💷 Enter the amount in ${settings.CURRENCY} you want to deposit!</i></b>`
+                answerCallback[from.id] = "PAY_WITH_OXAPAY"
             }
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
@@ -34,13 +190,52 @@ api.on("callback_query", async callback => {
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
                     keyboard: [
-                        ["🚫 Cancel"]
+                        ["🔴 Cancel"]
                     ],
                     resize_keyboard: true
                 }
             })
         }catch(err){
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (command === "/history") {
+        try {
+            let text = `<b><i>📃 Here you can see the latest 10 Pending & Completed transaction history</i></b>`
+            const history = await paymentCollection.find({ user_id: from.id }).sort({ createdAt: -1 }).limit(10)
+            if (history.length == 0) {
+                text += `\n\n<b><i>💫 No Transaction Found!</i></b>`
+            }
+            history.forEach(item => {
+                if ((item.status == "Paying" || item.status == "Paid") && (item.type == "payment" || item.type == "invoice")) {
+                    text += `\n\n<b><i>${item.status == "Paying" ? "⌛" : "✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.amount.toFixed(6)} ${settings.CURRENCY}\n🆔 TrackID: ${item.trackId}</i></b>`
+                }
+                if (item.type == "payout") {
+                    text += `\n\n<b><i>${item.status == "Confirming" ? "⌛" : "✅"} Status: ${item.status}\n🛰️ Type: Payout\n💷 Amount: ${item.amount.toFixed(6)} ${settings.CURRENCY}\n🆔 Track ID: ${item.trackId}</i></b>`
+                }
+            })
+            const key = [
+                [
+                    { text: "🔙 Back", callback_data: "/balance" }
+                ]
+            ]
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: key
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT
@@ -82,7 +277,7 @@ api.on("callback_query", async callback => {
             const answers = [
                 `${settings.BOT.NAME} is a Telegram earning platform where users can complete simple tasks, engage with posts, visit websites, and earn real rewards. You can also run your own ad campaigns to promote your business or projects!`,
                 `You can earn through multiple methods: Start Bots — Interact with partner bots; View Posts — Watch sponsored posts or content; Join Chats — Join groups or channels to earn rewards; Micro Tasks — Complete small, easy missions; Visit Sites — Open websites and get paid.`,
-                `Invite your friends and earn extra bonuses! ${settings.REF.INCOME.TASK * 100}% of your invitee’s task earnings, ${settings.REF.INCOME.DEPOSIT * 100}% of your invitee’s deposits, and an extra $${settings.REF.PER_REF} for every verified referral. There’s no limit — the more you invite, the more you earn!`,
+                `Invite your friends and earn extra bonuses! ${settings.REF.INCOME.TASK * 100}% of your invitee’s task earnings, ${settings.REF.INCOME.DEPOSIT * 100}% of your invitee’s deposits, and an extra ${settings.REF.PER_REF} ${settings.CURRENCY} for every verified referral. There’s no limit — the more you invite, the more you earn!`,
                 `Yes! You can create ad campaigns to promote bots, groups, websites, or tasks. Reach real users who engage with your content.`,
                 `You can withdraw through Oxapay or any other crypto wallet — a fast and secure crypto payment gateway.`,
                 `Rewards are added instantly after task completion. Referral and deposit bonuses update automatically.`,
@@ -454,7 +649,7 @@ api.on("callback_query", async callback => {
             let text = `<b><i>❌ CampaignID: #${ads_id} has been deleted!</i></b>`
             if (refund > 0) {
                 await userCollection.updateOne({ _id: from.id }, { $inc: { "balance.balance": refund } })
-                text += `<b><i>\n\n✅ Re-fund: +$${refund}</i></b>`
+                text += `<b><i>\n\n✅ Re-fund: +${refund} ${settings.CURRENCY}</i></b>`
             }
             return await api.editMessageText(text, {
                 chat_id: from.id,
@@ -663,7 +858,7 @@ api.on("callback_query", async callback => {
                 const updateUser = await userCollection.findOneAndUpdate({ _id: pendingTask.done_by }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
                 await userCollection.updateOne({ _id: updateUser.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
             }
-            const text = `<b><i>✅ You micro task response [#${pendingTask.campaign_id}] has been approved by advertiser.\n🎁 Earned: +$${earn}</i></b>`
+            const text = `<b><i>✅ You micro task response [#${pendingTask.campaign_id}] has been approved by advertiser.\n🎁 Earned: +${earn} ${settings.CURRENCY}</i></b>`
             await api.editMessageText(`<b><i>✅ The response [#${pendingTask.campaign_id}] has been approved.</i></b>`, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -722,7 +917,7 @@ api.on("callback_query", async callback => {
             if (type == "CPC") {
                 answerCallback[from.id] = "EDIT_ADS_CPC"
                 const response = await adsCollection.findOne({_id: ads_id})
-                const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${response.cpc.toFixed(6)}</i></b>`
+                const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: ${response.cpc.toFixed(6)} ${settings.CURRENCY}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -738,7 +933,7 @@ api.on("callback_query", async callback => {
             if (type == "BUDGET") {
                 answerCallback[from.id] = "EDIT_ADS_BUDGET"
                 const response = await adsCollection.findOne({_id: ads_id})
-                const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Remaining Budget: $${response.remaining_budget.toFixed(6)}</i></b>`
+                const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Remaining Budget: ${response.remaining_budget.toFixed(6)} ${settings.CURRENCY}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -798,7 +993,7 @@ api.on("callback_query", async callback => {
             if (!isNaN(stats?.[0]?.total_invited) && stats?.[0]?.total_invited > user.invites) {
                 user.invites = stats[0]?.total_invited
             }
-            const text = `<b>📈 Your Referral Stats\n\n━━━━━━━━━━━━━━━━━━━━\n👤 Total Invites: ${stats[0]?.total_invited || 0}\n✅ Verified Users: ${stats[0]?.verified || 0}\n🚫 Blocked Accounts: ${stats[0]?.blocked_bot || 0}\n🔴 Banned Accounts: ${stats[0]?.banned || 0}\n━━━━━━━━━━━━━━━━━━━━\n\n💵 Total Earned: $${user.balance.earned.toFixed(6)}\n\n✨ Keep spreading the word and watch your earnings grow! 🚀</b>`
+            const text = `<b>📈 Your Referral Stats\n\n━━━━━━━━━━━━━━━━━━━━\n👤 Total Invites: ${stats[0]?.total_invited || 0}\n✅ Verified Users: ${stats[0]?.verified || 0}\n🚫 Blocked Accounts: ${stats[0]?.blocked_bot || 0}\n🔴 Banned Accounts: ${stats[0]?.banned || 0}\n━━━━━━━━━━━━━━━━━━━━\n\n💵 Total Earned: ${user.balance.earned.toFixed(6)} ${settings.CURRENCY}\n\n✨ Keep spreading the word and watch your earnings grow! 🚀</b>`
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -878,7 +1073,7 @@ api.on("callback_query", async callback => {
                 verified_ref: user.verified_ref
             }))
             const nos = ["🥇","🥈","🥉"]
-            const text = `<b>🏆 Referral Leaderboard (Top 15)\n📅 Duration: <code>October 25 – November 25, 2025</code>\n\n${info.map((user, index) => `${nos[index] ? `${nos[index]}` : (index + 1) < 10 ? `#0${index + 1}` : `#${index + 1}`}. ${userMention(user.id, user.username, user.name)} - ${user.verified_ref} Referrals`).join("\n")}\n\n🏆 $20.00 reward split for top 3!\n🥇 $10.00 | 🥈 $6.00 | 🥉 $4.00\n\n🏆 Winners get rewards within 24 hrs!\n🔥 Keep referring to win more!</b>`
+            const text = `<b>🏆 Referral Leaderboard (Top 15)\n📅 Duration: <code>October 25 – November 25, 2025</code>\n\n${info.map((user, index) => `${nos[index] ? `${nos[index]}` : (index + 1) < 10 ? `#0${index + 1}` : `#${index + 1}`}. ${userMention(user.id, user.username, user.name)} - ${user.verified_ref} Referrals`).join("\n")}\n\n🏆 20.00 ${settings.CURRENCY} reward split for top 3!\n🥇 10.00  ${settings.CURRENCY} | 🥈 6.00  ${settings.CURRENCY} | 🥉 4.00  ${settings.CURRENCY}\n\n🏆 Winners get rewards within 24 hrs!\n🔥 Keep referring to win more!</b>`
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -1040,7 +1235,7 @@ api.on("callback_query", async callback => {
                     }
                 }
             ])
-            text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: $${users?.[0]?.balance?.toFixed(6)}\nWithdrawable: $${users?.[0]?.withdrawable?.toFixed(6)}\nReferral: $${users?.[0]?.referral?.toFixed(6)}\nPayouts: $${users?.[0]?.payouts?.toFixed(6)}\nEarned: $${users?.[0]?.earned?.toFixed(6)}</i></b>`
+            text += `<b><i>\n\nUsers: ${users?.[0]?.count}\nBanned: ${users?.[0]?.banned}\nVerified: ${users?.[0]?.verified}\n\nBalance: ${users?.[0]?.balance?.toFixed(6)} ${settings.CURRENCY}\nWithdrawable: ${users?.[0]?.withdrawable?.toFixed(6)} ${settings.CURRENCY}\nReferral: ${users?.[0]?.referral?.toFixed(6)} ${settings.CURRENCY}\nPayouts: ${users?.[0]?.payouts?.toFixed(6)} ${settings.CURRENCY}\nEarned: ${users?.[0]?.earned?.toFixed(6)} ${settings.CURRENCY}</i></b>`
             return await api.editMessageText(text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,

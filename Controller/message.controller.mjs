@@ -16,6 +16,7 @@ api.on("message", async message => {
         u.username = message.from.username;
         u.first_name = message.from.first_name;
         u.last_name = message.from.last_name;
+        u.last_active = Math.floor(new Date().getTime() / 1000)
         if (u.blocked_bot) {
             u.blocked_bot = false
         }
@@ -180,7 +181,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["description"] = description
             answerCallback[from.id] = "NEW_BOT_ADS_CPC"
-            const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: $${settings.COST.PER_CLICK.BOT_ADS.toFixed(6)}</i></b>`
+            const text = `<b><i>💷 Enter the cost per click.\n\n💰 Minimum: ${settings.COST.PER_CLICK.BOT_ADS.toFixed(6)} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -207,7 +208,7 @@ api.on("message", async message => {
             }
             const amount = parseFloat(message.text).toFixed(6)
             if (isNaN(amount) || amount < settings.COST.PER_CLICK.BOT_ADS) {
-                const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.BOT_ADS.toFixed(6)}.</i></b>`
+                const text = `<b><i>❌ Minimum CPC: ${settings.COST.PER_CLICK.BOT_ADS.toFixed(6)} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -216,7 +217,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["cpc"] = amount
             answerCallback[from.id] = "NEW_BOT_ADS_BUDGET"
-            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
+            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: ${amount} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -244,7 +245,7 @@ api.on("message", async message => {
             const amount = parseFloat(message.text).toFixed(6)
             const cpc = parseFloat(localStore[from.id]["cpc"]).toFixed(6)
             if (isNaN(amount) || amount < cpc) {
-                const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
+                const text = `<b><i>❌ Minimum budget: ${cpc} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -424,7 +425,7 @@ api.on("message", async message => {
             localStore[from.id]["duration"] = duration
             answerCallback[from.id] = "NEW_SITE_ADS_CPC"
             const perVisit = parseFloat((settings.COST.PER_CLICK.SITE_ADS / 10) * duration).toFixed(6)
-            const text = `<b><i>💷 Enter the cost per visit.\n\n💰 Minimum: $${perVisit} for ${duration} seconds.</i></b>`
+            const text = `<b><i>💷 Enter the cost per visit.\n\n💰 Minimum: ${perVisit} ${settings.CURRENCY} for ${duration} seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -453,7 +454,7 @@ api.on("message", async message => {
             const duration = localStore[from.id]["duration"]
             const perVisit = parseFloat((settings.COST.PER_CLICK.SITE_ADS / 10) * duration).toFixed(6)
             if (isNaN(amount) || amount < perVisit) {
-                const text = `<b><i>❌ Minimum CPC: $${perVisit} per ${duration} seconds.</i></b>`
+                const text = `<b><i>❌ Minimum CPC: ${perVisit} ${settings.CURRENCY} per ${duration} seconds.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -462,7 +463,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["cpc"] = amount
             answerCallback[from.id] = "NEW_SITE_ADS_BUDGET"
-            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
+            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: ${amount} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -490,7 +491,7 @@ api.on("message", async message => {
             const amount = parseFloat(message.text).toFixed(6)
             const cpc = parseFloat(localStore[from.id]["cpc"]).toFixed(6)
             if (isNaN(amount) || amount < cpc) {
-                const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
+                const text = `<b><i>❌ Minimum budget: ${cpc} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -667,7 +668,7 @@ api.on("message", async message => {
             localStore[from.id]["duration"] = duration
             answerCallback[from.id] = "NEW_POST_ADS_CPC"
             const perVisit = parseFloat((settings.COST.PER_CLICK.POST_ADS / 10) * duration).toFixed(6)
-            const text = `<b><i>💷 Enter the cost per view.\n\n💰 Minimum: $${perVisit} for ${duration} seconds.</i></b>`
+            const text = `<b><i>💷 Enter the cost per view.\n\n💰 Minimum: ${perVisit} ${settings.CURRENCY} for ${duration} seconds.</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -696,7 +697,7 @@ api.on("message", async message => {
             const duration = localStore[from.id]["duration"]
             const perVisit = parseFloat((settings.COST.PER_CLICK.POST_ADS / 10) * duration).toFixed(6)
             if (isNaN(amount) || amount < perVisit) {
-                const text = `<b><i>❌ Minimum CPC: $${perVisit} per ${duration} seconds.</i></b>`
+                const text = `<b><i>❌ Minimum CPC: ${perVisit} ${settings.CURRENCY} per ${duration} seconds.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -705,7 +706,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["cpc"] = amount
             answerCallback[from.id] = "NEW_POST_ADS_BUDGET"
-            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
+            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: ${amount} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -733,7 +734,7 @@ api.on("message", async message => {
             const amount = parseFloat(message.text).toFixed(6)
             const cpc = parseFloat(localStore[from.id]["cpc"]).toFixed(6)
             if (isNaN(amount) || amount < cpc) {
-                const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
+                const text = `<b><i>❌ Minimum budget: ${cpc} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -930,7 +931,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["description"] = description
             answerCallback[from.id] = "NEW_CHAT_ADS_CPC"
-            const text = `<b><i>💷 Enter the cost per join.\n\n💰 Minimum: $${settings.COST.PER_CLICK.CHAT_ADS.toFixed(6)}</i></b>`
+            const text = `<b><i>💷 Enter the cost per join.\n\n💰 Minimum: ${settings.COST.PER_CLICK.CHAT_ADS.toFixed(6)} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -957,7 +958,7 @@ api.on("message", async message => {
             }
             const amount = parseFloat(message.text).toFixed(6)
             if (isNaN(amount) || amount < settings.COST.PER_CLICK.CHAT_ADS) {
-                const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.CHAT_ADS.toFixed(6)}.</i></b>`
+                const text = `<b><i>❌ Minimum CPC: ${settings.COST.PER_CLICK.CHAT_ADS.toFixed(6)} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -966,7 +967,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["cpc"] = amount
             answerCallback[from.id] = "NEW_CHAT_ADS_BUDGET"
-            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
+            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: ${amount} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -994,7 +995,7 @@ api.on("message", async message => {
             const amount = parseFloat(message.text).toFixed(6)
             const cpc = parseFloat(localStore[from.id]["cpc"]).toFixed(6)
             if (isNaN(amount) || amount < cpc) {
-                const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
+                const text = `<b><i>❌ Minimum budget: ${cpc} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -1108,7 +1109,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["description"] = description
             answerCallback[from.id] = "NEW_MICRO_ADS_CPC"
-            const text = `<b><i>💷 Enter the cost per task.\n\n💰 Minimum: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(6)}</i></b>`
+            const text = `<b><i>💷 Enter the cost per task.\n\n💰 Minimum: ${settings.COST.PER_CLICK.MICRO_ADS.toFixed(6)} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -1135,7 +1136,7 @@ api.on("message", async message => {
             }
             const amount = parseFloat(message.text).toFixed(6)
             if (isNaN(amount) || amount < settings.COST.PER_CLICK.MICRO_ADS) {
-                const text = `<b><i>❌ Minimum CPC: $${settings.COST.PER_CLICK.MICRO_ADS.toFixed(6)}.</i></b>`
+                const text = `<b><i>❌ Minimum CPC: ${settings.COST.PER_CLICK.MICRO_ADS.toFixed(6)} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -1144,7 +1145,7 @@ api.on("message", async message => {
             }
             localStore[from.id]["cpc"] = amount
             answerCallback[from.id] = "NEW_MICRO_ADS_BUDGET"
-            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: $${amount}</i></b>`
+            const text = `<b><i>💷 Enter the budget for the ad.\n\n💰 Minimum: ${amount} ${settings.CURRENCY}</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -1172,7 +1173,7 @@ api.on("message", async message => {
             const amount = parseFloat(message.text).toFixed(6)
             const cpc = parseFloat(localStore[from.id]["cpc"]).toFixed(6)
             if (isNaN(amount) || amount < cpc) {
-                const text = `<b><i>❌ Minimum budget: $${cpc}.</i></b>`
+                const text = `<b><i>❌ Minimum budget: ${cpc} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -1325,7 +1326,7 @@ api.on("message", async message => {
             const ads_id = localStore[from.id]["ads_id"]
             const ads = await adsCollection.findOne({ _id: ads_id })
             if (isNaN(amount) || amount <= ads.cpc) {
-                const text = `<b><i>❌ CPC should be greater than $${ads.cpc.toFixed(6)}.</i></b>`
+                const text = `<b><i>❌ CPC should be greater than ${ads.cpc.toFixed(6)} ${settings.CURRENCY}.</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -1458,7 +1459,7 @@ api.on("message", async message => {
             await adsCollection.updateOne({ _id: ads_id },{$inc: {remaining_budget: -(ads.cpc)}, $addToSet:{completed: from.id}})
             const user = await userCollection.findOneAndReplace({ _id: from.id }, { $inc: { "balance.withdrawable": earn, "balance.earned": earn } })
             await userCollection.updateOne({ _id: user.invited_by }, { $inc: { "balance.withdrawable": commission, "balance.referral": commission, "balance.earned": commission } })
-            const text = `<b><i>✅ Task completed, you've received +$${earn}</i></b>`
+            const text = `<b><i>✅ Task completed, you've received +${earn} ${settings.CURRENCY}</i></b>`
             sendMessageToTaskChannel(ads_id, from.id, from.username, from.first_name, "START BOT", earn)
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
@@ -1610,74 +1611,6 @@ api.on("message", async message => {
 
     // balance related
 
-    if (waitfor === "CONVERT_BALANCE") {
-        try {
-            if (!message?.text || isNaN(message?.text)) {
-                const text = `<b><i>❌ Only number is allowed.</i></b>`
-                return await api.sendMessage(from.id, text, {
-                    parse_mode: "HTML",
-                    disable_web_page_preview: true,
-                    protect_content: settings.PROTECTED_CONTENT
-                })
-            }
-            const user = await userCollection.findOne({ _id: from.id })
-            const amount = parseFloat(message.text).toFixed(6)
-            if (user.balance.withdrawable <= 0) {
-                answerCallback[from.id] = null
-                const text = `<b><i>❌ You don't have enough balance.</i></b>`
-                return await api.sendMessage(from.id, text, {
-                    parse_mode: "HTML",
-                    disable_web_page_preview: true,
-                    protect_content: settings.PROTECTED_CONTENT,
-                    reply_markup: {
-                        keyboard: keyList.balanceKey,
-                        resize_keyboard: true
-                    }
-                })
-            }
-            if (amount < 0 || amount > user.balance.withdrawable) {
-                const text = `<b><i>❌ Amount should be greater than 0 and less than or equal to $${user.balance.withdrawable.toFixed(6)}</i></b>`
-                return await api.sendMessage(from.id, text, {
-                    parse_mode: "HTML",
-                    disable_web_page_preview: true,
-                    protect_content: settings.PROTECTED_CONTENT,
-                    reply_markup: {
-                        keyboard: keyList.balanceKey,
-                        resize_keyboard: true
-                    }
-                })
-            }
-            answerCallback[from.id] = null
-            const response = await userCollection.updateOne({ _id: from.id }, {
-                $inc: {
-                    "balance.withdrawable": -(amount),
-                    "balance.balance": amount
-                }
-            })
-            let text = ""
-            if (response.matchedCount == 1 && response.modifiedCount == 1) {
-                text = `✅ Balance converted`
-            } else {
-                text = `❌ Error while converting balance`
-            }
-            return await api.sendMessage(from.id, `<b><i>${text}</i></b>`, {
-                parse_mode: "HTML",
-                disable_web_page_preview: true,
-                protect_content: settings.PROTECTED_CONTENT,
-                reply_markup: {
-                    keyboard: keyList.balanceKey,
-                    resize_keyboard: true
-                }
-            })
-        } catch (err) {
-            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
-                parse_mode: "HTML",
-                disable_web_page_preview: true,
-                protect_content: settings.PROTECTED_CONTENT
-            })
-        }
-    }
-
     if (waitfor === "PAYOUT_AMOUNT") {
         try {
             if (!message.text || isNaN(message.text)) {
@@ -1692,7 +1625,7 @@ api.on("message", async message => {
             const user = await userCollection.findOne({ _id: from.id })
             const minPay = settings.PAYMENT.MIN.WITHDRAW
             if (amount < minPay || amount > user.balance.withdrawable) {
-                const text = `<b><i>❌ ${amount < minPay ? `Minimum payout is $${minPay}` : `You don't have enough balance.`}</i></b>`
+                const text = `<b><i>❌ ${amount < minPay ? `Minimum payout is ${minPay} ${settings.CURRENCY}` : `You don't have enough balance.`}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -1750,7 +1683,7 @@ api.on("message", async message => {
             if (status == 200) {
                 await userCollection.updateOne({_id: from.id},{$set: {"balance.withdrawable": -(amount)}})
             }
-            const text = `<b><i>✅ Requested payout of $${amount} to ${address} is ${status == 200 ? "Processing" : "Failed"}!</i></b>`
+            const text = `<b><i>✅ Requested payout of ${amount} ${settings.CURRENCY} to ${address} is ${status == 200 ? "Processing" : "Failed"}!</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -1765,7 +1698,7 @@ api.on("message", async message => {
         }
     }
 
-    if (waitfor === "PAY_WITH_CRYPTO") {
+    if (waitfor === "PAY_WITH_OXAPAY") {
         try {
             if (!message.text || isNaN(message.text)) {
                 const text = `<b><i>❌ Invalid amount!</i></b>`
@@ -1777,7 +1710,7 @@ api.on("message", async message => {
             }
             const amount = parseFloat(message.text).toFixed(6)
             if (amount < settings.PAYMENT.MIN.DEPOSIT) {
-                const text = `<b><i>❌ Minimum deposit $${settings.PAYMENT.MIN.DEPOSIT.toFixed(6)}</i></b>`
+                const text = `<b><i>❌ Minimum deposit is ${settings.PAYMENT.MIN.DEPOSIT.toFixed(6)} ${settings.CURRENCY}</i></b>`
                 return await api.sendMessage(from.id, text, {
                     parse_mode: "HTML",
                     disable_web_page_preview: true,
@@ -1802,11 +1735,11 @@ api.on("message", async message => {
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
-                    keyboard: keyList.balanceKey,
+                    keyboard: keyList.mainKey,
                     resize_keyboard: true
                 }
             })
-            const text = `<b><i><code>🆔 #${orderid}</code>\n\n💵 Amount: $${amount}\n⌛ Expire in 30 minutes</i></b>`
+            const text = `<b><i><code>🆔 #${orderid}</code>\n\n💵 Amount: ${amount} ${settings.CURRENCY}\n⌛ Expire in 30 minutes</i></b>`
             return await api.sendMessage(from.id, text, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -1990,7 +1923,7 @@ api.on("message", async message => {
             const balance = userinfo.balance[type]
             localStore[from.id]["userid_to_add_balance"] = userid
             answerCallback[from.id] = "ADMIN_ENTER_BALANCE_TO_ADD"
-            return await api.sendMessage(from.id, `<i>💷 Enter the amount you want to add\n\n💰 ${type.replace(type[0], type[0].toUpperCase())}: $${balance.toFixed(6)}</i>`, {
+            return await api.sendMessage(from.id, `<i>💷 Enter the amount you want to add\n\n💰 ${type.replace(type[0], type[0].toUpperCase())}: ${balance.toFixed(6)} ${settings.CURRENCY}</i>`, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
                 protect_content: true
@@ -2024,7 +1957,7 @@ api.on("message", async message => {
                 obj.add = { [`balance.${type}`]: amount }
             }
             await userCollection.updateOne({ _id: userid }, { $inc: obj.add })
-            await api.sendMessage(from.id, `<i>☑️ Balance added:\n\n🆔 UserID: ${userid}\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: $${amount}</i>`, {
+            await api.sendMessage(from.id, `<i>☑️ Balance added:\n\n🆔 UserID: ${userid}\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: ${amount} ${settings.CURRENCY}</i>`, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
                 protect_content: true,
@@ -2033,7 +1966,7 @@ api.on("message", async message => {
                     resize_keyboard: true
                 }
             })
-            return await api.sendMessage(userid, `<i>✅ Balance added by Admin\n\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: $${amount}</i>`, {
+            return await api.sendMessage(userid, `<i>✅ Balance added by Admin\n\n💷 To: ${type.replace(type[0], type[0].toUpperCase())}\n💰 Amount: ${amount} ${settings.CURRENCY}</i>`, {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
                 protect_content: true

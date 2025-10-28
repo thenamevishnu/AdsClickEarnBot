@@ -3,7 +3,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, getFaq, getRefMessage, inlineKeys, invited_user, isUserBanned, keyList, showAdsText, userMention, welcomeMessage } from "../Utils/tele.mjs";
+import { adsText, balance_key, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, showAdsText, userMention, welcomeMessage } from "../Utils/tele.mjs";
 
 // start message
 
@@ -17,14 +17,14 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
         answerCallback[from.id] = null
         const user = await userCollection.findOne({ _id: from.id })
         if (!user) {
-            invited_user[from.id] = match[1] || settings.ADMIN.ID
-            if (invited_user[from.id] != settings.ADMIN.ID) {
-                if (isNaN(invited_user[from.id]) || invited_user[from.id] == from.id) {
-                    invited_user[from.id] = settings.ADMIN.ID
+            let invited_user = match[1] || settings.ADMIN.ID
+            if (invited_user != settings.ADMIN.ID) {
+                if (isNaN(invited_user) || invited_user == from.id) {
+                    invited_user = settings.ADMIN.ID
                 }
-                const validateInviter = await userCollection.findOne({ _id: invited_user[from.id] })
+                const validateInviter = await userCollection.findOne({ _id: invited_user })
                 if (!validateInviter) {
-                    invited_user[from.id] = settings.ADMIN.ID
+                    invited_user = settings.ADMIN.ID
                 }
             }
             const createdUser = await userCollection.create({
@@ -32,7 +32,8 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
                 first_name: from.first_name,
                 last_name: from.last_name,
                 username: from.username,
-                invited_by: invited_user[from.id]
+                invited_by: invited_user,
+                last_active: Math.floor(new Date().getTime() / 1000)
             })
             if (createdUser?._id) {
                 await userCollection.updateOne({ _id: createdUser.invited_by },{$inc:{invites: 1}})
@@ -66,7 +67,7 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
 
 // other buttons
 
-api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
+api.onText(/^💷 Balance$/, async message => {
     try {
         if(message.chat.type != "private") return
         const from = message.from
@@ -74,142 +75,15 @@ api.onText(/^💷 Balance$|^🚫 Cancel$/, async message => {
         if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         answerCallback[from.id] = null
-        const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
+        // const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
+        const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}</b>\n\n💰 You can convert main balance into ads balance.`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
-                keyboard: keyList.balanceKey,
-                resize_keyboard: true
+                inline_keyboard: balance_key
             }
-        })
-    } catch (err) {
-        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
-api.onText(/^➕ Deposit$/, async message => {
-    try {
-        if(message.chat.type != "private") return
-        const from = message.from
-        const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
-        const text = `<b><i>📥 Choose your payment method!</i></b>`
-        const key = [
-            [
-                { text: "PAY WITH CRYPTO", callback_data: "/pay CRYPTO" }
-            ]
-        ]
-        return await api.sendMessage(from.id, text, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT,
-            reply_markup: {
-                inline_keyboard: key
-            }
-        })
-    } catch (err) {
-        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
-api.onText(/^➖ Payout$/, async message => {
-    try {
-        if(message.chat.type != "private") return
-        const from = message.from
-        const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
-        const user = await userCollection.findOne({ _id: from.id })
-        if (user.balance.withdrawable < settings.PAYMENT.MIN.WITHDRAW) {
-            const text = `<b><i>❌ Minimum withdrawal is $${settings.PAYMENT.MIN.WITHDRAW.toFixed(6)}</i></b>`
-            return await api.sendMessage(from.id, text, {
-                parse_mode: "HTML",
-                disable_web_page_preview: true,
-                protect_content: settings.PROTECTED_CONTENT
-            })
-        }
-        const text = `<b><i>💵 Enter the amount you want to withdraw</i></b>`
-        answerCallback[from.id] = "PAYOUT_AMOUNT"
-        return await api.sendMessage(from.id, text, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT,
-            reply_markup: {
-                keyboard: [
-                    ["🚫 Cancel"]
-                ],
-                resize_keyboard: true
-            }
-        })
-    } catch (err) {
-        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
-api.onText(/^🔄 Convert$/, async message => {
-    try {
-        if(message.chat.type != "private") return
-        const from = message.from
-        const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
-        const text = `<b><i>🔄 Convert your withdrawable balance to available balance.\n\n💶 Enter the amount to convert.</i></b>`
-        answerCallback[from.id] = "CONVERT_BALANCE"
-        return await api.sendMessage(from.id, text, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT,
-            reply_markup: {
-                keyboard: [
-                    ["🚫 Cancel"]
-                ],
-                resize_keyboard: true
-            }
-        })
-    } catch (err) {
-        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
-api.onText(/^📃 History$/, async message => {
-    try {
-        if(message.chat.type != "private") return
-        const from = message.from
-        const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
-        let text = `<b><i>📃 Here you can see the latest 10 Pending & Completed transaction history</i></b>`
-        const history = await paymentCollection.find({ user_id: from.id }).sort({ createdAt: -1 }).limit(10)
-        if (history.length == 0) {
-            text += `\n\n<b><i>💫 No Transaction Found!</i></b>`
-        }
-        history.forEach(item => {
-            if ((item.status == "Paying" || item.status == "Paid") && (item.type == "payment" || item.type == "invoice")) {
-                text += `\n\n<b><i>${item.status == "Paying" ? "⌛" : "✅"} Status: ${item.status}\n🛰️ Type: Deposit\n💷 Amount: ${item.amount.toFixed(6)} ${item.currency}\n🆔 TrackID: ${item.trackId}</i></b>`   
-            }
-            if (item.type == "payout") {
-                text += `\n\n<b><i>${item.status == "Confirming" ?"⌛":"✅"} Status: ${item.status}\n🛰️ Type: Payout\n💷 Amount: $${item.amount.toFixed(6)}\n🆔 Track ID: ${item.trackId}</i></b>`   
-            }
-        })
-        return await api.sendMessage(from.id, text, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {

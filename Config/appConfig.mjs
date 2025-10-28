@@ -45,6 +45,7 @@ export const settings = {
             WITHDRAW: 2
         }
     },
+    CURRENCY: "USD",
     PROTECTED_CONTENT: true,
     AD_NOTIFY_RUNNING: false
 }
