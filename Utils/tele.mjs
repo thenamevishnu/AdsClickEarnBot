@@ -112,7 +112,8 @@ export const keyList = {
 
 export const balance_key = [
     [{ text: "📥 Deposit", callback_data: "/deposit" }, { text: "📤 Withdraw", callback_data: "/withdraw" }],
-    [{ text: "🔄 Convert", callback_data: "/convert_balance" }, { text: "🕛 History", callback_data: "/history" }]
+    [{ text: "🔄 Convert Balance", callback_data: "/convert_balance" }, { text: "🔃 Convert Points", callback_data: "/convert_points" }],
+    [{ text: "🕛 History", callback_data: "/history" }]
 ]
 
 export const getRefMessage = (id) => {
@@ -127,6 +128,19 @@ export const getRefMessage = (id) => {
         ]
     ]
     return { text, key }
+}
+
+export const number_format = number => {
+    if (isNaN(number)) return number
+    const abs = Math.abs(number)
+    if (abs >= 1e9) return (number / 1e9).toFixed(1) + 'B'
+    if (abs >= 1e6) return (number / 1e6).toFixed(1) + 'M'
+    if (abs >= 1e3) return (number / 1e3).toFixed(1) + 'K'
+    return new Intl.NumberFormat('en-US').format(number)
+}
+
+export const addComma = number => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
 export const getFaq = () => {

@@ -5,7 +5,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, answerCallback, balance_key, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, sendMessageToTaskChannel, userMention } from "../Utils/tele.mjs";
+import { addComma, adsText, answerCallback, balance_key, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, sendMessageToTaskChannel, userMention } from "../Utils/tele.mjs";
 import { deletedAdsModel } from "../Models/deleted_ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 
@@ -26,8 +26,7 @@ api.on("callback_query", async callback => {
         try {
             const user = await userCollection.findOne({ _id: from.id })
             answerCallback[from.id] = null
-            // const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
-            const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}</b>\n\n💰 You can convert main balance into ads balance.`
+            const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}\n\n🌟 Reward Points: <code>${user.balance.points}</code></b>\n\n<i>💰 Collect ${addComma(settings.POINTS_CONVERT_AT)} points and redeem them for ${settings.CURRENCY} rewards!</i>`
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -102,6 +101,83 @@ api.on("callback_query", async callback => {
                             { text: "❌ No", callback_data: "/convert_balance no" }
                         ], [
                             {text: "🔙 Back", callback_data: "/balance"}
+                        ]
+                    ]
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (command === "/convert_points") {
+        try {
+            const [response] = params
+            const user = await userCollection.findOne({ _id: from.id })
+            if (response == "no") {
+                const text = `<b>❌ Conversion cancelled.\n\nNo points were transferred. You can try again later.</b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT,
+                    reply_markup: {
+                        inline_keyboard: [[{ text: "🔙 Back", callback_data: "/balance" }]]
+                    }
+                })
+            }
+            if (response == "yes") {
+                const points = user.balance.points
+                if (points < settings.POINTS_CONVERT_AT) {
+                    return await api.answerCallbackQuery(callback.id, {
+                        text: `❌ You don't have enough points.\n\nYou need ${addComma(settings.POINTS_CONVERT_AT)} points to convert.`,
+                        show_alert: true
+                    })
+                }
+                const in_usd = points * settings.REWARD_POINT_RATE_IN_USD
+                user.balance.withdrawable += in_usd
+                user.balance.earned += in_usd
+                user.balance.points = 0
+                await user.save()
+                const text = `<b>✅ Conversion successful.\n\nYou’ve successfully converted <code>${addComma(points)}</code> points to <code>${in_usd.toFixed(6)}</code> ${settings.CURRENCY}.</b>`
+                return await api.editMessageText(text, {
+                    chat_id: from.id,
+                    message_id: callback.message.message_id,
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT,
+                    reply_markup: {
+                        inline_keyboard: [[{ text: "🔙 Back", callback_data: "/balance" }]]
+                    }
+                })
+            }
+            if (user.balance.points < settings.POINTS_CONVERT_AT) {
+                return await api.answerCallbackQuery(callback.id, {
+                    text: `❌ You don't have enough points\n\nYou need ${addComma(settings.POINTS_CONVERT_AT)} points to convert.`,
+                    show_alert: true
+                })
+            }
+            const points = user.balance.points;
+            const in_usd = points * settings.REWARD_POINT_RATE_IN_USD
+            const text = `<b>🔄 Convert points to ${settings.CURRENCY}\n\nYou’re about to convert <code>${addComma(points)}</code> points to <code>${in_usd.toFixed(6)}</code> ${settings.CURRENCY}\n\nWould you like to proceed with this conversion?</b>`;
+            return await api.editMessageText(text, {
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            { text: "✅ Yes", callback_data: "/convert_points yes" },
+                            { text: "❌ No", callback_data: "/convert_points no" }
+                        ], [
+                            { text: "🔙 Back", callback_data: "/balance" }
                         ]
                     ]
                 }

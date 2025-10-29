@@ -20,6 +20,18 @@ api.on("message", async message => {
         if (u.blocked_bot) {
             u.blocked_bot = false
         }
+        const currentTime = Math.floor(new Date().getTime() / 1000)
+        if (currentTime >= u.next_reward) {
+            u.next_reward = currentTime + 86400
+            const rwp = settings.REWARD_POINTS()
+            u.balance.points += rwp
+            const text = `<b>🎯 Daily Active Reward!\n🏆 You earned ${rwp} points for your activity today!</b>`
+            api.sendMessage(message.from.id, text, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
         await u.save()
     }
 

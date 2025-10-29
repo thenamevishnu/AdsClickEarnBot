@@ -38,6 +38,9 @@ export const settings = {
             DEPOSIT: 0.05
         }  
     },
+    REWARD_POINTS: () => Math.floor(Math.random() * 5) + 1,
+    REWARD_POINT_RATE_IN_USD: 0.00001,
+    POINTS_CONVERT_AT: 100000,
     GIVEAWAY: 0.5,
     PAYMENT: {
         MIN: {

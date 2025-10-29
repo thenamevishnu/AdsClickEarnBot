@@ -8,6 +8,7 @@ const user = new Schema({
     username: { type: String },
     blocked_bot: { type: Boolean, default: false },
     balance: {
+        points: { type: Number, default: 0 },
         withdrawable: { type: Number, default: 0 },
         balance: { type: Number, default: 0 },
         deposits: { type: Number, default: 0 },
@@ -17,6 +18,7 @@ const user = new Schema({
     },
     is_verified: { type: Boolean, default: false },
     ip: { type: String },
+    next_reward: { type: Number, default: 0 },
     ban_reason: { type: String },
     banned: { type: Boolean, default: false },
     invites: { type: Number, default: 0 },

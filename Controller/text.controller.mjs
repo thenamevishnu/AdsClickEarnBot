@@ -3,7 +3,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { adsText, balance_key, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, showAdsText, userMention, welcomeMessage } from "../Utils/tele.mjs";
+import { adsText, balance_key, answerCallback, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, showAdsText, userMention, welcomeMessage, addComma } from "../Utils/tele.mjs";
 
 // start message
 
@@ -75,8 +75,7 @@ api.onText(/^💷 Balance$/, async message => {
         if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         answerCallback[from.id] = null
-        // const text = `<b>👤 ${userMention(from.id, from.username, from.first_name)}\n\n💵 Available Balance:   $${user.balance.balance.toFixed(6)}\n\n🏆 Withdrawable: $${user.balance.withdrawable.toFixed(6)}\n💳 Total Deposits:     $${user.balance.deposits.toFixed(6)}\n\n🎁 Referral Amount:    $${user.balance.referral.toFixed(6)}\n💸 Total Payouts:    $${user.balance.payouts.toFixed(6)}\n\n💶 Total Earned: $${user.balance.earned.toFixed(6)}</b>`
-        const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}</b>\n\n💰 You can convert main balance into ads balance.`
+        const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}\n\n🌟 Reward Points: <code>${user.balance.points}</code></b>\n\n<i>💰 Collect ${addComma(settings.POINTS_CONVERT_AT)} points and redeem them for ${settings.CURRENCY} rewards!</i>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             disable_web_page_preview: true,
