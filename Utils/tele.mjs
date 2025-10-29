@@ -23,7 +23,7 @@ const getRandomAds = () => {
     return ads[randomIndex]
 }
 
-export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn ${settings.REF.PER_REF} ${settings.CURRENCY} for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: <a href="${listedLinks["Telegramic"]}">Telegramic</a>\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
+export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn ${settings.REF.PER_REF} ${settings.CURRENCY} for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: <a href="${listedLinks["Telegram Channels"]}">Review</a>\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
 
 export const userMention = (user_id, username, first_name) => {
     const mention = username ? `@${username}` : `<a href='tg://user?id=${user_id}'>${first_name}</a>`
