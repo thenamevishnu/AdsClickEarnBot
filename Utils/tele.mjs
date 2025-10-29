@@ -9,8 +9,8 @@ export const localStore = {}
 export const messageStat = {}
 
 const listedLinks = {
-    "Telegramic": "https://telegramic.org/bot/adsclickearnbot",
-    "Telegram Channels": "https://telegramchannels.me/bots/adsclickearnbot"
+    "Telegramic": "https://telegramic.org/bot/trueclickbot",
+    "Telegram Channels": "https://telegramchannels.me/bots/trueclickbot"
 }
 
 const ads = [{

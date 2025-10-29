@@ -13,7 +13,7 @@ export const settings = {
         USERNAME: "TrueClickBotUpdates",
         TASK: {
             ID: -1003254476266,
-            USERNAME: "TrueClickBotTask"
+            USERNAME: "TrueClickBotTasks"
         }
     },
     BOT: {
