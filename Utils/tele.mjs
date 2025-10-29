@@ -157,48 +157,58 @@ export const getFaq = () => {
     return { text, key }
 }
 
+export const ads_report_items = ["❌ Incorrect information", "🚫 Inappropriate content", "🔞 Adult content", "🚷 Scam / Fraud", "🛑 Not Working", "⚠️ Other"]
+
 export const inlineKeys = {
     start_bot: (ads) => {
         return [
             [
-                { text: `🔗 Open`, url: `${ads.link}` }
-            ],[
-                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
-                { text: `✅ Started`, callback_data: `/started_bot ${ads._id}`}
+                { text: `✉️ Message Bot`, url: `${ads.link}` },
+                { text: `✅ Started`, callback_data: `/started_bot ${ads._id}` }
+            ], [
+                {text: `🛑 Report`, callback_data: `/report_ad ${ads._id}`},
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` }
             ]
         ]
     },
     chat_join: (ads) => {
         return [
             [
-                { text: `🔗 Open Chat`, url: `${ads.link}` }
-            ],[
-                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
+                { text: `📢 Join Chat`, url: `${ads.link}` },
                 { text: `✅ Joined`, callback_data: `/chat_joined ${ads._id}`}
+            ], [
+                { text: `🛑 Report`, callback_data: `/report_ad ${ads._id}` },
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` }
             ]
         ]
     },
     visit_site: (ads, user_id) => {
         return [
             [
-                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
-                { text: `🔗 Open link`, url: `${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
+                { text: `🔗 Visit Site`, url: `${process.env.SERVER}/links/visit/${ads._id}?id=${user_id}` }
+            ], [
+                { text: `🛑 Report`, callback_data: `/report_ad ${ads._id}` },
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` }
             ]
         ]
     },
     micro_task: (ads) => {
         return [
             [
-                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
-                { text: `✅ Submit Proof`, callback_data: `/micro_task_done ${ads._id}` }
+                { text: `✅ Submit Proof`, callback_data: `/micro_task_done ${ads._id}` },
+            ], [
+                { text: `🛑 Report`, callback_data: `/report_ad ${ads._id}` },
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` }
             ]
         ]
     },
     post_view: (ads, endTime) => {
         return [
             [
-                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` },
-                { text: `✅ Watched`, callback_data: `/watched ${endTime} ${ads._id}` }
+                { text: `✅ Watched`, callback_data: `/watched ${endTime} ${ads._id}` },
+            ], [
+                { text: `🛑 Report`, callback_data: `/report_ad ${ads._id}` },
+                { text: `⏭️ Skip`, callback_data: `/skip ${ads._id}` }
             ]
         ]
     },
@@ -237,25 +247,30 @@ export const getKeyArray = () => {
     return keyArray
 }
 
+const getReportedReasons = reports => {
+    const reasons = reports.map(item => item.reason)
+    return [...new Set(reasons)]
+}
+
 export const adsText = {
     botAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n🤖 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>${(Array.isArray(info.reports) && info.reports.length >= 5) ? `⚠️ Your ad has been reported more than 5 times and has been suspended.\n\nReasons: ${getReportedReasons(info.reports)}\n\n` : ""}⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n🤖 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : info.paused_reason}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     siteAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>${(Array.isArray(info.reports) && info.reports.length >= 5) ? `⚠️ Your ad has been reported more than 5 times and has been suspended.\n\nReasons: ${getReportedReasons(info.reports)}\n\n` : ""}⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : info.paused_reason}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     postAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🆔 PostID: ${info.post_id}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>${(Array.isArray(info.reports) && info.reports.length >= 5) ? `⚠️ Your ad has been reported more than 5 times and has been suspended.\n\nReasons: ${getReportedReasons(info.reports)}\n\n` : ""}⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n⌚ Duration: ${info.duration} seconds\n🆔 PostID: ${info.post_id}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : info.paused_reason}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     chatAds: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n💬 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>${(Array.isArray(info.reports) && info.reports.length >= 5) ? `⚠️ Your ad has been reported more than 5 times and has been suspended.\n\nReasons: ${getReportedReasons(info.reports)}\n\n` : ""}⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: ${info.description}\n\n💬 Username: @${info.username}\n🔗 Link: ${info.link}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : info.paused_reason}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     },
     microTask: (info) => {
-        const text = `<b><i>⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: \n ${info.description}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : `⏹️ Paused`}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
+        const text = `<b><i>${(Array.isArray(info.reports) && info.reports.length >= 5) ? `⚠️ Your ad has been reported more than 5 times and has been suspended.\n\nReasons: ${getReportedReasons(info.reports)}\n\n` : ""}⚙️ Campaign ID: #${info._id}\n\n🛰️ Title: ${info.title}\n🚀 Description: \n ${info.description}\n\n💷 CPC: ${parseFloat(info.cpc).toFixed(6)} ${settings.CURRENCY}\n💶 Budget: ${parseFloat(info.budget).toFixed(6)} ${settings.CURRENCY}\n💵 Remaining Budget: ${parseFloat(info.remaining_budget).toFixed(6)} ${settings.CURRENCY}\n\n🚁 Status: ${info.status ? `✅ Active` : info.paused_reason}\n🎯 Clicks: ${info.completed.length}\n🪂 Skips: ${info.skip.length}</i></b>`
         return text
     }
 }

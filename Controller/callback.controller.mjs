@@ -5,7 +5,7 @@ import { settings } from "../Config/appConfig.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
 import { pendingMicroCollection } from "../Models/microTask.model.mjs";
 import { userCollection } from "../Models/user.model.mjs";
-import { addComma, adsText, answerCallback, balance_key, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, sendMessageToTaskChannel, userMention } from "../Utils/tele.mjs";
+import { addComma, ads_report_items, adsText, answerCallback, balance_key, getFaq, getRefMessage, inlineKeys, isUserBanned, keyList, localStore, messageStat, sendMessageToTaskChannel, userMention } from "../Utils/tele.mjs";
 import { deletedAdsModel } from "../Models/deleted_ads.model.mjs";
 import { paymentCollection } from "../Models/payment.model.mjs";
 
@@ -394,6 +394,76 @@ api.on("callback_query", async callback => {
         })
     }
 
+    // task report
+
+    if (command === "/report_ad") {
+        try {
+            const [ads_id, reason_index] = params
+            if(!ads_id){
+                return await api.answerCallbackQuery(callback.id, {
+                    text: "❌ Please provide ads id",
+                    show_alert: true
+                })
+            }
+            if (reason_index >= 1 && reason_index <= 6) {
+                const idx = Number(reason_index) - 1
+                const ad = await adsCollection.findOne({ _id: ads_id })
+                if (!ad) {
+                    return await api.answerCallbackQuery(callback.id, {
+                        text: "❌ Ad not found",
+                        show_alert: true
+                    })
+                }
+                ad.skip.push(from.id);
+                ad.reports.push({ user_id: from.id, reason: ads_report_items[idx] });
+                if(ad.reports.length >= 5){
+                    ad.status = false
+                    ad.paused_reason = "⚠️ More than 5 reports"
+                }
+                await ad.save();
+                api.sendMessage(settings.ADMIN.ID, `<b>⚠️ Ad reported by user ${userMention(from.id, from.username, from.first_name)}\n\nAd ID: <code>${ads_id}</code>\nReason: <code>${ads_report_items[idx]}</code></b>`, {
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT
+                })
+                return await api.editMessageText(`<b>✅ Ad reported successfully</b>`, {
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    chat_id: from.id,
+                    message_id: callback.message.message_id
+                })
+            }
+            const key = [
+                [
+                    { text: ads_report_items[0], callback_data: `/report_ad ${ads_id} 1` },
+                    { text: ads_report_items[1], callback_data: `/report_ad ${ads_id} 2` }
+                ],[
+                    { text: ads_report_items[2], callback_data: `/report_ad ${ads_id} 3` },
+                    { text: ads_report_items[3], callback_data: `/report_ad ${ads_id} 4` }
+                ],[
+                    { text: ads_report_items[4], callback_data: `/report_ad ${ads_id} 5` },
+                    { text: ads_report_items[5], callback_data: `/report_ad ${ads_id} 6` }
+                ]
+            ]
+            return await api.editMessageText(`<b>🛑 Choose a reason to report this ad:</b>`, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                chat_id: from.id,
+                message_id: callback.message.message_id,
+                reply_markup: {
+                    inline_keyboard: key
+                }
+            })
+        } catch (err) {
+            console.log(err)
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
     // task skip
 
     if (command === "/skip") {
@@ -643,10 +713,26 @@ api.on("callback_query", async callback => {
 
     if (command === "/ads_status") {
         try {
+            
             const [status, ads_id] = params
-            const adType = await adsCollection.findOneAndUpdate({ _id: ads_id }, { $set: { status: status } })
             const ads = await adsCollection.findOne({ _id: ads_id })
-            const text = adType.type == "BOT" ? adsText.botAds(ads) : adType.type == "SITE" ? adsText.siteAds(ads) : ads.type == "POST" ? adsText.postAds(ads) : ads.type == "CHAT" ? adsText.chatAds(ads) : ads.type == "MICRO" ? adsText.microTask(ads) : "Error"
+            if (!ads) {
+                return await api.answerCallbackQuery(callback.id, {
+                    text: "❌ Ad not found",
+                    show_alert: true
+                })
+            }
+            if (ads.reports.length >= 5) {
+                return await api.answerCallbackQuery(callback.id, {
+                    text: "❌ You can't manage this task. It has been reported more than 5 times",
+                    show_alert: true
+                })
+            }
+            ads.status = status
+            console.log(status)
+            ads.paused_reason = status == "true" ? "" : "▶️ Paused"
+            await ads.save()
+            const text = ads.type == "BOT" ? adsText.botAds(ads) : ads.type == "SITE" ? adsText.siteAds(ads) : ads.type == "POST" ? adsText.postAds(ads) : ads.type == "CHAT" ? adsText.chatAds(ads) : ads.type == "MICRO" ? adsText.microTask(ads) : "Error"
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -658,6 +744,7 @@ api.on("callback_query", async callback => {
                 disable_web_page_preview: true
             })
         } catch (err) {
+            console.log(err)
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,

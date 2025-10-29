@@ -187,7 +187,7 @@ api.onText(/^🎯 Micro Task$/, async message => {
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
-        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false, paused_reason: "⚠️ Insufficient Budget" } })
         let ads = await adsCollection.findOne({
             type: "MICRO",
             chat_id: {
@@ -199,7 +199,8 @@ api.onText(/^🎯 Micro Task$/, async message => {
             skip: {
                 $nin: [from.id]
             },
-            status: true
+            status: true,
+            $expr: { $lt: [{$size: "$reports"}, 5]}
         })
         if (!ads) {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
@@ -219,6 +220,7 @@ api.onText(/^🎯 Micro Task$/, async message => {
             }
         })
     } catch (err) {
+        console.log(err)
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
             disable_web_page_preview: true,
@@ -263,7 +265,7 @@ api.onText(/^🤖 Start Bots$/, async message => {
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
-        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        await adsCollection.updateMany({ $expr: { $lt: ["$remaining_budget", "$cpc"] } }, { $set: { status: false, paused_reason: "⚠️ Insufficient Budget" } })
         let ads = await adsCollection.findOne({
             type: "BOT",
             chat_id: {
@@ -275,7 +277,8 @@ api.onText(/^🤖 Start Bots$/, async message => {
             skip: {
                 $nin: [from.id]
             },
-            status: true
+            status: true,
+            $expr: { $lt: [{$size: "$reports"}, 5]}
         })
         if (!ads) {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
@@ -339,7 +342,7 @@ api.onText(/^🔗 Visit Sites$/, async message => {
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
-        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        await adsCollection.updateMany({ $expr: { $lt: ["$remaining_budget", "$cpc"] } }, { $set: { status: false, paused_reason: "⚠️ Insufficient Budget" } })
         let ads = await adsCollection.findOne({
             type: "SITE",
             chat_id: {
@@ -351,7 +354,8 @@ api.onText(/^🔗 Visit Sites$/, async message => {
             skip: {
                 $nin: [from.id]
             },
-            status: true
+            status: true,
+            $expr: { $lt: [{$size: "$reports"}, 5]}
         })
         if (!ads) {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
@@ -387,7 +391,7 @@ api.onText(/^📄 View Posts$/, async message => {
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
-        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        await adsCollection.updateMany({ $expr: { $lt: ["$remaining_budget", "$cpc"] } }, { $set: { status: false, paused_reason: "⚠️ Insufficient Budget" } })
         let ads = await adsCollection.findOne({
             type: "POST",
             chat_id: {
@@ -399,7 +403,8 @@ api.onText(/^📄 View Posts$/, async message => {
             skip: {
                 $nin: [from.id]
             },
-            status: true
+            status: true,
+            $expr: { $lt: [{$size: "$reports"}, 5]}
         })
         if (!ads) {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`
@@ -439,7 +444,7 @@ api.onText(/^💬 Join Chats$/, async message => {
         const from = message.from
         const userStatusCheck = await isUserBanned(from.id)
         if(userStatusCheck) return
-        await adsCollection.updateMany({ $expr: { $lt: [ "$remaining_budget", "$cpc" ] } }, { $set: { status: false } })
+        await adsCollection.updateMany({ $expr: { $lt: ["$remaining_budget", "$cpc"] } }, { $set: { status: false, paused_reason: "⚠️ Insufficient Budget" } })
         let ads = await adsCollection.findOne({
             type: "CHAT",
             chat_id: {
@@ -451,7 +456,8 @@ api.onText(/^💬 Join Chats$/, async message => {
             skip: {
                 $nin: [from.id]
             },
-            status: true
+            status: true,
+            $expr: { $lt: [{$size: "$reports"}, 5]}
         })
         if (!ads) {
             const text = `<b><i>⛔ There are NO TASKS available at the moment.\n⏰ Please check back later!</i></b>`

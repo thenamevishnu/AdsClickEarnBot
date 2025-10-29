@@ -1537,6 +1537,8 @@ api.on("message", async message => {
                 campaign_id: ads_id,
                 cpc: ads.cpc.toFixed(6),
                 done_by: from.id,
+                done_by_first_name: from.first_name,
+                done_by_username: from.username,
                 proof: proof,
                 creator: sendTo,
                 time: Math.floor(new Date().getTime()/1000)

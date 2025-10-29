@@ -16,7 +16,9 @@ const ads = new Schema({
     remaining_budget: { type: Number, required: true },
     completed: { type: Array, default: [] },
     skip: { type: Array, default: [] },
-    status: { type: Boolean, default: true }
+    status: { type: Boolean, default: true },
+    paused_reason: { type: String, default: "" },
+    reports: { type: Array, default: [] }
 }, {
     timestamps: true
 })
