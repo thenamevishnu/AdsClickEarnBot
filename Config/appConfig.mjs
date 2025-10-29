@@ -2,24 +2,24 @@ export const settings = {
     ADMIN: {
         ID: 7270677117,
         ID2: 6813105483,
-        USERNAME: "CelestixSoftDev"
+        USERNAME: "vkripz"
     },
     CHAT: {
         ID: -1001995172897,
-        USERNAME: "AdsClickEarnGroup"
+        USERNAME: "TrueClickBotGroup"
     },
     CHANNEL: {
         ID: -1002098189284,
-        USERNAME: "AdsClickEarnUpdates",
+        USERNAME: "TrueClickBotUpdates",
         TASK: {
             ID: -1003254476266,
-            USERNAME: "AdsClickEarnTask"
+            USERNAME: "TrueClickBotTask"
         }
     },
     BOT: {
         VERSION: "v1.0.3",
-        USERNAME: "AdsClickEarnBot",
-        NAME: "Ads Click Earn Bot",
+        USERNAME: "TrueClickBot",
+        NAME: "TrueClickBot",
         ID: 7924773157
     },
     COST: {
