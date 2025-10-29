@@ -20,7 +20,8 @@ export const settings = {
         VERSION: "v1.0.3",
         USERNAME: "TrueClickBot",
         NAME: "TrueClickBot",
-        ID: 7924773157
+        ID: 7924773157,
+        PUBLIC_RELEASE: "OCT 25, 2025, 10:00 AM"
     },
     COST: {
         PER_CLICK: {

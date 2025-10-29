@@ -82,16 +82,13 @@ export const shortID = () => {
 
 export const keyList = {
     mainKey: [
-        ["🛰️ Tele Task", "🎯 Micro Task", "💻 Web Task"],
-        ["💷 Balance", "👭 Referrals", "⚙️ Settings"],
-        ["📊 Advertise", "❓ FAQ"]
+        ["💷 Balance", "📋 Tasks"],
+        ["👭 Referrals", "📊 Advertise", "⚙️ Settings"],
+        ["📈 Statistics", "❓ FAQ"]
     ],
-    teleKey: [
-        ["🤖 Start Bots", "📄 View Posts", "💬 Join Chats"],
-        ["🔙 Home"]
-    ],
-    webKey: [
-        ["🔗 Visit Sites"],
+    earnKey: [
+        ["🤖 Start Bots", "🎯 Micro Task", "💬 Join Chats"],
+        ["🔗 Visit Sites", "📄 View Posts"],
         ["🔙 Home"]
     ],
     advertiseKey: [

@@ -93,6 +93,32 @@ api.onText(/^💷 Balance$/, async message => {
     }
 })
 
+api.onText(/^📋 Tasks$|^🛑 Cancel$/, async message => {
+    try {
+        if (message.chat.type != "private") return
+        const from = message.from
+        answerCallback[from.id] = null
+        const userStatusCheck = await isUserBanned(from.id)
+        if (userStatusCheck) return
+        const text = `<b>📋 Pick a task & earn instantly!</b>`
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
+            protect_content: settings.PROTECTED_CONTENT,
+            reply_markup: {
+                keyboard: keyList.earnKey,
+                resize_keyboard: true
+            }
+        })
+    } catch (err) {
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
+            protect_content: settings.PROTECTED_CONTENT
+        })
+    }
+})
+
 api.onText(/^👭 Referrals$/, async message => {
     try {
         if(message.chat.type != "private") return
@@ -155,9 +181,46 @@ api.onText(/^\/info$/, async message => {
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             disable_web_page_preview: true,
+            protect_content: from.id == settings.ADMIN.ID ? false : settings.PROTECTED_CONTENT
+        })
+    } catch (err) {
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
+            protect_content: settings.PROTECTED_CONTENT
+        })
+    }
+})
+
+api.onText(/^📈 Statistics$/, async message => {
+    try {
+        if (message.chat.type != "private") return;
+        const from = message.from;
+        const userStatusCheck = await isUserBanned(from.id);
+        if (userStatusCheck) return;
+        const info = await userCollection.aggregate([{
+            $group: {
+                _id: null,
+                total_users: { $count: {} },
+                new_users: { $sum: { $cond: [{ $lte: [{ $subtract: [new Date(), "$createdAt"] }, 86400000] }, 1, 0] } },
+                monthly_active_users: { $sum: { $cond: [{ $lte: [{ $subtract: [Math.floor(new Date().getTime() / 1000), "$last_active"] }, 2592000] }, 1, 0] } }
+            }
+        }])
+        const text = `<b>📊 <u>Live Statistics</u>\n\n👥 Total Users: <code>${info[0].total_users}</code>\n🆕 New Users (24h): <code>${info[0].new_users}</code>\n📅 Monthly Active: <code>${info[0].monthly_active_users}</code>\n\n🚀 Bot Launched: <code>${settings.BOT.PUBLIC_RELEASE}</code>\n🕒 Last Updated: <code>${new Date().toLocaleString("default", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        }).toUpperCase()}</code></b>`
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
+        console.log(err)
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
             disable_web_page_preview: true,
@@ -229,34 +292,6 @@ api.onText(/^🎯 Micro Task$/, async message => {
     }
 })
 
-// Tele Task Section
-
-api.onText(/^🛰️ Tele Task$|^⛔ Cancel$/, async message => {
-    try {
-        if(message.chat.type != "private") return
-        const from = message.from
-        const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
-        answerCallback[from.id] = null
-        const text = `<b><i>🛰️ Telegram Tasks</i></b>`
-        return await api.sendMessage(from.id, text, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT,
-            reply_markup: {
-                keyboard: keyList.teleKey,
-                resize_keyboard: true
-            }
-        })
-    } catch (err) {
-        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
 // start bots
 
 api.onText(/^🤖 Start Bots$/, async message => {
@@ -295,34 +330,6 @@ api.onText(/^🤖 Start Bots$/, async message => {
             protect_content: settings.PROTECTED_CONTENT,
             reply_markup: {
                 inline_keyboard: inlineKeys.start_bot(ads)
-            }
-        })
-    } catch (err) {
-        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT
-        })
-    }
-})
-
-// web task
-
-api.onText(/^💻 Web Task$|^🛑 Cancel$/, async message => {
-    try {
-        if (message.chat.type != "private") return
-        const from = message.from
-        const userStatusCheck = await isUserBanned(from.id)
-        if(userStatusCheck) return
-        answerCallback[from.id] = null
-        const text = `<b><i>🔗 Web related tasks</i></b>`
-        return await api.sendMessage(from.id, text, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            protect_content: settings.PROTECTED_CONTENT,
-            reply_markup: {
-                keyboard: keyList.webKey,
-                resize_keyboard: true
             }
         })
     } catch (err) {

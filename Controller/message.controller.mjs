@@ -1478,7 +1478,7 @@ api.on("message", async message => {
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
-                    keyboard: keyList.teleKey,
+                    keyboard: keyList.earnKey,
                     resize_keyboard: true
                 }
             })
@@ -1550,7 +1550,7 @@ api.on("message", async message => {
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
-                    keyboard: keyList.mainKey,
+                    keyboard: keyList.earnKey,
                     resize_keyboard: true
                 }
             })
