@@ -18,7 +18,8 @@ app.set('views', path.join(__dirname, 'Web'))
 
 app.use(express.json())
 
-app.use("/server", serverRoute)
+// app.use("/", )
+app.use("/", serverRoute)
 app.use("/payments", paymentRoute)
 app.use("/links", linkRoute)
 app.use("/verification", verificationRoute)

@@ -21,7 +21,8 @@ export const settings = {
         USERNAME: "TrueClickBot",
         NAME: "TrueClickBot",
         ID: 7924773157,
-        PUBLIC_RELEASE: "OCT 25, 2025, 10:00 AM"
+        PUBLIC_RELEASE: "OCT 25, 2025, 10:00 AM",
+        EMAIL: "info@trueclickbot.site"
     },
     COST: {
         PER_CLICK: {

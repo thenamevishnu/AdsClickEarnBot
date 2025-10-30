@@ -220,7 +220,6 @@ api.onText(/^📈 Statistics$/, async message => {
             protect_content: settings.PROTECTED_CONTENT
         })
     } catch (err) {
-        console.log(err)
         return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
             parse_mode: "HTML",
             disable_web_page_preview: true,
