@@ -4,7 +4,42 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TrueClickBot – Telegram Ads Automation</title>
+    <link rel="icon" type="image/png" href="<%= favicon %>" />
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="<%= bot_username %> – Telegram Ads Automation & Crypto Earning Bot">
+    <meta name="description" content="Automate Telegram ad clicks, boost engagement and earn USDT instantly with <%= bot_username %>. AI-powered optimization, live analytics, secure automation and instant crypto payouts.">
+    <meta name="keywords" content="Telegram ads automation, true click bot, <%= bot_username %>, Telegram click bot, USDT earning bot, crypto earning Telegram, Telegram marketing automation, automated ad clicks, Telegram traffic bot, USDT instant payout, AI ad optimization, Telegram engagement boost, crypto referral program, Telegram monetization, USDT earning platform, automated crypto earnings, Telegram ad management, click automation tool, Telegram marketing tool, USDT withdrawal bot, Telegram traffic automation, crypto earning automation">
+    <meta name="author" content="<%= bot_username %>">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://t.me/<%= bot_username %>">
+    <meta property="og:title" content="<%= bot_username %> – Telegram Ads Automation & USDT Earning">
+    <meta property="og:description" content="Automate Telegram ad clicks and earn USDT instantly. AI-powered optimization, live analytics, secure automation and instant crypto payouts. Start earning today!">
+    <meta property="og:image" content="<%= favicon %>">
+    <meta property="og:image:alt" content="<%= bot_username %> Telegram Ads Automation">
+    <meta property="og:site_name" content="<%= bot_username %>">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://t.me/<%= bot_username %>">
+    <meta property="twitter:title" content="<%= bot_username %> – Earn USDT with Telegram Ad Automation">
+    <meta property="twitter:description" content="Automate Telegram ads and earn USDT instantly. AI optimization, live analytics, secure automation & instant crypto payouts. Start now!">
+    <meta property="twitter:image" content="<%= favicon %>">
+    <meta property="twitter:image:alt" content="<%= bot_username %> Telegram Ads Automation Platform">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://t.me/<%= bot_username %>">
+    
+    <!-- Performance: Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+    <title><%= bot_username %> – Telegram Ads Automation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +69,7 @@
 
         .glass {
             background: rgba(22, 27, 34, 0.6);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
@@ -79,9 +114,9 @@
     <!-- Navbar -->
     <header class="glass sticky top-3 z-50 rounded-full">
         <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-            <h1
-                class="text-2xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#00C2FF] to-cyan-400">
-                TrueClickBot</h1>
+            <h1 onclick="window.open('https://t.me/<%= bot_username %>', '_blank')"
+                class="text-2xl cursor-pointer font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[#00C2FF] to-cyan-400">
+                @<%= bot_username %></h1>
             <!-- Mobile menu button -->
             <button id="mobile-menu-btn" class="lg:hidden text-[#00C2FF] focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +179,7 @@
                 Supercharge Your Telegram Ads
             </h2>
             <p class="text-lg sm:text-xl md:text-2xl text-gray-300 mb-10 max-w-4xl mx-auto px-2 leading-relaxed">
-                TrueClickBot automates clicks, boosts engagement, and maximizes ROI for your Telegram
+                <%= bot_username %> automates clicks, boosts engagement, and maximizes ROI for your Telegram
                 campaigns—effortlessly.
             </p>
 
@@ -332,7 +367,7 @@
     <!-- Live Stats -->
     <section id="live-stats" class="max-w-7xl mx-auto px-4 py-16 sm:py-24">
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-center mb-12 sm:mb-16 section-title">
-            TrueClickBot in Real Time</h2>
+            <%= bot_username %> in Real Time</h2>
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-center">
             <div class="glass p-4 sm:p-6 rounded-2xl">
                 <div class="text-2xl sm:text-4xl font-extrabold text-[#00C2FF] mb-1 sm:mb-2" id="clicks">0</div>
@@ -425,7 +460,7 @@
                 <div class="sm:col-span-2 lg:col-span-1">
                     <h4
                         class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00C2FF] to-cyan-400 mb-4 sm:mb-6">
-                        TrueClickBot</h4>
+                        <%= bot_username %></h4>
                     <p class="text-sm sm:text-base leading-relaxed text-gray-400">Automate your Telegram ads and scale
                         your marketing efforts effortlessly.</p>
                 </div>
@@ -481,7 +516,7 @@
             <!-- Copyright -->
             <div class="border-t border-gray-700/60 pt-8 sm:pt-10 text-center">
                 <p class="text-sm sm:text-base text-gray-400">
-                    © <span id="year"></span> TrueClickBot. All rights reserved.
+                    © <span id="year"></span> <%= bot_username %>. All rights reserved.
                 </p>
             </div>
         </div>

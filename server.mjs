@@ -17,8 +17,8 @@ const __dirname = dirname(__filename)
 app.set('views', path.join(__dirname, 'Web'))
 
 app.use(express.json())
+app.use("/file", express.static("file"))
 
-// app.use("/", )
 app.use("/", serverRoute)
 app.use("/payments", paymentRoute)
 app.use("/links", linkRoute)

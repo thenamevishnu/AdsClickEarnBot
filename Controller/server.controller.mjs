@@ -50,6 +50,7 @@ const website = async (_req, res) => {
             ])
         ]);
         return res.render("Website/LandingPage", {
+            favicon: process.env.SERVER + "/file/true_click_favicon.png",
             live_campaigns: ads[0]?.live_campaigns || 0,
             total_clicks: (ads[0]?.total_clicks||0) + (ads_deleted[0]?.total_clicks||0),
             total_users: total_users[0]?.total_users || 0,
