@@ -13,6 +13,8 @@ const listedLinks = {
     "Telegram Channels": "https://telegramchannels.me/bots/trueclickbot"
 }
 
+const trustpilot = "https://www.trustpilot.com/review/trueclickbot.site"
+
 const ads = [{
     text: "Fast & Secure Crypto Pay!",
     url: "https://oxapay.com/?ref=50087312"
@@ -23,7 +25,11 @@ const getRandomAds = () => {
     return ads[randomIndex]
 }
 
-export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn ${settings.REF.PER_REF} ${settings.CURRENCY} for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: <a href="${listedLinks["Telegram Channels"]}">Review</a>\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
+export const getRateLink = () => {
+    return `<a href="${trustpilot}">Trustpilot</a>`
+}
+
+export const welcomeMessage = `<b>Welcome to ${settings.BOT.USERNAME}!\n\n✅ Earn ${settings.REF.PER_REF} ${settings.CURRENCY} for every active referral you bring!\n\n📢 Stay Updated: @${settings.CHANNEL.USERNAME}\n⭐ Share Feedback: ${getRateLink()}\n\n【AD】 <a href="${getRandomAds().url}">${getRandomAds().text}</a></b>`
 
 export const userMention = (user_id, username, first_name) => {
     const mention = username ? `@${username}` : `<a href='tg://user?id=${user_id}'>${first_name}</a>`

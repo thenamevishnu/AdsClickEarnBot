@@ -1,5 +1,6 @@
 import api from "../Config/Telegram.mjs";
 import { settings } from "../Config/appConfig.mjs";
+import { getRateLink } from "../Utils/tele.mjs";
 
 api.onText(/^\/id$/, async message => {
     try {
@@ -18,6 +19,19 @@ api.onText(/^\/id$/, async message => {
             protect_content: settings.PROTECTED_CONTENT
         })
     }
+})
+
+api.onText(/^\/review$/, async message => {
+    let reply_to_message_id = message.message_id
+    if (message.reply_to_message) {
+        reply_to_message_id = message.reply_to_message.message_id
+    }
+    return await api.sendMessage(message.chat.id, `<b>⭐ Rate us on ${getRateLink()}</b>`, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+        protect_content: settings.PROTECTED_CONTENT,
+        reply_to_message_id
+    })
 })
 
 api.onText("/ads_run_command", async message => {
