@@ -69,6 +69,34 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
 
 // other buttons
 
+api.onText(/^🤖 Clone Bot$/, async message => {
+    try {
+        if (message.chat.type != "private") return;
+        const from = message.from;
+        const text = `<b>✅ Connect with @${settings.ADMIN.USERNAME}\n💶 Cost: $250</b>`;
+        return await api.sendMessage(from.id, text, {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
+            protect_content: settings.PROTECTED_CONTENT,
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        { text: "📃 Features", url: "https://t.me/TrueClickBotUpdates/72" },
+                        { text: "💵 Buy Now", url: `https://t.me/${settings.ADMIN.USERNAME}` }
+                    ]
+                ]
+            },
+            reply_to_message_id: message.message_id
+        });
+    } catch (err) {
+        return await api.sendMessage(message.from.id, "<b>❌ Error happened</b>", {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
+            protect_content: settings.PROTECTED_CONTENT
+        })
+    }
+})
+
 api.onText(/^💷 Balance$/, async message => {
     try {
         if(message.chat.type != "private") return

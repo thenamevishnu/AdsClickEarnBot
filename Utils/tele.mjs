@@ -90,11 +90,11 @@ export const keyList = {
     mainKey: [
         ["💷 Balance", "📋 Tasks"],
         ["👭 Referrals", "📊 Advertise", "⚙️ Settings"],
-        ["📈 Statistics", "❓ FAQ"]
+        ["📈 Statistics", "❓ FAQ", "🤖 Clone Bot"]
     ],
     earnKey: [
         ["🤖 Start Bots", "🎯 Micro Task", "💬 Join Chats"],
-        ["🔗 Visit Sites", "📄 View Posts"],
+        ["🔗 Visit Sites", "", "📄 View Posts"],
         ["🔙 Home"]
     ],
     advertiseKey: [
