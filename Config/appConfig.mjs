@@ -22,6 +22,7 @@ export const settings = {
         NAME: "TrueClickBot",
         ID: 7924773157,
         PUBLIC_RELEASE: "OCT 25, 2025, 10:00 AM",
+        WEBSITE: "https://trueclickbot.site",
         EMAIL: "info@trueclickbot.site"
     },
     COST: {

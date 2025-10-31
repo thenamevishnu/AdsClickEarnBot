@@ -41,7 +41,12 @@ export const sendMessageToTaskChannel = async (ad_id, user_id, username, first_n
     return await api.sendMessage(settings.CHANNEL.TASK.ID, text, {
         parse_mode: "HTML",
         disable_web_page_preview: true,
-        protect_content: settings.PROTECTED_CONTENT
+        protect_content: settings.PROTECTED_CONTENT,
+        reply_markup: {
+            inline_keyboard: [[
+                {text: "🔗 Official Website", url: `https://t.me/${settings.BOT.USERNAME}/app`},
+            ]]
+        }
     })
 }
 
