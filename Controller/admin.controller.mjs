@@ -4,7 +4,7 @@ import { getAdminPanel, listedKey } from "../Utils/tele.mjs";
 
 // admin
 
-api.onText(/^\/admin$/, async message => {
+api.onText(/^\/admin$|^🔧 Admin Panel$/, async message => {
     try {
         const from = message.from
         if(message.chat.type != "private") return

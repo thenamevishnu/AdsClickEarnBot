@@ -215,11 +215,11 @@ export const inlineKeys = {
             ]
         ]
     },
-    confirmDelete: (ads_id) => {
+    confirmDelete: (ads_id, who=null) => {
         return [
             [
                 { text: "❌ Cancel", callback_data: `/cancel_delete_ad` },
-                { text: "✅ Confirm delete", callback_data: `/confirm_delete ${ads_id}` }
+                { text: "✅ Confirm delete", callback_data: `/confirm_delete ${ads_id} ${who}` }
             ]
         ]
     },
@@ -340,9 +340,11 @@ export const getAdminPanel = () => {
             { text: "📤 Mailing", callback_data: "/admin_mailing" }
         ],[
             { text: `🔴 Ban User`, callback_data: `/admin_ban_user` },
+            { text: "ℹ️ User Info", callback_data: `/admin_user_info` },
             { text: `🟢 Unban User`, callback_data: `/admin_unban_user` }
         ], [
-            { text: "💵 Add Balance", callback_data: "/admin_add_balance" }
+            { text: "💵 Manage Balance", callback_data: "/admin_add_balance" },
+            { text: "📊 Manage Campaign", callback_data: "/admin_manage_campaign"}
         ]
     ]
     return {

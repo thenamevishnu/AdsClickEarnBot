@@ -94,7 +94,9 @@ const verificationCheck = async (req, res) => {
                     disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
-                        keyboard: keyList.mainKey,
+                        keyboard: user_id == settings.ADMIN.ID
+                            ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                            : [...keyList.mainKey],
                         resize_keyboard: true
                     }
                 })

@@ -1,6 +1,6 @@
 import { isUri } from "valid-url";
 import api from "../Config/Telegram.mjs";
-import { answerCallback, getKeyArray, isUserBanned, keyList, localStore, sendMessageToTaskChannel, shortID } from "../Utils/tele.mjs";
+import { adsText, answerCallback, getKeyArray, isUserBanned, keyList, localStore, sendMessageToTaskChannel, shortID, userMention } from "../Utils/tele.mjs";
 import { settings } from "../Config/appConfig.mjs";
 import { userCollection } from "../Models/user.model.mjs";
 import { adsCollection } from "../Models/ads.model.mjs";
@@ -1749,7 +1749,9 @@ api.on("message", async message => {
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
-                    keyboard: keyList.mainKey,
+                    keyboard: from.id == settings.ADMIN.ID
+                        ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                        : [...keyList.mainKey],
                     resize_keyboard: true
                 }
             })
@@ -1777,8 +1779,116 @@ api.on("message", async message => {
 
     // admin section
 
+    if (waitfor === "ADMIN_MANAGE_CAMPAIGN") {
+        try {
+            if(from.id != settings.ADMIN.ID) return;
+            if(!message?.text){
+                const text = `<b><i>❌ Enter a valid campaign id.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT
+                })
+            }
+            const campaign_id = message.text
+            const campaign = await adsCollection.findOne({ _id: campaign_id })
+            if(!campaign){
+                const text = `<b><i>❌ Campaign not found.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT
+                })
+            }
+            answerCallback[from.id] = null
+            const text = campaign.type == "BOT" ? adsText.botAds(campaign) : campaign.type == "SITE" ? adsText.siteAds(campaign) : campaign.type == "POST" ? adsText.postAds(campaign) : campaign.type == "CHAT" ? adsText.chatAds(campaign) : campaign.type == "MICRO" ? adsText.microTask(campaign) : "Error"
+            await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    inline_keyboard: [
+                        [{ text: "❌ Delete Ad", callback_data: `/delete_ad ${campaign._id} admin` }]
+                    ]
+                }
+            })
+            return await api.sendMessage(from.id, `<b><i>🆔 Campaign ID <code>${campaign._id}</code> fetched.</i></b>`, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    keyboard: from.id == settings.ADMIN.ID ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]] : [...keyList.mainKey],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
+    if (waitfor === "ADMIN_USER_INFO") {
+        try {
+            if (from.id != settings.ADMIN.ID) return;
+            if(!message.text || isNaN(message.text)){
+                const text = `<b><i>❌ Enter userId in numberic.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT
+                })
+            }
+            const user_id = message.text
+            const user = await userCollection.findOne({ _id: user_id })
+            if(!user){
+                const text = `<b><i>❌ Invalid userId or user not found.</i></b>`
+                return await api.sendMessage(from.id, text, {
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT
+                })
+            }
+            answerCallback[from.id] = null
+            const ref = await userCollection.aggregate([{
+                $match: {
+                    invited_by: user_id
+                }
+            }, {
+                $group: {
+                    _id: null,
+                    invited: { $count: {} },
+                    verified: { $sum: { $cond: [{ $eq: ["$is_verified", true] }, 1, 0] } },
+                    banned: { $sum: { $cond: [{ $eq: ["$banned", true] }, 1, 0] } },
+                    blocked_bot: { $sum: { $cond: [{ $eq: ["$blocked_bot", true] }, 1, 0] } },
+                }
+            }])
+            const text = `<b>👤 User Info</b>\n<b>├ ID:</b> <code>${user_id}</code>\n<b>├ Name:</b> ${user.first_name || '—'}\n<b>├ Last:</b> ${user.last_name || '—'}\n<b>├ Username:</b> @${user.username || '—'}\n<b>├ Mention:</b> ${userMention(user._id, user.username, user.first_name)}\n\n<b>🎯 Referral</b>\n<b>├ Invited:</b> <code>${ref[0]?.invited || 0}</code>\n<b>├ Verified:</b> <code>${ref[0]?.verified || 0}</code>\n<b>├ Inactive:</b> <code>${(ref[0]?.invited || 0) - ((ref[0]?.banned || 0) + (ref[0]?.verified || 0) + (ref[0]?.blocked_bot || 0))}</code>\n<b>├ Banned:</b> <code>${ref[0]?.banned || 0}</code>\n<b>├ Blocked Bot:</b> <code>${ref[0]?.blocked_bot || 0}</code>\n<b>├ Referral Link:</b> <code>https://t.me/${(await api.getMe()).username}?start=${user._id}</code>\n\n<b>💰 Balances</b>\n<b>├ Ad Balance:</b> <code>${user.balance.balance.toFixed(6)} ${settings.CURRENCY}</code>\n<b>├ Deposits:</b> <code>${user.balance.deposits.toFixed(6)} ${settings.CURRENCY}</code>\n<b>├ Earnings:</b> <code>${user.balance.earned.toFixed(6)} ${settings.CURRENCY}</code>\n<b>├ Withdrawals:</b> <code>${user.balance.payouts.toFixed(6)} ${settings.CURRENCY}</code>\n<b>├ Points:</b> <code>${user.balance.points} ✨</code>\n\n<b>📊 Stats</b>\n<b>├ Verified:</b> <code>${user.is_verified ? '✅ Yes' : '❌ No'}</code>\n<b>├ Banned:</b> <code>${user.banned ? '🔴 Yes' : '🟢 No'}</code>\n<b>├ Joined:</b> <code>${new Date(user.createdAt).toLocaleString('default', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()}</code>`;
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    keyboard: from.id == settings.ADMIN.ID
+                        ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                        : [...keyList.mainKey],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return await api.sendMessage(from.id, "<b>❌ Error happened</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
     if (waitfor === "ADMIN_BAN_USER") {
         try {
+            if (from.id != settings.ADMIN.ID) return;
             if(!message.text || isNaN(message.text)){
                 const text = `<b><i>❌ Enter userId in numberic.</i></b>`
                 return await api.sendMessage(from.id, text, {
@@ -1813,7 +1923,9 @@ api.on("message", async message => {
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup:{
-                    keyboard: keyList.mainKey,
+                    keyboard: from.id == settings.ADMIN.ID
+                        ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                        : [...keyList.mainKey],
                     resize_keyboard: true
                 }
             })
@@ -1833,6 +1945,7 @@ api.on("message", async message => {
 
     if (waitfor === "ADMIN_UNBAN_USER") {
         try {
+            if (from.id != settings.ADMIN.ID) return;
             if(!message.text || isNaN(message.text)){
                 const text = `<b><i>❌ Enter userId in numberic.</i></b>`
                 return await api.sendMessage(from.id, text, {
@@ -1867,7 +1980,9 @@ api.on("message", async message => {
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup:{
-                    keyboard: keyList.mainKey,
+                    keyboard: from.id == settings.ADMIN.ID
+                        ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                        : [...keyList.mainKey],
                     resize_keyboard: true
                 }
             })
@@ -1887,6 +2002,7 @@ api.on("message", async message => {
 
     if (waitfor === "ADMIN_MAILING") {
         try {
+            if (from.id != settings.ADMIN.ID) return;
             const message_id = message.message_id
             const text = "<b><i>👇 Preview 👇</i></b>"
             answerCallback[from.id] = null
@@ -1924,6 +2040,7 @@ api.on("message", async message => {
 
     if (waitfor === "ADMIN_USER_ID_FOR_ADD_BALANCE") {
         try {
+            if (from.id != settings.ADMIN.ID) return;
             if (isNaN(message.text)) {
                 return await api.sendMessage(from.id, `<i>✖️ Enter valid UserID</i>`, {
                     parse_mode: "HTML",
@@ -1953,6 +2070,7 @@ api.on("message", async message => {
 
     if (waitfor === "ADMIN_ENTER_BALANCE_TO_ADD") {
         try {
+            if (from.id != settings.ADMIN.ID) return;
             if (isNaN(message.text)) {
                 return await api.sendMessage(from.id, `<i>✖️ Enter valid amount</i>`, {
                     parse_mode: "HTML",
@@ -1976,7 +2094,9 @@ api.on("message", async message => {
                 disable_web_page_preview: true,
                 protect_content: true,
                 reply_markup: {
-                    keyboard: keyList.mainKey,
+                    keyboard: from.id == settings.ADMIN.ID
+                        ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                        : [...keyList.mainKey],
                     resize_keyboard: true
                 }
             })

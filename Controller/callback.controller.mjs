@@ -26,7 +26,7 @@ api.on("callback_query", async callback => {
         try {
             const user = await userCollection.findOne({ _id: from.id })
             answerCallback[from.id] = null
-            const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}\n\n🌟 Reward Points: <code>${user.balance.points}</code></b>\n\n<i>💰 Collect ${addComma(settings.POINTS_CONVERT_AT)} points and redeem them for ${settings.CURRENCY} rewards!</i>`
+            const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}\n\n🌟 Reward Points: <code>${addComma(user.balance.points)} points</code></b>\n\n<i>💰 Collect ${addComma(settings.POINTS_CONVERT_AT)} points and redeem them for ${settings.CURRENCY} rewards!</i>`
             return await api.editMessageText(text, {
                 chat_id: from.id,
                 message_id: callback.message.message_id,
@@ -755,7 +755,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/delete_ad") {
         try {
-            const [ads_id] = params
+            const [ads_id, who] = params
             const text = `<b><i>🗑️ Are you confirm to delete campaignID: #${ads_id}</i></b>`
             return await api.editMessageText(text, {
                 chat_id: from.id,
@@ -763,7 +763,7 @@ api.on("callback_query", async callback => {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
                 reply_markup: {
-                    inline_keyboard: inlineKeys.confirmDelete(ads_id)
+                    inline_keyboard: inlineKeys.confirmDelete(ads_id, who)
                 }
             })
         } catch (err) {
@@ -795,7 +795,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/confirm_delete") {
         try {
-            const [ads_id] = params
+            const [ads_id, who] = params
             const ads = await adsCollection.findOne({ _id: ads_id })
             if (!ads) {
                 const text = `<b><i>❌ Ad already deleted/can't find!</i></b>`
@@ -810,9 +810,18 @@ api.on("callback_query", async callback => {
             await adsCollection.deleteOne({ _id: ads_id })
             const refund = ads.remaining_budget.toFixed(6)
             let text = `<b><i>❌ CampaignID: #${ads_id} has been deleted!</i></b>`
+            let to_user = `<b><i>❌ CampaignID: #${ads_id} has been deleted by admin!</i></b>`
             if (refund > 0) {
-                await userCollection.updateOne({ _id: from.id }, { $inc: { "balance.balance": refund } })
+                await userCollection.updateOne({ _id: ads.chat_id}, { $inc: { "balance.balance": refund } })
                 text += `<b><i>\n\n✅ Re-fund: +${refund} ${settings.CURRENCY}</i></b>`
+                to_user += `<b><i>\n\n✅ Re-fund: +${refund} ${settings.CURRENCY}</i></b>`
+            }
+            if(who == "admin") {
+                await api.sendMessage(ads.chat_id, to_user, {
+                    parse_mode: "HTML",
+                    disable_web_page_preview: true,
+                    protect_content: settings.PROTECTED_CONTENT
+                })
             }
             return await api.editMessageText(text, {
                 chat_id: from.id,
@@ -821,7 +830,6 @@ api.on("callback_query", async callback => {
                 disable_web_page_preview: true
             })
         } catch (err) {
-            console.log(err)
             return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
                 parse_mode: "HTML",
                 disable_web_page_preview: true,
@@ -972,7 +980,9 @@ api.on("callback_query", async callback => {
                     disable_web_page_preview: true,
                     protect_content: settings.PROTECTED_CONTENT,
                     reply_markup: {
-                        keyboard: keyList.mainKey,
+                        keyboard: from.id == settings.ADMIN.ID
+                            ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                            : [...keyList.mainKey],
                         resize_keyboard: true
                     }
                 })
@@ -1261,8 +1271,34 @@ api.on("callback_query", async callback => {
 
     // admin section
 
+    if (command === "/admin_manage_campaign") {
+        try {
+            if(settings.ADMIN.ID != from.id) return;
+            const text = `<b><i>🎯 Enter the targeted campaign Id.</i></b>`
+            answerCallback[from.id] = "ADMIN_MANAGE_CAMPAIGN"
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    keyboard: [
+                        ["🔴 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
     if (command === "/admin_ad_notify") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const is_running = settings.AD_NOTIFY_RUNNING
             if (is_running) return await api.answerCallbackQuery(callback.id, {
                 text: "🚫 Ads notify is already running!",
@@ -1313,6 +1349,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_protected_content") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             settings.PROTECTED_CONTENT = !settings.PROTECTED_CONTENT
             const key = callback.message.reply_markup.inline_keyboard
             key.shift()
@@ -1332,8 +1369,34 @@ api.on("callback_query", async callback => {
         }
     }
 
+    if (command === "/admin_user_info") {
+        try {
+            if (settings.ADMIN.ID != from.id) return;
+            const text = `<b><i>🎯 Enter the targeted userId.</i></b>`
+            answerCallback[from.id] = "ADMIN_USER_INFO"
+            return await api.sendMessage(from.id, text, {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT,
+                reply_markup: {
+                    keyboard: [
+                        ["🔴 Cancel"]
+                    ],
+                    resize_keyboard: true
+                }
+            })
+        } catch (err) {
+            return api.sendMessage(from.id, "<b>❌ Error happend</b>", {
+                parse_mode: "HTML",
+                disable_web_page_preview: true,
+                protect_content: settings.PROTECTED_CONTENT
+            })
+        }
+    }
+
     if (command === "/admin_ban_user") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const text = `<b><i>🎯 Enter the targeted userId to ban.</i></b>`
             answerCallback[from.id] = "ADMIN_BAN_USER"
             return await api.sendMessage(from.id, text, {
@@ -1358,6 +1421,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_unban_user") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const text = `<b><i>🎯 Enter the targeted userId to ban.</i></b>`
             answerCallback[from.id] = "ADMIN_UNBAN_USER"
             return await api.sendMessage(from.id, text, {
@@ -1382,6 +1446,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_user_stat") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             let text = `<b><i>🎯 User Stat</i></b>`
             const users = await userCollection.aggregate([
                 {
@@ -1416,6 +1481,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_mailing") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const text = "<b><i>📨 Create or forward a message to mail to users</i></b>"
             answerCallback[from.id] = "ADMIN_MAILING"
             return api.sendMessage(from.id, text, {
@@ -1440,6 +1506,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_cancel_mail") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const text = "<b><i>✖️ Mailing has been cancelled!</i></b>"
             return await api.editMessageText(text, {
                 chat_id: from.id,
@@ -1458,6 +1525,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_send_mail") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const [message_id] = params
             const text = "<b><i>✅ Mailing started...</i></b>"
             const users = await userCollection.find({ blocked_bot: false });
@@ -1471,7 +1539,9 @@ api.on("callback_query", async callback => {
                 disable_web_page_preview: true,
                 protect_content: settings.PROTECTED_CONTENT,
                 reply_markup: {
-                    keyboard: keyList.mainKey,
+                    keyboard: from.id == settings.ADMIN.ID 
+                        ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]] 
+                        : [...keyList.mainKey],
                     resize_keyboard: true
                 }
             })
@@ -1522,6 +1592,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_add_balance") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const key = [
                 [
                     { text: "💶 Balance", callback_data: "/admin_add_balance_to balance" },
@@ -1552,6 +1623,7 @@ api.on("callback_query", async callback => {
 
     if (command === "/admin_add_balance_to") {
         try {
+            if (settings.ADMIN.ID != from.id) return;
             const type = params[0]
             const text = `<i>🆔 Enter the user Telegram ID:</i>`
             localStore[from.id]["balance_add_to"] = type

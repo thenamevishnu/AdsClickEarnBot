@@ -52,7 +52,9 @@ api.onText(/^\/start(?: (.+))?$|^🔙 Home$|^🔴 Cancel$/, async (message, matc
             protect_content: settings.PROTECTED_CONTENT,
             disable_web_page_preview: true,
             reply_markup: {
-                keyboard: keyList.mainKey,
+                keyboard: from.id == settings.ADMIN.ID
+                    ? [...keyList.mainKey, [{ text: "🔧 Admin Panel", callback_data: "/admin" }]]
+                    : [...keyList.mainKey],
                 resize_keyboard: true
             }
         })
@@ -75,7 +77,7 @@ api.onText(/^💷 Balance$/, async message => {
         if(userStatusCheck) return
         const user = await userCollection.findOne({ _id: from.id })
         answerCallback[from.id] = null
-        const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}\n\n🌟 Reward Points: <code>${user.balance.points}</code></b>\n\n<i>💰 Collect ${addComma(settings.POINTS_CONVERT_AT)} points and redeem them for ${settings.CURRENCY} rewards!</i>`
+        const text = `<b><u>🏦 Balance Snapshot</u>\n\n💶 Main Balance: <code>${user.balance.withdrawable.toFixed(6)}</code> ${settings.CURRENCY}\n📉 Ads Balance: <code>${user.balance.balance.toFixed(6)}</code> ${settings.CURRENCY}\n\n🌟 Reward Points: <code>${addComma(user.balance.points)} points</code></b>\n\n<i>💰 Collect ${addComma(settings.POINTS_CONVERT_AT)} points and redeem them for ${settings.CURRENCY} rewards!</i>`
         return await api.sendMessage(from.id, text, {
             parse_mode: "HTML",
             disable_web_page_preview: true,
